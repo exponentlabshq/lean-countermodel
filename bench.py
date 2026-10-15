@@ -44,7 +44,8 @@ def run(f):
                         env={"CM_CACHE": f"{DIR}/vampire-cache", **os.environ})  # Vampire's answers are reused across Lean versions
     r = {"problem": f, "lang": "cnf" if "-" in f else "fof", "cm_s": round(time.time() - t, 1)}
     if cm.returncode:
-        return {**r, "verdict": "no model" if "no finite" in cm.stderr else "cm.py error", "why": cm.stderr.strip()[-300:]}
+        return {**r, "verdict": "no model" if "no finite" in cm.stderr else "unsupported input" if "unsupported TPTP" in cm.stderr
+                else "cm.py error", "why": cm.stderr.strip()[-300:]}
     r["size"] = int(re.search(r"a (\d+)-element", cm.stdout)[1])
     r["work"] = max(r["size"] ** len(set(re.findall(r"\b[A-Z]\w*", f))) for _, f in problem(p))  # decide's cases, worst formula
     stem = f"{DIR}/lean/{f[:-2].replace('-', '_').replace('.', '_')}"
@@ -84,7 +85,8 @@ def run_reflect(f):
                         capture_output=True, text=True, env={"CM_CACHE": f"{DIR}/vampire-cache", **os.environ})
     r = {"problem": f, "lang": "cnf" if "-" in f else "fof", "cm_s": round(time.time() - t, 1), "method": "reflect"}
     if cm.returncode:
-        return {**r, "verdict": "no model" if "no finite" in cm.stderr else "cm.py error", "why": cm.stderr.strip()[-300:]}
+        return {**r, "verdict": "no model" if "no finite" in cm.stderr else "unsupported input" if "unsupported TPTP" in cm.stderr
+                else "cm.py error", "why": cm.stderr.strip()[-300:]}
     d = f"{DIR}/lean/{ns}"
     first = open(f"{d}/{'Base' if os.path.exists(d + '/Base.lean') else 'Main'}.lean").readline()
     r["size"] = int(re.search(r"a (\d+)-element", first)[1])
@@ -114,8 +116,12 @@ def fact_share(p):
 
 
 def run_hybrid(f, threshold=0.9):
-    """Reflection for fact-heavy problems; one theorem per formula (shallow decide) for the rest."""
-    share = fact_share(f"{DIR}/problems/{f}")
+    """Reflection for fact-heavy problems; one theorem per formula (shallow decide) for the rest. Inputs cm.py refuses
+    (unsupported TPTP features) are recorded as such and stay in the denominator."""
+    try:
+        share = fact_share(f"{DIR}/problems/{f}")
+    except ValueError as e:
+        return {"problem": f, "verdict": "unsupported input", "why": str(e)[:300], "method": "-"}
     r = run_reflect(f) if share >= threshold else run(f)
     return {**r, "method": "reflect" if share >= threshold else "shallow", "fact_share": round(share, 3)}
 

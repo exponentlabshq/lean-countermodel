@@ -131,6 +131,26 @@ def miniscope(scope, lits, bound=frozenset()):
     return f"![{','.join(sorted(new(lit)))}]: {body}" if new(lit) else body
 
 
+def check_arities(forms, path):
+    """Refuse a problem that uses one symbol at two arities. TPTP treats p/1 and p/2 as different symbols, but the
+    model tables are keyed by name, so the two would be silently merged."""
+    seen = {}
+    for _, f in forms:
+        t = re.findall(TOKENS, f)
+        for i, k in enumerate(t):
+            if not (re.fullmatch(r"[a-z]\w*", k) or k[0] == "'"):
+                continue
+            n, d, j = 0, 0, i + 2
+            if i + 1 < len(t) and t[i + 1] == "(":
+                n = 1
+                while j < len(t) and not (t[j] == ")" and d == 0):
+                    d += (t[j] == "(") - (t[j] == ")")
+                    n += t[j] == "," and d == 0
+                    j += 1
+            if seen.setdefault(k.strip("'"), n) != n:
+                raise ValueError(f"unsupported TPTP: {k} used at arities {seen[k.strip(chr(39))]} and {n} in {path}")
+
+
 def problem(path):
     """[(role, formula)] from a TPTP file: cnf clauses closed by ∀, and those plus ∀-implications in fof miniscoped."""
     src = uncomment(open(path).read())
@@ -141,6 +161,7 @@ def problem(path):
         scope, lits = literals(f, k == "cnf")
         ok = k == "cnf" or scope and len(lits) > 1
         out.append((r, miniscope(scope, lits) if ok else f))
+    check_arities(out, path)
     return out
 
 

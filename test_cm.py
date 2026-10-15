@@ -239,3 +239,20 @@ def test_typed_statements_and_includes_are_rejected(tmp_path, stmt):
     p.write_text(stmt + "\nfof(a, axiom, p(c)).\nfof(c, conjecture, q(c)).\n")
     with pytest.raises(ValueError):
         problem(str(p))
+
+
+def test_a_symbol_at_two_arities_is_rejected(tmp_path):
+    """TPTP's p/1 and p/2 are different symbols; the model tables are keyed by name, so such a problem is refused."""
+    p = tmp_path / "t.p"
+    p.write_text("fof(a, axiom, p(c)).\nfof(b, axiom, p(c, c)).\nfof(g, conjecture, q(c)).\n")
+    with pytest.raises(ValueError):
+        problem(str(p))
+
+
+def test_benchmark_records_unsupported_input(tmp_path, monkeypatch):
+    """An input cm.py refuses stays in the benchmark denominator as 'unsupported input', not a crash or a silent drop."""
+    import bench
+    monkeypatch.setattr(bench, "DIR", str(tmp_path))
+    (tmp_path / "problems").mkdir()
+    (tmp_path / "problems" / "X.p").write_text("fof(a, axiom, (p <~> q)).\n")
+    assert bench.run_hybrid("X.p")["verdict"] == "unsupported input"

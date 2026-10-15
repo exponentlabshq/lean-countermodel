@@ -1,0 +1,51 @@
+{
+ "method": "cm.problem() + cm.lean() on every formula (fail-closed parser, commit 1a55aef); symbol arities collected from token streams",
+ "development": {
+  "inputs": 100,
+  "parsed": 97,
+  "rejected": [
+   [
+    "BIO001+1.p",
+    "unsupported TPTP syntax: '\"2\"' (see README: supported features)"
+   ],
+   [
+    "HWV042+1.p",
+    "unsupported TPTP syntax: '<~>' (see README: supported features)"
+   ],
+   [
+    "KRS244+1.p",
+    "unsupported TPTP syntax: '<~>' (see README: supported features)"
+   ]
+  ],
+  "mixed_arity": []
+ },
+ "held-out": {
+  "inputs": 100,
+  "parsed": 96,
+  "rejected": [
+   [
+    "KRS210+1.p",
+    "unsupported TPTP syntax: '<~>' (see README: supported features)"
+   ],
+   [
+    "SYN000+2.p",
+    "unsupported TPTP: include(...) in bench/problems/SYN000+2.p; cm.py reads self-co"
+   ],
+   [
+    "KRS182+1.p",
+    "unsupported TPTP syntax: '<~>' (see README: supported features)"
+   ],
+   [
+    "KRS199+1.p",
+    "unsupported TPTP syntax: '<~>' (see README: supported features)"
+   ]
+  ],
+  "mixed_arity": []
+ },
+ "examples": {
+  "inputs": 15,
+  "parsed": 15,
+  "rejected": [],
+  "mixed_arity": []
+ }
+}
