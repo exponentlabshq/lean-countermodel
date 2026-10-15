@@ -2,7 +2,7 @@
 
 ### Kernel-Checked Finite Counter-Models for Lean 4: a Verified Reflective Checker, a Measured Scaling Recipe, and a Million-Fact Certificate
 
-**Michael Jagdeo** · Exponent Labs LLC · {{co-author to confirm}}
+**Michael Jagdeo** (Exponent Labs LLC) · **Jeff Dumps**
 
 *Whitepaper, October 2026. Code and data: https://github.com/exponentlabshq/lean-countermodel*
 

@@ -11,7 +11,7 @@ python3 cm.py examples/group_comm.p > G.lean && lake env lean G.lean            
 python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean   # through the verified checker
 ```
 
-**Whitepaper:** [`paper/whitepaper.md`](paper/whitepaper.md) covers the method, data structures, scaling recipe, evaluation and related work.
+**Authors:** Michael Jagdeo (Exponent Labs LLC) and Jeff Dumps. **Whitepaper:** [`paper/whitepaper.md`](paper/whitepaper.md) covers the method, data structures, scaling recipe, evaluation and related work.
 
 ---
 
@@ -155,6 +155,7 @@ This problem forced most of the scaling recipe. On the way it exposed four bugs:
 | Nakamura | `cd nakamura && lake build && lake env lean Axioms.lean` (clones spinoza-ethica-lean @ 6d4c046, about 11 MB) |
 | Benchmark | `python3 bench.py N [WORKERS]`; results in `bench/results*.jsonl` |
 | Whitepaper | `python3 paper/assemble.py` builds `paper/whitepaper.md` from `paper/whitepaper/` |
+| Formal-philosophy agenda | `paper/philosophy-lean-vampire-research.md` (original) and `paper/formal-philosophy.md` (revised, with results) |
 
 ## References
 

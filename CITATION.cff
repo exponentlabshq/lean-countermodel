@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite it as below."
+title: "lean-countermodel: Kernel-Checked Finite Counter-Models for Lean 4"
+authors:
+  - family-names: Jagdeo
+    given-names: Michael
+    affiliation: Exponent Labs LLC
+  - family-names: Dumps
+    given-names: Jeff
+repository-code: "https://github.com/exponentlabshq/lean-countermodel"
+date-released: 2026-10-15

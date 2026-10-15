@@ -2,7 +2,7 @@
 title: "Lean on Vampire *Models*: Kernel-Checked Finite Counter-Models for Lean 4"
 author:
   - Michael Jagdeo, Exponent Labs LLC
-  - "[co-author to confirm]"
+  - Jeff Dumps
 date: "DRAFT, 2026-10-15"
 ---
 
