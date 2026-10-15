@@ -45,7 +45,7 @@ Can the tool find these counter-models by itself?
 | A25 (plenitude) | not needed | still does not follow | **needed** (2-element model) |
 | A26 (God is unique) | not needed | still does not follow | **needed** (2-element model) |
 
-Minimal sufficient sets (greedy deletion, each step a Vampire proof): weak P5 needs {A22} alone; A15 needs {A25, A26}. These are more than leave-one-out results, since leave-one-out alone cannot show that all individually unneeded axioms can be dropped *together*. They also have direct support upstream: Nakamura's own Lean proofs derive weak P5 from `PSRSubstance` and A15 from the two fields of `PSRPlenitude`, neither using `StatedAxioms` (`ModalForm.lean` at 6d4c046).
+**Subset-minimal** sufficient sets (greedy deletion, each step a Vampire proof; this finds *a* minimal set, not necessarily a smallest or the only one, and a Vampire timeout would leave minimality unresolved): weak P5 needs {A22} alone; A15 needs {A25, A26}. These are more than leave-one-out results, since leave-one-out alone cannot show that all individually unneeded axioms can be dropped *together*. They also have direct support upstream: Nakamura's own Lean proofs derive weak P5 from `PSRSubstance` and A15 from the two fields of `PSRPlenitude`, neither using `StatedAxioms` (`ModalForm.lean` at 6d4c046).
 
 **Findings:**
 
@@ -103,7 +103,7 @@ Problems were developed in Fibonacci batches (1, 1, 2, 3, 5, 8). Every bug found
 | Last 80 (uniform from the index) | 80 | 60 | 53 (88.3%) | 2 | 5 | 20 |
 | All 100 | 100 | 77 | 70 (90.9%) | 2 | 5 | 23 |
 
-The domain-first picker flattered the result: the uniformly drawn 80 certify 88.3% strictly.
+The uniformly drawn 80 certify 88.3% strictly, against 17 of 17 for the domain-first 20. That is a descriptive breakdown, not evidence that the picker caused the difference; the established problem is the non-uniform design itself.
 
 Three verdicts changed between the versions:
 

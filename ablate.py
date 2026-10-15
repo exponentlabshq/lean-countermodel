@@ -3,7 +3,7 @@
 Usage: python3 ablate.py theory.p [OUTDIR]
 theory.p holds definitions (role `definition`, always kept), axioms (role `axiom`, ablated one at a time) and
 one or more conjectures (the targets). For each target it asks whether the target follows from all axioms, and
-then, for each axiom, whether it still follows without that axiom. It also finds one minimal sufficient set.
+then, for each axiom, whether it still follows without that axiom. It also finds one subset-minimal sufficient set by greedy deletion (not necessarily a smallest one, or the only one).
 
 "Does not follow" is backed by a finite counter-model that Lean's kernel certifies (cm.py), so it is trusted.
 "Follows" rests on a Vampire proof, which is not certified here; the report labels it as such."""

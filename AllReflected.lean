@@ -1,0 +1,15 @@
+import Refl.circle_of_fifths
+import Refl.group_comm
+import Refl.guarded_definition
+import Refl.nakamura_a12
+import Refl.nakamura_a15
+import Refl.p14_bridge_weaker
+import Refl.p7_needs_a4c
+import Refl.p7_needs_b1
+import Refl.p7_needs_b1c
+import Refl.propositional
+import Refl.quantifier_scope
+import Refl.quoted_capture
+import Refl.quoted_names
+import Refl.single_formula
+import Refl.transitive_cnf

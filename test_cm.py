@@ -82,6 +82,12 @@ def test_compiles_to_committed_file(p):
     assert run("python3", "cm.py", p).stdout == open(f"Cm/{os.path.basename(p)[:-2]}.lean").read()
 
 
+@pytest.mark.parametrize("p", EXAMPLES)
+def test_reflects_to_committed_file(p):
+    """Refl/ holds the reflected certificate of every example; recheck.sh replays both libraries from scratch."""
+    assert run("python3", "cm.py", "--reflect", p).stdout == open(f"Refl/{os.path.basename(p)[:-2]}.lean").read()
+
+
 def test_kernel_accepts_with_propext_only():
     assert run("lake", "build").returncode == 0
     out = run("lake", "env", "lean", "Axioms.lean").stdout.splitlines()

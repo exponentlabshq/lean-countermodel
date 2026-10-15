@@ -26,7 +26,8 @@ example : (Fm.eq (.var 3) (.var 3)).wf Out [] 0 = false := by decide
 /-- A function used at an arity that `valid` never checked is not well formed. -/
 example : (Fm.all (.eq (.app 0 [.var 0, .var 0]) (.var 0))).wf Out [(0, 1)] 0 = false := by decide
 
-/-- Malformed data: too little fuel decodes to ⊥, which is never `Good`. -/
+/-- Documented behaviour, not general truncation detection: too little fuel decodes to ⊥, which is never `Good`.
+    Truncated or miscounted token streams are not detected by the decoder in general (paper §4.3). -/
 example : ((decode 131145 4 1 1).map (· matches .fls)) = [true] := by decide
 example : (decode 131145 4 1 1).all (fun φ => φ.wf Out [] 0 && φ.check Out []) = false := by decide
 /-- The same token stream with enough fuel decodes to `∀ x, ¬ r(x, x)`. -/

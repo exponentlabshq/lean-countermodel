@@ -1,5 +1,5 @@
 name = "cm"
-defaultTargets = ["Cm", "Checker"]
+defaultTargets = ["Cm", "Checker", "Refl", "All"]
 
 [[lean_lib]]
 name = "Cm"
@@ -8,3 +8,11 @@ globs = ["Cm.+"]
 
 [[lean_lib]]
 name = "Checker"
+
+[[lean_lib]]
+name = "Refl"
+globs = ["Refl.+"]
+
+[[lean_lib]]
+name = "All"
+roots = ["AllShallow", "AllReflected"]

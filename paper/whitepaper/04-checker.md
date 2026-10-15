@@ -230,7 +230,11 @@ theorem Fm.check_iff (M : Model) (φ : Fm) : ∀ env, φ.check M env = true ↔ 
 **What a certificate states.** Each block is checked in one pass, `φ.wf M fns 0 && φ.check M []`, giving `Good M fns block` (`good_of_check`, `good_facts`). Blocks combine with `good_append`, `M.valid fns` is one more `decide +kernel`, and `countermodel_of_good` concludes:
 
 ```lean
-theorem countermodel : ∀ φ ∈ problem, φ.Sat (M.toStructure (Model.valid_pos valid)) ⟨0, _⟩ [] φ
+theorem countermodel : ∀ φ ∈ problem, φ.Sat (M.toStructure (Model.valid_pos valid)) ⟨0, Model.valid_pos valid⟩ [] :=
+  countermodel_of_good M fns problem valid good
+-- #check @transitive_cnf.countermodel (generated from examples/transitive_cnf.p):
+--   ∀ (φ : Fm), φ ∈ transitive_cnf.problem → Fm.Sat (transitive_cnf.M.toStructure ⋯) ⟨0, ⋯⟩ [] φ
+-- @Fm.Sat : {α : Type} → Structure α → α → List α → Fm → Prop   (dot notation places φ last)
 ```
 
 That is: **the ordinary first-order structure on `Fin n` satisfies every formula of the decoded problem.** What it does *not* state is that the decoded problem is the TPTP source; that is the trusted translation (§3.8).
