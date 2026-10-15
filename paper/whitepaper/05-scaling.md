@@ -1,6 +1,8 @@
 ## 5. Scaling: Design Patterns, Data Structures and Measured Effects
 
-**Central lesson.** For large machine-generated Lean certificates, the cost is dominated by Lean *elaborating statements*: parsing, elaboration, typeclass search and kernel type checking of large terms. *Evaluating* them costs much less. Every pattern that reduced elaboration paid off. The one pattern that added unification work (shared fact lemmas) backfired. Search-size reductions mattered too, but once the search was small, the remaining cost was the text Lean had to read.
+**Central lesson, for the workloads we measured.** For our large ground-fact certificates, the cost was dominated by Lean *elaborating statements* (parsing, elaboration, typeclass search, kernel type checking of large terms) rather than by evaluating them, and reducing proposition elaboration gave the largest gains. This is not a claim about all Lean certificates: quantifier-heavy checking has a separate evaluation bottleneck, which our own reflected regression on PLA025+1 shows (§4.5).
+
+**Cost model.** Unless stated otherwise, $O(\cdot)$ counts field operations (shifts, masks, comparisons) on fixed-width fields. On `Nat` data, a shift costs time proportional to the bit length of the number shifted. That is why blocking (pattern 13a) matters, and why an "$O(1)$ packed lookup" means a constant number of operations on a bounded block, not constant time on an unbounded table.
 
 Profile of one 2,000-fact shallow chunk (Lean 4.13):
 
@@ -23,13 +25,13 @@ Machine for all measurements: 8 GB laptop, 8 cores.
 | # | Pattern (classic name) | Where applied | Big-O before → after | Measured effect | Status |
 |---|---|---|---|---|---|
 | 1 | Backtracking with pruning (miniscoping; lazy ∨, bounded ∀ in `decide`) | clause evaluation | $\lvert M\rvert^k$ full enumeration → pruned search tree | NLP219-1: 13-var clause over 7 elements $\approx 10^{11}$ cases → 46,746 atom checks for the whole problem; impossible → certified | kept |
-| 2 | Greedy join ordering (fewest new variables first) | literal order inside a clause | — (heuristic) | SWB017+3 starts from its most selective guard `rest(S3, nil)` | kept |
+| 2 | Greedy join ordering (fewest new variables first) | literal order inside a clause | — (heuristic) | a heuristic, not a guarantee of picking the most selective literal (the density planner, R1, shows selectivity is data-dependent); on SWB017+3 it happens to start from a highly selective guard, `rest(S3, nil)` | kept |
 | 3 | Loop fusion / deforestation (recursive flattening ∀V(A→∀W(B→C)) → one clause, fresh vars only) | FOF → clause translation | nested loops re-enter outer guards → one fused loop | SWB017+3 368,112 → 5,932 atom checks; `native_decide` → kernel-only `decide` in 2–12 s. PLA025+1 91,921 → 31,675 | kept |
 | 4 | Bitset (bitmask predicate tables) | model predicate lookup | $O(n)$ list-membership scan → $O(1)$ bit test | NLP165-1 10.9 s → ~1 s | kept |
 | 5 | Divide and conquer (one theorem per formula) | certificate layout | one monolithic term → n small independent terms | PLA025+1 47 s → 14 s; peak memory 805 MB → 420 MB | kept |
 | 6 | Memoization (VARS cache of literal variables) | Python rewriter | recompute per visit → once per literal | SYN832-1 rewrite 21.8 s → 8.4 s, identical output | kept |
 | 7 | Balanced binary tree | conjunction terms | depth $O(n)$ → $O(\log_2 n)$ | linear 10,000-way ∧ overflows kernel ("deep recursion"); tree passes | kept |
-| 8 | Partitioning / sharding (≤10,000 declarations per module) | Lean modules | — (hard limit) | Lean 4.13 fails on any file with >~20,600 declarations; Names split for 383,180 constants | kept |
+| 8 | Partitioning / sharding (≤10,000 declarations per module) | Lean modules | — (hard limit) | an observed, reproducible failure point on Lean 4.13 for our generated pattern: files with more than ~20,600 declarations fail ("deep recursion"); not re-tested on 4.35; Names split for 383,180 constants | kept |
 | 9 | Segment tree / map-reduce (hierarchical aggregation) | final theorem | restate n formulas in Main → $O(n/\text{chunk})$ chunk conjunctions | 10,000-formula slice 109 s → 12.3 s wall; Main 77 s → 0.09 s | kept |
 | 10 | Content-addressed cache (SHA-256 of problem+flags+version) | Vampire calls | re-run per invocation → $O(1)$ hit | on a Lean-only rerun, every problem with a deterministic Vampire answer (77 models and 3 definite give-ups) is served from the cache; the 2026-10-15 rerun's median end-to-end time fell from 3 s to 0.65 s per problem; timeouts never cached | kept |
 | 11 | Index lookup instead of rejection sampling | benchmark selection | ~113 requests/problem → 1–2 | picking ~165 s → negligible; end-to-end ~174 s → ~8 s per problem (~22×) | kept |
@@ -57,7 +59,7 @@ Machine for all measurements: 8 GB laptop, 8 cores.
 **Kernel limits (patterns 7, 8, 13a–13c).** These are hard limits rather than costs: Lean either works or fails.
 
 - A right-nested ∧ of 10,000 conjuncts fails with "deep recursion". A balanced tree has depth ⌈$\log_2 n$⌉.
-- Lean 4.13 fails on any file with more than ~20,600 declarations. Even 30,000 trivial `def c_i : Nat := 1` fail, in a band of ~340 failures around declaration 20,600. The fix caps modules at 10,000 declarations.
+- **On Lean 4.13, with our generated pattern and default options**, files with more than about 20,600 declarations failed with kernel "deep recursion". Even 30,000 trivial `def c_i : Nat := 1` fail, in a band of ~340 failures around declaration 20,600. The fix caps modules at 10,000 declarations.
 - In the reflected path, kernel evaluation is sensitive to representation.
   - A 557,591-bit number shifted on every lookup made decoding quadratic. Blocking fixed it.
   - Structural recursion on fuel = token count made evaluation take more than 9 min. Fuel = nesting depth: 12 s.
@@ -67,7 +69,7 @@ Machine for all measurements: 8 GB laptop, 8 cores.
 
 **Pipeline throughput (patterns 10–12).** These patterns reduce the time spent outside Lean.
 
-- **Vampire cache.** Keyed by SHA-256(problem, flags, version). Timeouts are never cached because two problems flipped from model to timeout under CPU load.
+- **Vampire cache.** Keyed by SHA-256(problem, flags, version). Timeouts are never cached, because two problems flipped from model to timeout under CPU load. **Note:** the lower median time of reruns (0.65 s against 3 s per problem) reflects cache reuse, not a Lean improvement.
 - **Benchmark selection.** It reads the TPTP ProblemAndSolutionStatistics index: 2,561 eligible problems of 26,990 (CNF SAT 1,305; FOF CSA 888; FOF SAT 368). Rejection sampling took ~113 requests per problem; the index needs 1–2.
 - **Build pipeline.** A producer–consumer pipeline, with the worker pool sized by memory (3–4 workers). Jobs run longest first (LPT) to shorten the makespan. `native_decide` runs only after a `decide` timeout, so kernel-only proofs remain the default.
 
@@ -144,7 +146,7 @@ Block size is a trade-off between per-block overhead and per-lookup shift cost: 
 
 - **Profile before optimizing, and expect elaboration to dominate.** Parsing alone was 41% of a chunk. `decide` itself was a minority of the cost.
 - **Never state a formula twice.** Prove each one once, locally, and aggregate proofs hierarchically. Restating 10,000 formulas in Main cost 77 s; aggregating chunk conjunctions cost 0.09 s.
-- **Keep every term shallow and every file small.** Use balanced trees for big conjunctions ($\log_2 n$ depth) and keep modules at ≤10,000 declarations. Lean 4.13 has an undocumented failure band near 20,600.
+- **Keep every term shallow and every file small.** Use balanced trees for big conjunctions ($\log_2 n$ depth) and keep modules at ≤10,000 declarations. Lean 4.13 had an undocumented failure band near 20,600.
 - **Reduce the search before you reduce the proof.** Miniscoping, lazy connectives, greedy join order and flattening turn $10^{11}$ cases into tens of thousands.
 - **For ground data, use reflection, and design the encoding for the kernel.** Use packed blocks (~128 records), $O(1)$ lookups instead of `match` chains, fuel bounded by depth, and `decide +kernel`. For quantifier-heavy problems, stay shallow and dispatch per problem.
 - **Distrust sharing that adds unification.** Hash-consed lemmas made the build 3× slower. Fewer terms help only if each one costs the same to elaborate.

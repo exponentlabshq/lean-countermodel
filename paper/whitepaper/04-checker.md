@@ -137,7 +137,13 @@ The decoder is mutually recursive and fueled:
 | `readFms s w fuel` | `k → i → List Fm` | `k` formulas; on `none` it returns `[.fls]` and stops |
 | `decode s w k depth` | `List Fm` | `readFms s w depth k 0` |
 
-Fuel bounds the recursion depth, and each call consumes one unit. Kernel cost grows with the fuel, so `emit_reflect` passes `depth = max(map(nesting, fs)) + 2`, where `nesting` is the token count of a single formula. That is an upper bound on the nesting depth, not the block's token count (§5, pattern 13b: >9 min → 12 s). If the fuel runs out or the data is malformed, `readFm` returns `none`, and `readFms` emits `.fls`: *malformed data decodes to ⊥, which can never be certified*.
+Fuel bounds the recursion depth, and each call consumes one unit. Kernel cost grows with the fuel, so `emit_reflect` passes `depth = max(map(nesting, fs)) + 2`, where `nesting` is the token count of a single formula. That is an upper bound on the nesting depth, not the block's token count (§5, pattern 13b: >9 min → 12 s). What the decoder does with bad data is precise, and narrower than "malformed data decodes to ⊥":
+
+- **Detected failures:** if the fuel runs out, `readFm` returns `none`, and `readFms` emits `.fls`, which can never be certified.
+- **Not detected by the decoder:** `get` reads zeros past the end of the data, and the formula count is supplied by the generator. So truncation, extra tokens and wrong counts can decode to *some* formula list. They do not pass silently: that list is the statement Lean certifies, so the error would be in the trusted translation.
+- **Caught by `Fm.wf`:** out-of-scope variables, out-of-range constants and wrong function arities (§4.4).
+
+`tests/Boundary.lean` records these cases as kernel-checked facts.
 
 Illustration: `fof(irrefl, axiom, ![X]: ~ r(X,X)).` with `ids["pred"]["r"] = 0`. `tokens` returns `[9] + body`, and `X` is index 0:
 
@@ -190,11 +196,44 @@ theorem hf0 : Holds M (decodeFacts F0 1 2 ar 2) := holds_facts M _ _ _ _ _ (by d
 
 ### 4.4 Soundness
 
+The certificate rests on two theorems, both proved once in `Checker.lean`.
+
+**(1) From bounded evaluation to ordinary semantics.** `Fm.Sem` is a *bounded* semantics. Quantifiers range over `x < M.n`, but nothing in `Model` stops a constant or function value from leaving that range, and `M.n` may be 0. Peer review rightly pointed out the consequence. With `M.n = 1` and a constant interpreted as 1, the bounded semantics makes `∀x, x ≠ c` true, although it is unsatisfiable in any structure containing `c`; with `M.n = 0`, `∀x, ⊥` is vacuously true. The checker therefore defines ordinary structures and satisfaction, and two kernel-checked conditions:
+
+```lean
+structure Structure (α : Type) where
+  const : Nat → α
+  fn : Nat → List α → α
+  pred : Nat → List α → Prop
+def Fm.Sat (S : Structure α) (d : α) : List α → Fm → Prop  -- ∀/∃ range over all of α
+
+def Model.valid (M : Model) (fns : List (Nat × Nat)) : Bool :=      -- 0 < n; each function closed
+  0 < M.n && fns.all fun (f, k) => allTuples M.n (fun xs => M.fn f xs < M.n) k
+def Fm.wf (M : Model) (fns : List (Nat × Nat)) : Nat → Fm → Bool   -- bound variables, constants in range,
+                                                                    -- functions at checked arities
+theorem sem_iff_sat (M) (fns) (hv : M.valid fns = true) (d : Fin M.n) (φ : Fm) :
+    ∀ env : List (Fin M.n), φ.wf M fns env.length = true →
+    (φ.Sem M (env.map Fin.val) ↔ φ.Sat (M.toStructure (Model.valid_pos hv)) d env)
+```
+
+`M.toStructure` is the structure on `Fin M.n` that `M` describes. Its values are clipped into the domain, and the proof shows the clipping never changes a value for valid models and well-formed terms (`val_interp`). For a closed formula (`env = []`), **the bounded semantics coincides with ordinary first-order satisfaction.** The reviewer's examples are rejected: `allNeC.wf Out [] 0 = false` and `EmptyDomain.valid [] = false` are kernel-checked in `tests/Boundary.lean`.
+
+**(2) The evaluator decides the bounded semantics:**
+
+
 One theorem connects the evaluator to the semantics. It is proved once, by induction on `Fm`, and holds for every formula and every model:
 
 ```lean
 theorem Fm.check_iff (M : Model) (φ : Fm) : ∀ env, φ.check M env = true ↔ φ.Sem M env
 ```
+
+**What a certificate states.** Each block is checked in one pass, `φ.wf M fns 0 && φ.check M []`, giving `Good M fns block` (`good_of_check`, `good_facts`). Blocks combine with `good_append`, `M.valid fns` is one more `decide +kernel`, and `countermodel_of_good` concludes:
+
+```lean
+theorem countermodel : ∀ φ ∈ problem, φ.Sat (M.toStructure (Model.valid_pos valid)) ⟨0, _⟩ [] φ
+```
+
+That is: **the ordinary first-order structure on `Fin n` satisfies every formula of the decoded problem.** What it does *not* state is that the decoded problem is the TPTP source; that is the trusted translation (§3.8).
 
 The `atom` case is `rfl`. The propositional cases are `simp` with the induction hypotheses, and `imp` adds a case split on `φ.check M env`. The quantifier cases use
 
@@ -219,7 +258,7 @@ theorem countermodel : Holds M problem
 
 where `problem : List Fm` is a balanced `++` tree of the `decode D<b> …` and `decodeFacts F<j> …` blocks. A conjecture appears negated (opcode `4`). The proof is a balanced tree of `holds_append` over the per-block proofs `h<b>` and `hf<j>`. NLP263+1's reflected certificate depends on the axioms `propext` and `Quot.sound` only. `#print axioms` on the library pins down where `Quot.sound` enters: through `allBelow_iff` and `anyBelow_iff`, the lemmas for the quantifier loops. `check_iff`, `holds_of_check` and `holds_facts` inherit it from them, and `holds_append` needs only `propext`. Both are standard Lean axioms, used throughout Mathlib.
 
-**Fidelity.** `decode`, `decodeFacts` and `M` are ordinary Lean definitions, and `Fm` derives `Repr`. `#eval problem` therefore prints exactly the list of formulas that `countermodel` certifies. The Python encoder (`tokens`, `as_fact`, symbol numbering) affects only *which* formulas appear in the statement, never whether the statement is true. A reader can inspect the decoded formulas and compare them with the TPTP source without trusting the encoder. The evaluator and decoders need no trust, since `check_iff`, `holds_of_check` and `holds_facts` are kernel-checked.
+**Fidelity, and its limit.** `decode`, `decodeFacts` and `M` are ordinary Lean definitions, so `#eval problem` prints the list of formulas the certificate is about. That is a useful diagnostic, not a proof of fidelity. It shows numeric symbol ids, so comparing it with the TPTP source needs the generator's symbol map and the rewrite. And `#eval` runs compiled code, so it adds nothing to the kernel proof. Fidelity to the source therefore rests on the trusted, tested translation (§3.8): a *verified checker* with a *tested translation pipeline*, not a verified TPTP-to-Lean compiler.
 
 ### 4.5 Shallow vs reflected certificates
 

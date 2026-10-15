@@ -6,7 +6,7 @@ A first-order *problem* is a set of axioms $\Gamma$ and, optionally, a conjectur
 
 ### 2.2 TPTP and Vampire
 
-TPTP [23] is the standard problem library for automated theorem proving. Its 26,990 problems each carry a status. **2,561 of them are untyped first-order (`fof` or `cnf`) with status *Satisfiable* or *CounterSatisfiable*,** meaning a model exists. Vampire [24] includes a finite-model builder (`-sa fmb`), which prints models as TPTP `tff` tables. We use it as an untrusted oracle.
+TPTP [23] is the standard problem library for automated theorem proving. Its 26,990 problems each carry a status. **2,561 of them are untyped first-order (`fof` or `cnf`) with status *Satisfiable* or *CounterSatisfiable*.** These statuses mean a model exists, not that a *finite* one does: the SZS ontology has separate *FinitelySatisfiable* and *FinitelyCounterSatisfiable* statuses [34]. A theory may have only infinite models, so a finite-model finder can fail on these problems for reasons other than time. Vampire [24] includes a finite-model builder (`-sa fmb`), which prints models as TPTP `tff` tables. We use it as an untrusted oracle.
 
 ### 2.3 Lean 4's kernel and `decide`
 
@@ -14,9 +14,9 @@ Lean's kernel checks proof terms. For a decidable proposition $P$:
 
 - **`decide`** evaluates the `Decidable P` instance in the elaborator, then has the kernel re-check it;
 - **`decide +kernel`** (Lean ≥ 4.15) asks the kernel alone to evaluate;
-- **`native_decide`** compiles the check to machine code. It is fast, but it adds the compiler, and the axiom `Lean.ofReduceBool`, to what must be trusted.
+- **`native_decide`** compiles the check to machine code. It is fast, but it adds the compiler to what must be trusted. Since Lean 4.29, each such computation is recorded as its own axiom, with `_native` in its name [35].
 
-**We accept only kernel checks.** For each certificate, `#print axioms` must list at most the standard axioms `propext` and `Quot.sound`.
+**Our strict policy** accepts only kernel checks: `#print axioms` must list at most the standard axioms `propext` and `Quot.sound`. `cm.py` never emits `native_decide`. The benchmark harness tries it only after a kernel timeout, and reports such certificates in a separate, weaker category.
 
 ### 2.4 The problem
 

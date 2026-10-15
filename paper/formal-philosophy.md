@@ -418,7 +418,7 @@ Research questions:
 
 The existing Lean repository provides a baseline against which alternative reconstructions can be compared.
 
-**First result: the assumption-dependency map (stage 6).** For the first-order layer of Nakamura's register (3 definitions held fixed, the 8 substantive stated axioms, and the sufficient-reason principles A22, A25 and A26), `ablate.py` reports:
+**First result: the assumption-dependency map (stage 6).** For the first-order layer of Nakamura's register (3 definitions held fixed, the 8 nontrivial fields of the stated-axiom register (4 further fields are `True` placeholders; the 8 combine stated axioms with the bridges A8–A11), and the sufficient-reason principles A22, A25 and A26), `ablate.py` reports:
 
 | Proposition | Follows from the register? | Depends on |
 |---|---|---|
@@ -427,9 +427,9 @@ The existing Lean repository provides a baseline against which alternative recon
 | A12: an attribute belongs to one substance | **no** | A kernel-checked 2-element model satisfies all eleven axioms |
 
 What this shows:
-- **None of Spinoza's eight stated axioms is needed for these results.** In this register the work is done by the definitions and the added principles of sufficient reason, which is a precise form of the Bennett–Della Rocca question.
+- **None of the eight nontrivial fields of Nakamura's stated-axiom register is needed for these results.** Relative to the fixed definitions, the work is done by the added principles of sufficient reason, which is a precise form of the Bennett–Della Rocca question for this reconstruction. Nakamura's own Lean proofs confirm the sufficient sets ({A22} for weak P5; {A25, A26} for A15).
 - **A12 remains underivable even with plenitude and God's uniqueness added,** a stronger irreducibility result than Nakamura's.
-- **Interpretive caveat (stage 7):** in these counter-models one object can be both a substance and an attribute. The register permits this. Whether Spinoza does is a question for interpretation, which is exactly where this agenda says the machine stops.
+- **Interpretive caveat (stage 7):** in these counter-models one object can be both a substance and an attribute. The register permits this. In this reconstruction the overlap is forced: A10 makes an attribute conceived through itself, and A8 identifies that with being in itself, so a sorted encoding would conflict with those bridges rather than refine them. Whether Spinoza meant this is a question for interpretation, which is exactly where this agenda says the machine stops. Note also that a counter-model shows non-derivability, not full independence.
 
 ### 8.2 Leibniz: necessary truths, sufficient reasons, and identity
 
