@@ -1,0 +1,7 @@
+{"problem": "NLP263+1.p", "lean": "4.35.0", "method": "shallow (one theorem per formula, Base/Names/Chunk/Main modules)",
+ "formulas": 1026857, "constants": 383180, "model_size": 1, "modules": {"Base": 1, "Names": 39, "Chunk": 514, "Main": 1},
+ "chunk_size": 2000, "parallel_chunks": 3, "verdict": "certified", "axioms": [], "failed_modules": 0,
+ "seconds": {"emit": 32, "base_and_names": 123, "chunks": 766, "main_and_check": 498, "total_wall": 1419, "total_cpu": 3051},
+ "peak_memory_bytes": 1460699136,
+ "note": "the Main and axiom-check steps overlapped with other work on the machine (ablation, tests), which inflates main_and_check and total_wall",
+ "machine": "8 GB laptop, 8 cores", "date": "2026-10-15"}

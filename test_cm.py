@@ -187,3 +187,15 @@ def test_reflected_mutants_agree_with_python(tmp_path):
         lean = list(pool.map(lambda c: lean_accepts(*c, tmp_path, emit_reflect), cases))
     assert lean == [countermodel(p, *m) for p, m in cases]
     assert not all(lean)
+
+
+def test_ablation_finds_what_a_conclusion_needs(tmp_path):
+    """p(c) needs axiom `a` (a certified counter-model without it) and not `b`; an underivable target never 'needs'."""
+    from ablate import ablate, table
+    t = tmp_path / "t.p"
+    t.write_text("fof(a, axiom, p(c)).\nfof(b, axiom, q(c)).\nfof(c1, conjecture, p(c)).\nfof(c2, conjecture, r(c)).\n")
+    report = ablate(str(t), str(tmp_path / "out"))
+    v = {(r["target"], r["without"]): r["verdict"] for r in report["results"]}
+    assert v[("c1", None)] == "follows" and v[("c1", "a")] == "does not follow" and v[("c1", "b")] == "follows"
+    assert v[("c2", None)] == "does not follow" and report["minimal"] == {"c1": ["a"]}
+    assert "**needed**" in table(report) and "still does not follow" in table(report)

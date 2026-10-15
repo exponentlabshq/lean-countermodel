@@ -9,3 +9,5 @@ bench/lean/
 bench/*.log
 bench/results-before-*.jsonl
 bench/vampire-cache/
+bench/olean/
+ablation/out/

@@ -2,7 +2,7 @@
 Usage: python3 bench.py N [WORKERS]   -> fetch and run N more problems, append to bench/results.jsonl"""
 import html, json, os, queue, random, re, subprocess, sys, threading, time, urllib.request
 from concurrent.futures import ThreadPoolExecutor
-from cm import problem
+from cm import VARS, problem
 
 SEE, DIR = "https://tptp.org/cgi-bin/SeeTPTP?Category=", "bench"
 
@@ -63,6 +63,61 @@ def run(f):
         if "timeout" not in why:  # fail fast: native_decide is only faster, so it can't fix an error
             break
     return {**r, "verdict": "lean rejected", "why": why}
+
+
+def lean(args, timeout, env=None):
+    """(ok, output) of one Lean process; on timeout, kill lake *and* the lean process under it."""
+    proc = subprocess.Popen(args, stdout=subprocess.PIPE, text=True, start_new_session=True, env=env)
+    try:
+        out = proc.communicate(timeout=timeout)[0]
+        return proc.returncode == 0, out.strip()[:300]
+    except subprocess.TimeoutExpired:
+        os.killpg(proc.pid, 9)
+        return False, f"lean timeout ({timeout} s)"
+
+
+def run_reflect(f):
+    """Certify through the verified checker (Checker.lean): one kernel-only attempt, modules for large problems."""
+    p, t = f"{DIR}/problems/{f}", time.time()
+    stem, ns = f"{DIR}/lean/{f[:-2].replace('-', '_').replace('.', '_')}", re.sub(r"\W", "_", f[:-2])
+    cm = subprocess.run(["python3", "-X", "int_max_str_digits=0", "cm.py", "--reflect", p, f"{DIR}/lean"],
+                        capture_output=True, text=True, env={"CM_CACHE": f"{DIR}/vampire-cache", **os.environ})
+    r = {"problem": f, "lang": "cnf" if "-" in f else "fof", "cm_s": round(time.time() - t, 1), "method": "reflect"}
+    if cm.returncode:
+        return {**r, "verdict": "no model" if "no finite" in cm.stderr else "cm.py error", "why": cm.stderr.strip()[-300:]}
+    d = f"{DIR}/lean/{ns}"
+    first = open(f"{d}/{'Base' if os.path.exists(d + '/Base.lean') else 'Main'}.lean").readline()
+    r["size"] = int(re.search(r"a (\d+)-element", first)[1])
+    t = time.time()
+    if not os.path.exists(d + "/Base.lean"):  # one file
+        ok, why = lean(["lake", "env", "lean", f"{d}/Main.lean"], 60)
+    else:  # modules: Base, then the parts in parallel, then Main
+        path = subprocess.run(["lake", "env", "printenv", "LEAN_PATH"], capture_output=True, text=True).stdout.strip()
+        env = {**os.environ, "LEAN_PATH": f"{path}:{DIR}/olean"}
+        os.makedirs(f"{DIR}/olean/{ns}", exist_ok=True)
+        build = lambda m: lean(["lake", "env", "lean", "-o", f"{DIR}/olean/{ns}/{m}.olean", f"{d}/{m}.lean"], 600, env)
+        parts = sorted((m[:-5] for m in os.listdir(d) if m.startswith("Part")), key=lambda m: int(m[4:]))
+        ok, why = build("Base")
+        if ok:
+            with ThreadPoolExecutor(4) as pool:
+                bad = [w for o, w in pool.map(build, parts) if not o]
+            ok, why = (False, bad[0]) if bad else build("Main")
+    r["reflect_s"] = round(time.time() - t, 1)
+    return {**r, "verdict": "certified" if ok else "lean rejected", "why": "" if ok else why}
+
+
+def fact_share(p):
+    """The share of formulas that are ground literals: the checker's strong case."""
+    fs = problem(p)
+    lit = re.compile(r"^\(*\s*(~)?\s*\(*\s*([\w']+|'[^']*')\s*(\([^()]*\))?\s*\)*\s*$")
+    return sum(not VARS(f) and bool(lit.match(f.strip())) for _, f in fs) / max(len(fs), 1)
+
+
+def run_hybrid(f, threshold=0.9):
+    """Reflection for fact-heavy problems; one theorem per formula (shallow decide) for the rest."""
+    share = fact_share(f"{DIR}/problems/{f}")
+    r = run_reflect(f) if share >= threshold else run(f)
+    return {**r, "method": "reflect" if share >= threshold else "shallow", "fact_share": round(share, 3)}
 
 
 if __name__ == "__main__":

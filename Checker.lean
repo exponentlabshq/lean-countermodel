@@ -59,7 +59,31 @@ def Fm.Sem (M : Model) : List Nat → Fm → Prop
   | env, .all φ => ∀ x, x < M.n → φ.Sem M (x :: env)
   | env, .ex φ => ∃ x, x < M.n ∧ φ.Sem M (x :: env)
 
-/-- A Boolean evaluator for `Sem`. It is lazy: `&&`, `||` and `List.all` stop at the first decisive value. -/
+/-- `f x` for every `x < n`, counting down: no list is built, and the first `false` stops it. -/
+def allBelow (f : Nat → Bool) : Nat → Bool
+  | 0 => true
+  | k + 1 => f k && allBelow f k
+
+/-- `f x` for some `x < n`, counting down and stopping at the first `true`. -/
+def anyBelow (f : Nat → Bool) : Nat → Bool
+  | 0 => false
+  | k + 1 => f k || anyBelow f k
+
+theorem allBelow_iff (f : Nat → Bool) : ∀ n, allBelow f n = true ↔ ∀ x, x < n → f x = true
+  | 0 => by simp [allBelow]
+  | k + 1 => by
+    simp only [allBelow, Bool.and_eq_true, allBelow_iff f k]
+    exact ⟨fun ⟨h, hs⟩ x hx => (Nat.lt_succ_iff_lt_or_eq.1 hx).elim (hs x) (· ▸ h),
+           fun h => ⟨h k (Nat.lt_succ_self k), fun x hx => h x (Nat.lt_succ_of_lt hx)⟩⟩
+
+theorem anyBelow_iff (f : Nat → Bool) : ∀ n, anyBelow f n = true ↔ ∃ x, x < n ∧ f x = true
+  | 0 => by simp [anyBelow]
+  | k + 1 => by
+    simp only [anyBelow, Bool.or_eq_true, anyBelow_iff f k]
+    exact ⟨fun h => h.elim (fun h => ⟨k, Nat.lt_succ_self k, h⟩) (fun ⟨x, hx, h⟩ => ⟨x, Nat.lt_succ_of_lt hx, h⟩),
+           fun ⟨x, hx, h⟩ => (Nat.lt_succ_iff_lt_or_eq.1 hx).elim (fun hx => .inr ⟨x, hx, h⟩) (fun e => .inl (e ▸ h))⟩
+
+/-- A Boolean evaluator for `Sem`. It is lazy: `&&`, `||`, `allBelow` and `anyBelow` stop at the first decisive value. -/
 def Fm.check (M : Model) : List Nat → Fm → Bool
   | env, .atom p args => M.pred p (Tm.vals M env args)
   | env, .eq a b => a.val M env == b.val M env
@@ -70,8 +94,8 @@ def Fm.check (M : Model) : List Nat → Fm → Bool
   | env, .or φ ψ => φ.check M env || ψ.check M env
   | env, .imp φ ψ => !φ.check M env || ψ.check M env
   | env, .iff φ ψ => φ.check M env == ψ.check M env
-  | env, .all φ => (List.range M.n).all fun x => φ.check M (x :: env)
-  | env, .ex φ => (List.range M.n).any fun x => φ.check M (x :: env)
+  | env, .all φ => allBelow (fun x => φ.check M (x :: env)) M.n
+  | env, .ex φ => anyBelow (fun x => φ.check M (x :: env)) M.n
 
 /-- Soundness and completeness, proved once for every formula. -/
 theorem Fm.check_iff (M : Model) (φ : Fm) : ∀ env, φ.check M env = true ↔ φ.Sem M env := by
@@ -85,8 +109,8 @@ theorem Fm.check_iff (M : Model) (φ : Fm) : ∀ env, φ.check M env = true ↔ 
   | or φ ψ ihφ ihψ => intro env; simp [Fm.check, Fm.Sem, ← ihφ, ← ihψ]
   | imp φ ψ ihφ ihψ => intro env; simp [Fm.check, Fm.Sem, ← ihφ, ← ihψ]; cases φ.check M env <;> simp
   | iff φ ψ ihφ ihψ => intro env; simp [Fm.check, Fm.Sem, ← ihφ, ← ihψ]
-  | all φ ih => intro env; simp [Fm.check, Fm.Sem, ← ih, List.all_eq_true, List.mem_range]
-  | ex φ ih => intro env; simp [Fm.check, Fm.Sem, ← ih, List.any_eq_true, List.mem_range]
+  | all φ ih => intro env; simp [Fm.check, Fm.Sem, ← ih, allBelow_iff]
+  | ex φ ih => intro env; simp [Fm.check, Fm.Sem, ← ih, anyBelow_iff]
 
 /-- Every formula of a problem holds in `M` (a conjecture appears negated). -/
 def Holds (M : Model) (φs : List Fm) : Prop := ∀ φ ∈ φs, φ.Sem M []
@@ -161,8 +185,9 @@ def readFms (s w fuel : Nat) : Nat → Nat → List Fm
     | none => [.fls]  -- malformed data decodes to ⊥, which can never be certified
 
 /-- The `k` formulas packed in `s` with `w`-bit tokens, nested at most `depth` deep. The kernel's cost for these
-structural recursions grows with the fuel, so the generator passes the true nesting depth, not the token count;
-too little fuel decodes to `⊥`, which can never be certified. -/
+structural recursions grows with the fuel, so the generator passes a small bound (each formula's own token count,
+which bounds its nesting depth) rather than the whole block's token count; too little fuel decodes to `⊥`, which can
+never be certified. -/
 def decode (s w k depth : Nat) : List Fm := readFms s w depth k 0
 
 /-! ## Fact tables: ground literals as fixed-width records

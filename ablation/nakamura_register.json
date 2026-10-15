@@ -1,0 +1,268 @@
+{
+ "theory": "ablation/nakamura_register.p",
+ "definitions": [
+  "def_substance",
+  "def_attribute",
+  "def_isGod"
+ ],
+ "axioms": [
+  "ax1_inItselfOrInAnother",
+  "ax1_exclusive",
+  "ax2_perSeOrThroughAnother",
+  "ax7_conceivableAsNonExistent",
+  "ax_inItself_iff_perSeConceived",
+  "ax_inAnother_iff_conceivedThroughAnother",
+  "ax_attribute_perSe",
+  "ax_causaSui_iff",
+  "a22_PSRSubstance",
+  "a25_plenitude",
+  "a26_uniqueGod"
+ ],
+ "targets": [
+  "p5_weak",
+  "a12_oneSubstancePerAttribute",
+  "a15_attributesBelongToGod"
+ ],
+ "minimal": {
+  "p5_weak": [
+   "a22_PSRSubstance"
+  ],
+  "a15_attributesBelongToGod": [
+   "a25_plenitude",
+   "a26_uniqueGod"
+  ]
+ },
+ "results": [
+  {
+   "target": "p5_weak",
+   "without": null,
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": null,
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": null,
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "ax1_inItselfOrInAnother",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "ax1_exclusive",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "ax2_perSeOrThroughAnother",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "ax7_conceivableAsNonExistent",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "ax_inItself_iff_perSeConceived",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "ax_inAnother_iff_conceivedThroughAnother",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "ax_attribute_perSe",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "ax_causaSui_iff",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "a22_PSRSubstance",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "p5_weak",
+   "without": "a25_plenitude",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "p5_weak",
+   "without": "a26_uniqueGod",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "ax1_inItselfOrInAnother",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "ax1_exclusive",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "ax2_perSeOrThroughAnother",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "ax7_conceivableAsNonExistent",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "ax_inItself_iff_perSeConceived",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "ax_inAnother_iff_conceivedThroughAnother",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "ax_attribute_perSe",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "ax_causaSui_iff",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "a22_PSRSubstance",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "a25_plenitude",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a12_oneSubstancePerAttribute",
+   "without": "a26_uniqueGod",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "ax1_inItselfOrInAnother",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "ax1_exclusive",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "ax2_perSeOrThroughAnother",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "ax7_conceivableAsNonExistent",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "ax_inItself_iff_perSeConceived",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "ax_inAnother_iff_conceivedThroughAnother",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "ax_attribute_perSe",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "ax_causaSui_iff",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "a22_PSRSubstance",
+   "verdict": "follows",
+   "evidence": "Vampire proof (not certified)"
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "a25_plenitude",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  },
+  {
+   "target": "a15_attributesBelongToGod",
+   "without": "a26_uniqueGod",
+   "verdict": "does not follow",
+   "evidence": "2-element counter-model, kernel-checked (axioms: [propext])",
+   "size": 2
+  }
+ ]
+}

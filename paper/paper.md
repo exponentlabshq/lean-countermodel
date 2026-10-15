@@ -18,7 +18,7 @@ On 100 TPTP problems sampled from the 2,561 with a finite-model status, Lean cer
 
 # 1. The gap
 
-Lean 4 can import proofs from automated provers: Lean-auto, LeanHammer, Duper, and Vampire proof reconstruction ("Lean on Vampire Proofs", ITP 2026). It can also search for concrete counterexamples: `plausible`, and Lean Disprove (ICML 2026 AI-for-Math workshop). Both kinds of search work *within* fixed types (`Nat`, `Fin n`).
+Lean 4 can import proofs from automated provers: Lean-auto, LeanHammer, Duper, and Vampire proof reconstruction ("Lean on Vampire Proofs", arXiv:2603.26342). It can also search for concrete counterexamples: `plausible`, and Lean Disprove (ICML 2026 AI-for-Math workshop). Both kinds of search work *within* fixed types (`Nat`, `Fin n`).
 
 What is missing is a finder that *invents* a structure, meaning a universe plus interpretations of the undefined symbols, that satisfies a theory and falsifies a target. This is the Nitpick and Mace4 capability. It is how independence, non-implication and vacuity are shown.
 
@@ -91,7 +91,7 @@ Vampire is not trusted: a wrong model fails `decide`. Generated files set `autoI
 
 - **Nitpick** (Blanchette & Nipkow 2010) and **Nunchaku**: model finding for Isabelle, and for higher-order logic.
 - **Mace4:** finite model search for first-order logic.
-- **Lean on Vampire Proofs** (Bodingbauer, Hajdu, Kovács, Polaczek, Rawson; ITP 2026): the converse of this work.
+- **Lean on Vampire Proofs** (Bodingbauer, Hajdu, Kovács, Polaczek, Rawson; arXiv:2603.26342, 2026): the converse of this work.
 - **Lean Disprove** (Ondras & Freer 2026) and **plausible:** concrete counterexamples.
 - **Benzmüller (2026):** imports Isabelle's Nitpick verdicts into Lean 4.
 
