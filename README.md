@@ -11,7 +11,7 @@ python3 cm.py examples/group_comm.p > G.lean && lake env lean G.lean            
 python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean   # through the verified checker
 ```
 
-**Authors:** Michael Jagdeo (Exponent Labs LLC) and Jeff Dumps. **Whitepaper:** [`paper/whitepaper.md`](paper/whitepaper.md) covers the method, data structures, scaling recipe, evaluation and related work.
+**Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.md`](paper/whitepaper.md) covers the method, data structures, scaling recipe, evaluation and related work.
 
 ---
 
