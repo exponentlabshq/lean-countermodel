@@ -14,7 +14,7 @@ flowchart LR
     R --> S
     R --> F
     S -->|"inductive T, bitmasks,<br/>theorem cᵢ := by decide"| K["Lean kernel"]
-    F -->|"Model M, packed tokens,<br/>Holds M problem"| K
+    F -->|"Model M, packed tokens,<br/>valid + Good ⇒ Sat"| K
     C["Checker.lean<br/>check_iff, holds_of_check"] --> K
 ```
 
@@ -24,7 +24,7 @@ flowchart LR
       │            -t 30, $CM_CACHE                                      │
       │                                                                  ▼
       └──────► problem(path) ──► [(role, formula)] ──┬──► emit()         ── shallow:  T, masks, cᵢ := by decide ──┐
-               literals / clause / miniscope         └──► emit_reflect() ── reflected: M, Dᵦ/Fᵦ, Holds M problem ──┤
+               literals / clause / miniscope         └──► emit_reflect() ── reflected: M, Dᵦ/Fᵦ, valid+Good⇒Sat ──┤
                                                                                        ▲                         ▼
                                                                        Checker.lean ───┘                   Lean kernel
 ```
@@ -121,7 +121,7 @@ Constants live in separate `Names` modules because Lean 4.13 fails with "deep re
 - `tokens(f, ids)` translates a formula into the prefix token stream read by `CM.decode`. Variables become de Bruijn indices (`env.index(k)`, last-bound variable at index 0). Symbols become numbers via `ids = {"pred", "fn", "const"}`, assigned in sorted name order; propositional symbols are numbered after the table predicates, as 0-ary predicates. A conjecture is prefixed with opcode `4` (¬).
 - `as_fact(toks)` recognizes ground literals `(¬)p(c₁, …, cₖ)` over constants and returns `(polarity, predicate, [constant ids])`. Facts go into fixed-width fact tables (`F<j>`, 128 per block, proved by `holds_facts`); all other formulas go into token blocks (`D<b>`, about 4096 tokens per block, proved by `holds_of_check`).
 - Lookups in the generated `M`: predicates are one packed mask per symbol, read by `get (get MASKS p mw) (index n args) 1 == 1`; constants are packed 4096 per block, the block chosen by `bsearch`, a balanced tree of `if c / 4096 < k` comparisons; functions are selected by `bsearch` over function ids, then read with `get … (index n args) w`.
-- The statement is `theorem countermodel : Holds M problem`, where `problem : List Fm` is a balanced `++` tree of the decoded blocks, proved by a balanced tree of `holds_append`. Above 32 blocks (`per_part`) the output is split into `Base`, `Part<k>` and `Main` modules.
+- The certificate proves `valid : M.valid fns = true` and `good : Good M fns problem` (well-formedness and truth, a balanced tree of `good_append` over the blocks), and states `theorem countermodel : ∀ φ ∈ problem, φ.Sat (M.toStructure …) ⟨0, …⟩ []`: ordinary first-order satisfaction (§4.4). Above 32 blocks (`per_part`) the output is split into `Base`, `Part<k>` and `Main` modules.
 
 `bench.py`'s `run_hybrid` chooses reflection when the share of ground-literal formulas (`fact_share`) is at least 0.9, and the shallow path otherwise.
 
@@ -168,14 +168,16 @@ abbrev «a» : T := T.e1
 abbrev «b» : T := T.e2
 abbrev «r» (x0 x1 : T) : Prop := (4 >>> (1 * x0.idx + 2 * x1.idx)) % 2 = 1
 
-theorem c0 : (∀ X Y : T, (¬(«r» X Y) ∨ (∀ Z : T, (¬(«r» Y Z) ∨ («r» X Z))))) := by decide
+theorem c0 : (∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z'))))) := by decide
 theorem c1 : («r» «a» «b») := by decide
 theorem c2 : ¬(«r» «b» «a») := by decide
 
-theorem countermodel : (((∀ X Y : T, (¬(«r» X Y) ∨ (∀ Z : T, (¬(«r» Y Z) ∨ («r» X Z)))))) ∧
+theorem countermodel : (((∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z')))))) ∧
     (((«r» «a» «b»)) ∧ (¬(«r» «b» «a»)))) :=
   ⟨c0, ⟨c1, c2⟩⟩
 ```
+
+TPTP variables are emitted primed (`X` becomes `X'`). A TPTP variable cannot contain `'`, so no variable can shadow the domain type `T` or a Lean constant such as `True`.
 
 In the reflected path, with `ids = {pred: {r: 0}, const: {a: 0, b: 1}}`, `tokens` produces:
 
@@ -187,7 +189,7 @@ In the reflected path, with `ids = {pred: {r: 0}, const: {a: 0, b: 1}}`, `tokens
 
 Reading the first stream: `9 9` is ∀∀, `6` is ∨, `4 0 0 2 (0 1) (0 0)` is ¬r(var 1, var 0), i.e. ¬r(X, Y), because `Y`, bound last, is index 0.
 
-`group_comm.p` illustrates the other branch of `problem`: each `fof` formula there is a single equation under one `!`, so `clause` yields one literal, the `ok` test fails, and the formula is emitted unchanged, e.g. `theorem c3 : ¬(∀ X Y : T, ((«mul» X Y) = («mul» Y X))) := by decide` over the 6-element model S₃.
+`group_comm.p` illustrates the other branch of `problem`: each `fof` formula there is a single equation under one `!`, so `clause` yields one literal, the `ok` test fails, and the formula is emitted unchanged, e.g. `theorem c3 : ¬(∀ X' Y' : T, ((«mul» X' Y') = («mul» Y' X'))) := by decide` over the 6-element model S₃.
 
 ### 3.10 Independent checks (`test_cm.py`)
 
@@ -197,7 +199,7 @@ The trusted Python stages are tested against an evaluator that shares only the l
 |---|---|
 | `holds(s, n, consts, tables, env)` | Not a test: a brute-force evaluator of the **original** TPTP text. It parses with its own recursive descent and evaluates `!`/`?` with `itertools.product` over `1 … n`. It never sees `lean()`, `tokens()` or `Checker.lean`. |
 | `countermodel(path, …)` | Python's verdict: every formula of `problem(path)` holds, except the conjecture, which fails. |
-| `test_compiles_to_committed_file` | `cm.py` output equals the committed `Cm/<name>.lean`, for each of the 15 `examples/*.p`. |
+| `test_compiles_to_committed_file`, `test_reflects_to_committed_file` | `cm.py` output equals the committed `Cm/<name>.lean` (shallow) and `Refl/<name>.lean` (reflected), for each of the 15 `examples/*.p`. |
 | `test_kernel_accepts_with_propext_only` | `lake build` succeeds and every line of `#print axioms` (via `Axioms.lean`) ends with `[propext]`. |
 | `test_python_agrees_it_is_a_countermodel` | `holds` confirms Vampire's model for every example. |
 | `test_circle_of_fifths_is_the_known_answer` | The model has exactly 12 elements, and `f` and `g` are x ↦ x+7 and x ↦ x+5 (mod 12). |
@@ -208,7 +210,13 @@ The trusted Python stages are tested against an evaluator that shares only the l
 | `test_a_theorem_has_no_counter_model` | `cm.py` exits non-zero on `∀X p(X) ⊢ p(k)`. |
 | `test_large_problems_split_into_modules`, `test_constants_split_into_name_modules` | With `CM_CHUNK=2` or `1`, modular output builds with `lake`; `#print axioms` on the result contains no `sorryAx`. |
 | `test_vampire_cache_is_transparent` | With `CM_CACHE`, the second run hits the cache (one entry) and emits identical Lean. |
+| `test_boundary_cases_are_rejected_by_the_kernel` | Builds `tests/Boundary.lean`: the reviewer's out-of-range constant passes `check` but fails `wf`; an empty domain and a leaking function fail `valid`; an unbound variable and a wrong arity fail `wf`; too little decoder fuel yields ⊥ (documented behaviour, not general truncation detection). |
+| `test_quoted_and_plain_names_are_the_same_symbol` | `cat` and `'cat'` translate identically; `'X'` stays a constant, distinct from the variable `X`. |
+| `test_unsupported_syntax_is_rejected_not_misread` (7 cases), `test_typed_statements_and_includes_are_rejected` (2), `test_a_symbol_at_two_arities_is_rejected` | Fail-closed parsing: `<~>`, `<=`, `~\|`, `~&`, `$distinct`, numbers, strings, `tff`, `include` and mixed arities raise an error in both translators. |
+| `test_benchmark_records_unsupported_input` | The harness classifies such inputs as *unsupported input* **before** Vampire runs (the test supplies a Vampire binary that does not exist). |
+| `test_variables_cannot_capture_lean_names` (5 cases) | Variables named `T`, `True`, `False`, `Nat`, `Decidable` compile; `T` and `True` failed on the translator before the fix. |
+| `test_ablation_finds_what_a_conclusion_needs` | `ablate.py` labels a needed axiom with a certified counter-model, and never labels an underivable target as needing anything. |
 
-The file defines 4 tests parametrized over the 15 examples plus 8 single tests: 68 test cases.
+The suite has **102 test cases**: 5 tests parametrized over the 15 examples (75), 14 rejection and capture cases, and 13 single tests. Separately, `recheck.sh` rebuilds all 30 shipped certificates, prints their axioms and replays `Checker`, `AllShallow` and `AllReflected` through the kernel from scratch with `leanchecker --fresh` (Lean 4.35); its output is `bench/recheck.log`.
 
 **Planted bugs.** The suite was validated by introducing known bugs into `cm.py` and confirming failures (README §5): `=>` compiled as `↔` (7 tests fail), a scoping bug (4), a dropped negation (18), a lost parenthesis (4), and the single-formula case (1). The planted variants are not in the repository; the counts are those recorded in the README, measured against the suite at that time.

@@ -254,13 +254,7 @@ each proved by recursion on `n`. Three lemmas lift `check_iff` to certificates:
 | `holds_facts M s w K ar k` | `(List.range k).all (fun i => (fact s w K ar i).check M []) = true` | `Holds M (decodeFacts s w K ar k)` |
 | `holds_append` | `Holds M a`, `Holds M b` | `Holds M (a ++ b)` |
 
-The generated certificate states
-
-```lean
-theorem countermodel : Holds M problem
-```
-
-where `problem : List Fm` is a balanced `++` tree of the `decode D<b> …` and `decodeFacts F<j> …` blocks. A conjecture appears negated (opcode `4`). The proof is a balanced tree of `holds_append` over the per-block proofs `h<b>` and `hf<j>`. NLP263+1's reflected certificate depends on the axioms `propext` and `Quot.sound` only. `#print axioms` on the library pins down where `Quot.sound` enters: through `allBelow_iff` and `anyBelow_iff`, the lemmas for the quantifier loops. `check_iff`, `holds_of_check` and `holds_facts` inherit it from them, and `holds_append` needs only `propext`. Both are standard Lean axioms, used throughout Mathlib.
+These truth-only lemmas are the inner layer of `good_of_check`, `good_facts` and `good_append`, which add the well-formedness conjunct. In the generated certificate, `problem : List Fm` is a balanced `++` tree of the `decode D<b> …` and `decodeFacts F<j> …` blocks, a conjecture appears negated (opcode `4`), and `good : Good M fns problem` is a balanced tree of `good_append` over the per-block proofs `h<b>` and `hf<j>`; the public statement is `countermodel` above. NLP263+1's reflected certificate depends on the axioms `propext` and `Quot.sound` only. `#print axioms` on the library pins down where `Quot.sound` enters: through `allBelow_iff` and `anyBelow_iff`, the lemmas for the quantifier loops. `check_iff`, `holds_of_check` and `holds_facts` inherit it from them, and `holds_append` needs only `propext`. Both are standard Lean axioms, used throughout Mathlib.
 
 **Fidelity, and its limit.** `decode`, `decodeFacts` and `M` are ordinary Lean definitions, so `#eval problem` prints the list of formulas the certificate is about. That is a useful diagnostic, not a proof of fidelity. It shows numeric symbol ids, so comparing it with the TPTP source needs the generator's symbol map and the rewrite. And `#eval` runs compiled code, so it adds nothing to the kernel proof. Fidelity to the source therefore rests on the trusted, tested translation (§3.8): a *verified checker* with a *tested translation pipeline*, not a verified TPTP-to-Lean compiler.
 
@@ -268,7 +262,7 @@ where `problem : List Fm` is a balanced `++` tree of the `decode D<b> …` and `
 
 | | Shallow (`emit`, §3.5) | Reflected (`emit_reflect`) |
 |---|---|---|
-| Statement form | one Lean `Prop` per formula over `inductive T`; `theorem c<i> : φᵢ := by decide` | `Holds M problem` over `Fm` data |
+| Statement form | one Lean `Prop` per formula over `inductive T`; `theorem c<i> : φᵢ := by decide` | ordinary satisfaction `φ.Sat (M.toStructure …)` for every φ in `problem`, over `Fm` data |
 | Trusted code | `lean()`, `sym()`, `emit()`, rewriter, kernel | `tokens()`, `as_fact()`, symbol numbering, rewriter, kernel. `Checker.lean` is proved, and `#eval problem` exposes the statement |
 | Per-formula cost | parse + elaborate + typeclass search + `decide` for each formula | no per-formula elaboration: one Nat literal per block, evaluated by `decide +kernel` |
 | Axioms | `propext` (examples) | `propext`, `Quot.sound` |
@@ -278,8 +272,8 @@ Measured (8 GB laptop, 8 cores):
 
 | Workload | Shallow | Reflected |
 |---|---|---|
-| 10,000-fact slice, Lean 4.35 | 36.1 s CPU | **5.1 s CPU** |
-| NLP263+1, 1,026,857 facts | 20.7 min wall (Lean 4.13) | **4.8 min** wall (Lean 4.35) |
+| 10,000-fact slice, Lean 4.35, median of 3 (§6.3.1) | 31.1 s CPU | **9.8 s CPU** |
+| NLP263+1, 1,026,857 facts, Lean 4.35, median of 3 (§6.3.1) | 14.1 min wall | **5.2 min** wall |
 | PLA025+1, quantifier-heavy, 10-element model, Lean 4.35 | **4.4 s** | >400 s (did not finish); 228 s with the evaluator written using the primitive recursor |
 
 Reflection wins on ground facts and loses badly on nested quantifiers. *Hypothesis:* lazy kernel evaluation re-decodes subformulas inside the `allBelow`/`anyBelow` loops, because the `decode …` term is unfolded under each quantifier instead of being shared. *Policy:* hybrid dispatch. `bench.py`'s `run_hybrid` reflects when `fact_share ≥ 0.9` and uses the shallow method otherwise. *Future work:* decode once and check the result. That means proving `decode D … = L` for an explicit list `L`, then running `check` on `L`, so that quantifier loops never touch the packed stream.

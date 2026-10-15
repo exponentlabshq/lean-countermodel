@@ -77,6 +77,8 @@ Machine for all measurements: 8 GB laptop, 8 cores.
 
 NLP263+1: 1,026,857 ground facts, 383,180 constants, 1-element model. Sources: `bench/nlp263-lean4.13.json`, `bench/nlp263-reflected-lean4.35.json`.
 
+**Historical, uncontrolled measurements.** This subsection records the development-time runs: single runs, different Lean versions, different worker counts, varying load, and a reflected certificate *without* the validity and well-formedness checks added after peer review. They explain how the design was reached; they are **not** the paper's performance claim. The controlled comparison is §6.3.1 (median 14.1 min shallow against 5.2 min reflected, 2.7×).
+
 | Metric | Shallow (Lean 4.13) | Reflected (Lean 4.35) | Ratio |
 |---|---|---|---|
 | Wall time | 20.7 min (1,241 s) | 4.8 min (290 s) | 4.3× |
@@ -89,7 +91,7 @@ NLP263+1: 1,026,857 ground facts, 383,180 constants, 1-element model. Sources: `
 | Axioms | none | `propext`, `Quot.sound` | — |
 | Failed modules | 0 | 0 | — |
 
-Lean versions differ between the two columns. On the 10,000-fact slice, however, the shallow method costs about the same on both versions (39.6 s CPU on 4.13, 36.1 s on 4.35). So most of the gap comes from the method, not the Lean version. The version did matter for quantifier-heavy shallow proofs: PLA025+1 took 14–47 s on 4.13 and 4.4 s on 4.35.
+Lean versions differ between the two columns. On the 10,000-fact slice, however, the shallow method costs about the same on both versions (39.6 s CPU on 4.13, 36.1 s on 4.35). This suggested that most of the gap comes from the method, not the Lean version; §6.3.1 tests that directly on one Lean version and finds a smaller gap than this table shows. The version did matter for quantifier-heavy shallow proofs: PLA025+1 took 14–47 s on 4.13 and 4.4 s on 4.35.
 
 10,000-fact slice, Lean 4.35:
 

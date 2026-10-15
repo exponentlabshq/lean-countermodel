@@ -11,5 +11,4 @@ bench/results-before-*.jsonl
 bench/vampire-cache/
 bench/olean/
 ablation/out/
-bench/slice10000.p
 bench/perf.jsonl.tmp

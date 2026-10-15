@@ -101,14 +101,41 @@ Ready for you now:
 
 **Version relationship, shown rather than asserted:**
 
-- `a2c16ab` (semantic validity), `72bb3e2` (fail-closed parser) and `a23fe9c` (arity guard; unsupported inputs recorded) are linear ancestors of the evaluation commit: `git merge-base --is-ancestor` succeeds for each.
-- We **did not use `1a55aef` results.** That run crashed on an `include` in the held-out sample (`SYN000+2`), because the harness let `cm.py`'s rejection propagate. We fixed the harness to record such inputs, and froze again at **`a23fe9c`**.
-- An earlier, partial held-out run overlapped with a mid-run parser change. **It was discarded**, and none of its outcomes are reported.
-- `cm.py`, `bench.py` and `Checker.lean` are byte-identical between `a23fe9c` and the snapshot commit.
+- `a2c16ab` (semantic validity), `72bb3e2` (fail-closed parser), `a23fe9c` (arity guard), `62d43d6` (harness fixes) and `51481a4` (variable capture) are linear ancestors of the snapshot commit; `git merge-base --is-ancestor` succeeds for each.
+- `cm.py`, `bench.py` and `Checker.lean` are byte-identical between the evaluation commit **`51481a4`** and the snapshot commit.
 
-**Both sets were rerun on `a23fe9c`.** The run used a separate git worktree, the same 30 s Vampire limit, and the same model cache, so the finder's answers are unchanged. That includes the development set, so the 70/77 figure is no longer inherited from the old checker. Earlier figures stay in the paper only as labeled history.
+**Every earlier run of the revised code is superseded and none is reported.** Your instruction not to change code within a frozen evaluation cost us four attempts, and was right each time:
 
-[RESULTS TABLE]
+| Frozen at | What happened | Disposition |
+|---|---|---|
+| (unfrozen) | A partial held-out run overlapped with a mid-run parser change | Discarded |
+| `1a55aef` | Crashed on the `include` in `SYN000+2`: the harness let `cm.py`'s rejection propagate | Harness fixed to record unsupported inputs |
+| `a23fe9c` | Completed, but exposed two harness defects and a contention artifact | Kept in `bench/superseded-a23fe9c-*.jsonl`; not reported |
+| `62d43d6` | Completed on an idle machine, but exposed a translator defect (below) | Kept in `bench/superseded-62d43d6-*.jsonl`; not reported |
+
+**The three problems in the `a23fe9c` run:**
+1. **Misclassification.** Unsupported connectives were detected only when `cm.py` translated a model. Where Vampire found no model, as with the 3 development inputs above, the input was labeled *no model* instead of *unsupported input*. This was safe, because nothing was certified, but it was miscounted. The harness now translates every formula before Vampire runs, and the test proves it by supplying a Vampire binary that does not exist.
+2. **A crash.** The shallow path did not lift Python's 4,300-digit limit on printing integers, so `GEG001+1`, which has a large bitmask, crashed `cm.py`. `cm.py` now lifts the limit itself.
+3. **Contention on our side.** `LAT112-1` fell back to native evaluation after a 60 s kernel timeout, because we were running the test suite and `leanchecker` on the same 8 GB machine during the run. Run alone, it certifies strictly in 19.7 s; it needed 18.8 s in the original run.
+
+**A translator defect found by the `62d43d6` run.** `GEG001+1` binds a variable named `T`, which is the name of the shallow certificate's domain type. Inside the quantifier, `: T` referred to the variable, and Lean rejected the file with a type error. A variable named `True` would capture `$true` in the same way. Every case we constructed failed closed, as a Lean error, never as a certificate with a changed meaning; but it is a defect in trusted code. The shallow translator now emits variables primed (`X'`), a character TPTP variables cannot contain. Five tests cover it, and we checked that the `T` and `True` cases fail on the earlier translator. Reflected certificates use de Bruijn indices and were unaffected. `GEG001+1` now fails like the other deeply nested problems, in instance search.
+
+**Both sets were rerun on `51481a4`**, on an otherwise idle machine. Apart from `GEG001+1`'s failure mode, every verdict matches the `62d43d6` run, problem for problem. The run used a separate git worktree, the same 30 s Vampire limit and the same model cache, so the finder's answers are unchanged. That includes the development set, so the 70/77 figure is no longer inherited from the old checker. Earlier figures stay in the paper only as labeled history.
+
+| Outcome | **Held-out (100)** | Development (100) |
+|---|---|---|
+| Unsupported input | 4 | 3 |
+| No model within 30 s | 35 | 20 |
+| Models found | 61 | 77 |
+| **Strict** | **54** | **70** |
+| Native-assisted | 2 | 2 |
+| Not certified (resource limits) | 5 | 5 |
+| **Strict, of models found** | **88.5%** | **90.9%** |
+| Strict or native, of models found | 91.8% | 93.5% |
+| **Full pipeline, strict, of all sampled** | **54%** | **70%** |
+| Full pipeline, strict, of supported inputs | 56.3% | 72.2% |
+
+Given a model, strict certification generalizes (88.5% against 90.9%). The finder's 30 s yield does not (61 models against 77), so full-pipeline success falls from 70% to 54%. None of the 10 uncertified models is an invalid certificate: 8 exhaust instance search on deeply nested formulas and 2 exceed the 60 s Lean limit. The development figures are now results of the final code, not inherited: the strict count is unchanged at 70, and 3 former *no model* problems are now *unsupported input*.
 
 **Categories** (each problem is in exactly one):
 - **unsupported input:** rejected by the fail-closed parser; kept in the denominator.
@@ -136,7 +163,18 @@ Its definitions are written into every record:
 
 All reflected timings measure the **strengthened** certificate, with its validity and well-formedness checks. The earlier truth-only timings are not reused.
 
-[PERFORMANCE TABLE]
+Commit `62d43d6`; both timing problems are ground (no variables), so the later variable fix leaves their certificates unchanged. Lean 4.35.0, 4 workers for both methods, 3 alternating repetitions, Apple M2 with 8 GB, otherwise idle. Every run's axioms: shallow none; reflected `propext`, `Quot.sound`.
+
+| Median (range) | Shallow | **Reflected** | Ratio |
+|---|---|---|---|
+| NLP263+1, wall | 14.1 min (12.6–17.2) | **5.2 min (5.2–5.8)** | 2.7× |
+| NLP263+1, CPU | 52.5 min (52.3–55.3) | **20.3 min (20.2–21.0)** | 2.6× |
+| NLP263+1, peak memory, largest process | 1.42 GB | **0.50 GB** | 2.8× |
+| NLP263+1, peak memory, all Lean processes | 2.67 GB | **1.86 GB** | 1.4× |
+| 10,000-fact slice, wall | 10.9 s (9.8–11.4) | **4.4 s (4.1–4.7)** | 2.5× |
+| 10,000-fact slice, CPU | 31.1 s (31.0–32.0) | **9.8 s (9.5–10.0)** | 3.2× |
+
+**This weakens our original claim, as you anticipated.** The uncontrolled comparison suggested about 5× in wall time; under matched conditions it is about 2.7×. The aggregate-memory advantage, 1.4×, is much smaller than the per-process figure we reported before. Shallow wall time varies by 37% across repetitions while its CPU time varies by under 6%, which points to memory pressure on an 8 GB machine. The paper now reports these figures, with ranges, and keeps the old ones only as labeled history (§5.3, §6.3.1).
 
 The million-fact case remains described as a one-element throughput stress test.
 

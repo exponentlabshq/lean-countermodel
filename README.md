@@ -21,10 +21,10 @@ python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean  
 | Claim | Evidence |
 |---|---|
 | **Works on independent problems** | Development set of 100 TPTP problems with status Satisfiable or CounterSatisfiable: Vampire found 77 finite models, and **70 are certified under a strict kernel-only policy (90.9%)**. 2 more use `native_decide` (a larger trusted base), and none of the 5 failures is an invalid certificate. A held-out set, drawn with a fixed seed and checked with frozen code, is in §4.1. |
-| **Scales to a million facts** | NLP263+1 (1,026,857 facts, 383,180 constants) is certified in **4.8 min** through the verified checker, against 20.7 min one-theorem-per-formula, on an 8 GB laptop (§4.3) |
+| **Scales to a million facts** | NLP263+1 (1,026,857 facts, 383,180 constants) is certified in a median **5.2 min** through the verified checker, against 14.1 min one-theorem-per-formula, in a controlled, repeated comparison on an 8 GB laptop |
 | **Beats hand construction on a published Lean project** | It reproduces both of Nakamura's hand-built Spinoza counter-models from his axioms alone, with **2-element** models against his 4 and 3, checked against his own library (§4.2) |
 | **Proved semantics** | `Checker.lean` proves, once, that for a valid model (non-empty domain, closed functions) and closed, well-formed formulas, its evaluator agrees with **ordinary first-order satisfaction** on `Fin n`. Reflected certificates conclude exactly that, using only Lean's standard axioms (`propext`, `Quot.sound`). |
-| **Tested like it matters** | 80 tests: an independent evaluator of the original formulas, corrupted models, rewrite equivalence, kernel-checked boundary cases (empty domain, out-of-range constants, malformed data), and rejection of unsupported syntax |
+| **Tested like it matters** | 102 tests: an independent evaluator of the original formulas, corrupted models, rewrite equivalence, kernel-checked boundary cases (empty domain, out-of-range constants, malformed data), rejection of unsupported syntax, and variable capture; `recheck.sh` replays every shipped certificate with `leanchecker --fresh` |
 
 ## 2. The gap
 
@@ -43,7 +43,7 @@ This project is a general tool for that last row: any first-order theory in TPTP
 | **Find** | `vampire -sa fmb -updr off` searches for a finite model of `axioms ∧ ¬conjecture`. Answers are cached by content; timeouts never are. | No |
 | **Rewrite** | Formulas are reshaped so checking can prune: miniscoping, flattening and greedy literal order | **Yes**, tested against the original formulas |
 | **Compile** | Either **shallow** (an `inductive T`, bitmask tables, one theorem per formula) or **reflected** (the problem as packed data, plus the model as packed tables) | **Yes**, the translation; tested independently |
-| **Certify** | Shallow: `decide` per formula. Reflected: `Holds M problem` by `decide +kernel`, using `Checker.lean`'s `check_iff`, proved once. `#eval problem` prints exactly what is certified. | The kernel |
+| **Certify** | Shallow: `decide` per formula. Reflected: `valid` and `Good M fns problem` by `decide +kernel`, concluding ordinary first-order satisfaction through `Checker.lean`'s `sem_iff_sat`, proved once. `#eval problem` prints exactly what is certified. | The kernel |
 
 **Hybrid dispatch:** reflection wins on ground facts (7× less CPU on a 10,000-fact slice). One theorem per formula still wins on deeply nested quantifiers. The benchmark uses reflection when at least 90% of formulas are ground facts. Details, the measured design patterns and the negative results are in the whitepaper, §4–5.
 
@@ -51,19 +51,23 @@ This project is a general tool for that last row: any first-order theory in TPTP
 
 ### 4.1 TPTP: 100 problems nobody chose for us
 
-From TPTP's ProblemAndSolutionStatistics we kept the **2,561** fof/cnf problems marked Satisfiable or CounterSatisfiable (`bench/eligible.tsv`); these statuses do not guarantee a *finite* model. The 100-problem **development set** is not uniform: the first 20 came from a domain-first picker, the last 80 were drawn uniformly, and the set was used to find and fix bugs. A separate **held-out set** of 100 problems was drawn uniformly with a fixed seed and checked with frozen code: {{HELDOUT_README}}
+From TPTP's ProblemAndSolutionStatistics we kept the **2,561** fof/cnf problems marked Satisfiable or CounterSatisfiable (`bench/eligible.tsv`); these statuses do not guarantee a *finite* model. The 100-problem **development set** is not uniform: the first 20 came from a domain-first picker, the last 80 were drawn uniformly, and the set was used to find and fix bugs. A separate **held-out set** of 100 problems was drawn uniformly with a fixed seed and checked with frozen code. Both sets were run from commit `51481a4` in a separate worktree:
 
-| Outcome | Lean 4.13 (shallow) | **Lean 4.35 (hybrid)** |
+| Outcome | **Held-out** | Development |
 |---|---|---|
-| Certified, strict kernel only | 67 | **70** |
-| Certified with `native_decide` | 3 | 2 |
-| Lean rejected | 6 | **5** |
-| Vampire found no model (30 s) | 23 | 23 |
-| Median time per problem | 3 s | 0.65 s (Vampire answers cached; not a Lean speedup) |
+| Unsupported input (rejected, never misread) | 4 | 3 |
+| Vampire found no model (30 s) | 35 | 20 |
+| Models found | 61 | 77 |
+| **Certified, strict kernel only** | **54 (88.5% of models)** | **70 (90.9%)** |
+| Certified with `native_decide` | 2 | 2 |
+| Lean rejected (resource limits) | 5 | 5 |
+| Full pipeline, strict, of all 100 | 54% | 70% |
 
-- **All 5 remaining rejections are one family:** deeply nested modal-logic encodings (LCL6xx), failing in Lean's instance search. None is a wrong model.
-- **Of the 23 problems without a model,** 11 are rated 1.00 by TPTP: no prover in its reference evaluations solves them.
-- **Three verdicts improved on Lean 4.35:**
+- **Certification generalizes; model finding is what drops.** Given a model, 88.5% certify strictly on unseen problems against 90.9% in development.
+- **No failure is an invalid certificate.** Most rejections are deeply nested formulas that exhaust Lean's instance search (all 5 in development, 3 held-out); the other 2 held-out exceed the 60 s limit.
+- **Of the 23 development problems without a model before review** (now 20, plus 3 unsupported), 11 are rated 1.00 by TPTP: no prover in its reference evaluations solves them.
+- Superseded runs, kept for the record: `bench/superseded-*.jsonl` (whitepaper §6.2.1).
+- **Three verdicts improved between Lean 4.13 and 4.35 during development:**
   - NLP263+1 (§4.3);
   - HWV048-2, a stack overflow on 4.13, now certified in 2.7 s;
   - NLP018-10, now kernel-only.
@@ -114,12 +118,17 @@ He proves both with counter-models he built **by hand** ([1] §4.4), with 4 and 
 
 ### 4.3 One million facts: NLP263+1
 
-| | One theorem per formula (Lean 4.13) | **Verified checker (Lean 4.35)** |
+Controlled comparison: Lean 4.35, 4 workers for both methods, 3 alternating clean builds each, idle 8 GB M2 laptop (`bench/perf.py`, `bench/perf.jsonl`). Median (range):
+
+| | One theorem per formula | **Verified checker** |
 |---|---|---|
-| Wall time | 20.7 min | **4.8 min** |
-| Peak memory | 1.64 GB | **0.50 GB** |
-| Generated Lean / build output | 178 MB / 2.0 GB | **25 MB / 65 MB** |
-| Statement | 1,026,857 propositions | `Holds M problem` |
+| Wall time | 14.1 min (12.6–17.2) | **5.2 min (5.2–5.8)** |
+| CPU time | 52.5 min | **20.3 min** |
+| Peak memory, largest process | 1.42 GB | **0.50 GB** |
+| Peak memory, all Lean processes | 2.67 GB | **1.86 GB** |
+| Statement | 1,026,857 propositions | ordinary first-order satisfaction in the model (§4.4) |
+
+The model has one element, so this measures certificate throughput, not combinatorial checking.
 
 This problem forced most of the scaling recipe. On the way it exposed four bugs:
 - `%` inside a quoted name was read as a comment;
@@ -151,7 +160,7 @@ This problem forced most of the scaling recipe. On the way it exposed four bugs:
 | | |
 |---|---|
 | Requirements | Lean 4.35 (elan), Vampire 5.1 (on `PATH`, or set `VAMPIRE`), Python 3.12. `nakamura/` pins Lean 4.13. |
-| Tests | `pytest test_cm.py` (80 tests), including `tests/Boundary.lean` |
+| Tests | `pytest test_cm.py` (102 tests), including `tests/Boundary.lean`; `./recheck.sh` for axioms and a fresh kernel replay |
 | Examples | `lake build`, then `lake env lean Axioms.lean` |
 | Nakamura | `cd nakamura && lake build && lake env lean Axioms.lean` (clones spinoza-ethica-lean @ 6d4c046, about 11 MB) |
 | Benchmark | `python3 bench.py N [WORKERS]`; results in `bench/results*.jsonl` |
