@@ -16,3 +16,4 @@ bench/vampire-cache/
 bench/olean/
 ablation/out/
 bench/perf.jsonl.tmp
+bench/inputs.candidate.json

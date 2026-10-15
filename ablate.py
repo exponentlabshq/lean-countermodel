@@ -9,15 +9,15 @@ then, for each axiom, whether it still follows without that axiom. It also finds
 "Follows" rests on a Vampire proof, which is not certified here; the report labels it as such."""
 import json, os, re, subprocess, sys
 from concurrent.futures import ThreadPoolExecutor
-from cm import uncomment
+from cm import statements as cm_statements
 
 VAMPIRE = os.getenv("VAMPIRE", "vampire")
 
 
 def statements(path):
-    """[(name, role, text)] for every fof statement."""
-    src = uncomment(open(path).read())
-    return [(m[1], m[2], m[0].strip()) for m in re.finditer(r"fof\(\s*(\w+)\s*,\s*(\w+)\s*,.*?\)\s*\.(?=\s*fof\(|\s*$)", src, re.S)]
+    """[(name, role, text)] for every record of the theory, read by cm.statements: total and fail-closed, so a record
+    cannot be dropped silently. Names are made filename-safe (quoted TPTP names may contain punctuation)."""
+    return [(re.sub(r"\W", "_", r["name"].strip("'")), r["role"], r["text"]) for r in cm_statements(path)]
 
 
 def write(path, keep, target):

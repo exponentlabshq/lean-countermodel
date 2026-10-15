@@ -56,6 +56,7 @@ if __name__ == "__main__":
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
     shutil.rmtree(R, ignore_errors=True)
     os.makedirs(R)
+    failed = False
     for name in sorted(n[len("results-final-"):-6] for n in os.listdir(OUT) if n.startswith("results-final-")):
         rs = [json.loads(l) for l in open(f"{OUT}/results-final-{name}.jsonl")]
         rs = [r for r in rs if r["verdict"] == "certified"]  # each record keeps the commit it ran at
@@ -83,3 +84,5 @@ if __name__ == "__main__":
                or any(a not in ("propext", "Quot.sound", "Classical.choice") for a in c["axioms"])]
         print(name, f"{len(recs)} strict certificates; aggregate compiled in {s} s; leanchecker --fresh "
               f"{'ok' if fok else 'FAILED'} in {fs} s; outside standard axioms or not replayed: {bad}", flush=True)
+        failed = failed or bool(bad) or not fok or not ok
+    sys.exit(1 if failed else 0)  # any certificate not compiled, not replayed or outside the standard axioms fails the run

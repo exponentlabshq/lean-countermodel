@@ -1,0 +1,1906 @@
+{
+ "old_commit": "30ad4f3",
+ "summary": {
+  "identical": 297,
+  "changed": 9,
+  "rejected by both": 10
+ },
+ "inputs": [
+  {
+   "file": "bench/problems/AGT042+1.p",
+   "old": 636,
+   "new": 636,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/ALG301-1.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/ALG306-1.p",
+   "old": 41,
+   "new": 41,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/ALG310-1.p",
+   "old": 58,
+   "new": 58,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/ALG334-1.p",
+   "old": 103,
+   "new": 103,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/BIO001+1.p",
+   "old": 9160,
+   "new": 9160,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/BOO008-3.p",
+   "old": 21,
+   "new": 21,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/BOO030-1.p",
+   "old": 7,
+   "new": 7,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/BOO042-1.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/BOO048-1.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/CAT020-2.p",
+   "old": 7,
+   "new": 7,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/COL071-1.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/COM150+1.p",
+   "old": 28,
+   "new": 60,
+   "status": "changed"
+  },
+  {
+   "file": "bench/problems/CSR161+1.p",
+   "old": 7433,
+   "new": 7433,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/CSR175+1.p",
+   "old": 7433,
+   "new": 7433,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GEG001+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GEO078-5.p",
+   "old": 34,
+   "new": 34,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GEO153-2.p",
+   "old": 18,
+   "new": 18,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GEO154-2.p",
+   "old": 22,
+   "new": 22,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GEO158-1.p",
+   "old": 48,
+   "new": 48,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GEO159-1.p",
+   "old": 54,
+   "new": 54,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GEO224+1.p",
+   "old": 27,
+   "new": 27,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GEO352-1.p",
+   "old": 24,
+   "new": 24,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GEO661+1.p",
+   "old": 11,
+   "new": 11,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP025-2.p",
+   "old": 39,
+   "new": 39,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP027-1.p",
+   "old": 24,
+   "new": 24,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP123-4.004.p",
+   "old": 25,
+   "new": 25,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP126-4.005.p",
+   "old": 35,
+   "new": 35,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP133-1.004.p",
+   "old": 21,
+   "new": 21,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP133-2.004.p",
+   "old": 31,
+   "new": 31,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP134-1.005.p",
+   "old": 30,
+   "new": 30,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP135-1.005.p",
+   "old": 30,
+   "new": 30,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP204-1.p",
+   "old": 4,
+   "new": 4,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP398-1.p",
+   "old": 10,
+   "new": 10,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP760+1.p",
+   "old": 5,
+   "new": 5,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP763+1.p",
+   "old": 14,
+   "new": 14,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP773-1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP790+1.p",
+   "old": 36,
+   "new": 36,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP792+1.p",
+   "old": 36,
+   "new": 36,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP798+1.p",
+   "old": 36,
+   "new": 36,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP800+1.p",
+   "old": 35,
+   "new": 35,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP810+1.p",
+   "old": 35,
+   "new": 35,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP814+1.p",
+   "old": 36,
+   "new": 36,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/GRP818+1.p",
+   "old": 36,
+   "new": 36,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/HAL007+1.p",
+   "old": 13,
+   "new": 13,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/HWV042+1.p",
+   "old": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "new": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/HWV048-2.p",
+   "old": 985,
+   "new": 985,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/HWV070+1.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/HWV076+1.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/HWV105+1.p",
+   "old": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "new": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/KLE171+1.p",
+   "old": 18,
+   "new": 18,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/KLE178+1.p",
+   "old": 21,
+   "new": 21,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/KLE181+1.p",
+   "old": 23,
+   "new": 23,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/KRS006-1.p",
+   "old": 27,
+   "new": 27,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/KRS009-1.p",
+   "old": 41,
+   "new": 41,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/KRS016-1.p",
+   "old": 19,
+   "new": 19,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/KRS037+1.p",
+   "old": 22,
+   "new": 22,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/KRS173+1.p",
+   "old": 5,
+   "new": 5,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/KRS182+1.p",
+   "old": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "new": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/KRS199+1.p",
+   "old": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "new": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/KRS210+1.p",
+   "old": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "new": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/KRS224+1.p",
+   "old": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "new": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/KRS244+1.p",
+   "old": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "new": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/KRS249+1.p",
+   "old": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "new": "ValueError: unsupported TPTP syntax: '<~>' (see README: supported features)",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/KRS281-1.p",
+   "old": 1346,
+   "new": 1346,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/KRS290-1.p",
+   "old": "RecursionError: maximum recursion depth exceeded",
+   "new": "RecursionError: maximum recursion depth exceeded",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/LAT024-1.p",
+   "old": 14,
+   "new": 14,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT048-1.p",
+   "old": 15,
+   "new": 15,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT051-1.p",
+   "old": 12,
+   "new": 12,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT062-1.p",
+   "old": 12,
+   "new": 12,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT100-1.p",
+   "old": 10,
+   "new": 10,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT102-1.p",
+   "old": 10,
+   "new": 10,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT106-1.p",
+   "old": 10,
+   "new": 10,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT109-1.p",
+   "old": 10,
+   "new": 10,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT112-1.p",
+   "old": 10,
+   "new": 10,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT133-1.p",
+   "old": 10,
+   "new": 10,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LAT396-1.p",
+   "old": 11,
+   "new": 11,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL136-1.p",
+   "old": 6,
+   "new": 6,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL179-1.p",
+   "old": 9,
+   "new": 9,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL183-1.p",
+   "old": 9,
+   "new": 9,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL407-2.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL413-1.p",
+   "old": 10,
+   "new": 10,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL643+1.005.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL645+1.010.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL645+1.015.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL647+1.010.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL649+1.015.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL649+1.020.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL659+1.020.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL661+1.015.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL661+1.020.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL663+1.010.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL667+1.001.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL673+1.005.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL673+1.015.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL677+1.010.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL681+1.001.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL681+1.010.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL683+1.015.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL685+1.001.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL685+1.010.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL883+1.p",
+   "old": 14,
+   "new": 14,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL886+1.p",
+   "old": 14,
+   "new": 14,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL913+1.p",
+   "old": 46,
+   "new": 46,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LCL914+1.p",
+   "old": 50,
+   "new": 50,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LDA030-1.p",
+   "old": 5,
+   "new": 5,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LDA031-1.p",
+   "old": 5,
+   "new": 5,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/LDA032-1.p",
+   "old": 5,
+   "new": 5,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/MED004+1.p",
+   "old": 19,
+   "new": 19,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/MGT037-2.p",
+   "old": 27,
+   "new": 27,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/MGT040-1.p",
+   "old": 22,
+   "new": 22,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/MGT040-2.p",
+   "old": 20,
+   "new": 20,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/MSC013-10.p",
+   "old": 12,
+   "new": 12,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP016+1.p",
+   "old": 43,
+   "new": 43,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP018-10.p",
+   "old": 78,
+   "new": 78,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP040-1.p",
+   "old": 66,
+   "new": 66,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP042-10.p",
+   "old": 61,
+   "new": 61,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP043-1.p",
+   "old": 46,
+   "new": 46,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP044+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP051+1.p",
+   "old": 57,
+   "new": 57,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP051-1.p",
+   "old": 99,
+   "new": 99,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP055-1.p",
+   "old": 93,
+   "new": 93,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP060-1.p",
+   "old": 40,
+   "new": 40,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP061+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP063+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP065+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP066+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP072+1.p",
+   "old": 42,
+   "new": 42,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP083+1.p",
+   "old": 47,
+   "new": 47,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP091-1.p",
+   "old": 94,
+   "new": 94,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP104+1.p",
+   "old": 35,
+   "new": 35,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP106+1.p",
+   "old": 35,
+   "new": 35,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP108+1.p",
+   "old": 35,
+   "new": 35,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP111-1.p",
+   "old": 50,
+   "new": 50,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP115+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP124+1.p",
+   "old": 36,
+   "new": 36,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP125-1.p",
+   "old": 52,
+   "new": 52,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP126-10.p",
+   "old": 56,
+   "new": 56,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP137-1.p",
+   "old": 60,
+   "new": 60,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP152+1.p",
+   "old": 62,
+   "new": 62,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP162-1.p",
+   "old": 78,
+   "new": 78,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP165-1.p",
+   "old": 78,
+   "new": 78,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP179+1.p",
+   "old": 67,
+   "new": 67,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP184-1.p",
+   "old": 108,
+   "new": 108,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP186+1.p",
+   "old": 67,
+   "new": 67,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP192-1.p",
+   "old": 92,
+   "new": 92,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP199-1.p",
+   "old": 92,
+   "new": 92,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP213+1.p",
+   "old": 72,
+   "new": 72,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP219-1.p",
+   "old": 124,
+   "new": 124,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP225+1.p",
+   "old": 72,
+   "new": 72,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP226-10.p",
+   "old": 97,
+   "new": 97,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP229-1.p",
+   "old": 89,
+   "new": 89,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP232+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP238-1.p",
+   "old": 84,
+   "new": 84,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP243+1.p",
+   "old": 72,
+   "new": 72,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP244-1.p",
+   "old": 111,
+   "new": 111,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP249+1.p",
+   "old": 72,
+   "new": 72,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NLP263+1.p",
+   "old": 1026857,
+   "new": 1026857,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NUM288-1.p",
+   "old": 12,
+   "new": 12,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NUM289-1.p",
+   "old": 158,
+   "new": 158,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NUM349+1.p",
+   "old": 402,
+   "new": 402,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NUM366+1.p",
+   "old": 402,
+   "new": 402,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NUM374+2.p",
+   "old": 16,
+   "new": 16,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NUM374+4.p",
+   "old": 16,
+   "new": 16,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NUM448+1.p",
+   "old": 43,
+   "new": 43,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/NUN091+1.p",
+   "old": 5,
+   "new": 5,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PHI016+1.p",
+   "old": 18,
+   "new": 18,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PHI021+1.p",
+   "old": 21,
+   "new": 21,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PHI027+1.p",
+   "old": 21,
+   "new": 21,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PHI030+1.p",
+   "old": 21,
+   "new": 21,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PHI032+1.p",
+   "old": 21,
+   "new": 21,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PHI040+1.p",
+   "old": 21,
+   "new": 21,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PLA025+1.p",
+   "old": 114,
+   "new": 114,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PLA026+1.p",
+   "old": 69,
+   "new": 69,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PLA028+1.p",
+   "old": 45,
+   "new": 45,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PLA029-1.p",
+   "old": 10,
+   "new": 10,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PLA041-1.p",
+   "old": 10667,
+   "new": 10667,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PRD002+1.p",
+   "old": 1615,
+   "new": 1615,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PRO007+3.p",
+   "old": 63,
+   "new": 63,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PRO013+3.p",
+   "old": 63,
+   "new": 63,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PUZ028-1.p",
+   "old": 15,
+   "new": 15,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/PUZ133+3.p",
+   "old": 11,
+   "new": 11,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/REL053-1.p",
+   "old": 13,
+   "new": 13,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/RNG007-5.p",
+   "old": 25,
+   "new": 25,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/RNG025-9.p",
+   "old": 25,
+   "new": 25,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/RNG132-1.p",
+   "old": 11,
+   "new": 11,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/ROB012-2.p",
+   "old": 12,
+   "new": 12,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/ROB029-1.p",
+   "old": 7,
+   "new": 7,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SET226-6.p",
+   "old": 115,
+   "new": 115,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SET502-6.p",
+   "old": 113,
+   "new": 113,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SET538-6.p",
+   "old": 113,
+   "new": 113,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB004+4.p",
+   "old": 81,
+   "new": 81,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB007+3.p",
+   "old": 140,
+   "new": 140,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB009-10.p",
+   "old": 97,
+   "new": 97,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB010+3.p",
+   "old": 140,
+   "new": 140,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB011+4.p",
+   "old": 81,
+   "new": 81,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB013+4.p",
+   "old": 82,
+   "new": 82,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB014+4.p",
+   "old": 82,
+   "new": 82,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB016-10.p",
+   "old": 91,
+   "new": 91,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB017+3.p",
+   "old": 140,
+   "new": 140,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB022+3.p",
+   "old": 140,
+   "new": 140,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB023+3.p",
+   "old": 140,
+   "new": 140,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWB025+3.p",
+   "old": 140,
+   "new": 140,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV013-1.p",
+   "old": 31,
+   "new": 31,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV015+1.p",
+   "old": 30,
+   "new": 30,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV017+1.p",
+   "old": 33,
+   "new": 33,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV493-1.050.p",
+   "old": 1228,
+   "new": 1228,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV495-1.040.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV495-1.050.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV497-1.030.p",
+   "old": 498,
+   "new": 498,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV497-1.040.p",
+   "old": 863,
+   "new": 863,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV498-1.040.p",
+   "old": 863,
+   "new": 863,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV499-1.030.p",
+   "old": 63,
+   "new": 63,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV499-1.040.p",
+   "old": 83,
+   "new": 83,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV499-1.050.p",
+   "old": 103,
+   "new": 103,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV500-1.030.p",
+   "old": 63,
+   "new": 63,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV504-1.050.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV507-1.050.p",
+   "old": 106,
+   "new": 106,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV513-1.040.p",
+   "old": 866,
+   "new": 866,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV516-1.030.p",
+   "old": 439,
+   "new": 439,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV534-1.004.p",
+   "old": 28,
+   "new": 28,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV542-1.004.p",
+   "old": 4,
+   "new": 4,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV542-1.007.p",
+   "old": 4,
+   "new": 4,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV544-1.007.p",
+   "old": 52,
+   "new": 52,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV546-1.007.p",
+   "old": 4,
+   "new": 4,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV549-1.010.p",
+   "old": 4,
+   "new": 4,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV554-1.010.p",
+   "old": 4,
+   "new": 4,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV920-1.p",
+   "old": 14,
+   "new": 14,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWV953-1.p",
+   "old": 45,
+   "new": 45,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWW401-1.p",
+   "old": 15,
+   "new": 15,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWW415-1.p",
+   "old": 15,
+   "new": 15,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWW465-1.p",
+   "old": 13,
+   "new": 13,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWW467-1.p",
+   "old": 13,
+   "new": 13,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SWW865+1.p",
+   "old": 5,
+   "new": 18,
+   "status": "changed"
+  },
+  {
+   "file": "bench/problems/SWW882+1.p",
+   "old": 5,
+   "new": 11,
+   "status": "changed"
+  },
+  {
+   "file": "bench/problems/SWW883+1.p",
+   "old": 5,
+   "new": 10,
+   "status": "changed"
+  },
+  {
+   "file": "bench/problems/SWW889+1.p",
+   "old": 5,
+   "new": 44,
+   "status": "changed"
+  },
+  {
+   "file": "bench/problems/SWW902+1.p",
+   "old": 5,
+   "new": 28,
+   "status": "changed"
+  },
+  {
+   "file": "bench/problems/SWW921+1.p",
+   "old": 5,
+   "new": 13,
+   "status": "changed"
+  },
+  {
+   "file": "bench/problems/SWW938+1.p",
+   "old": 5,
+   "new": 34,
+   "status": "changed"
+  },
+  {
+   "file": "bench/problems/SWW942+1.p",
+   "old": 5,
+   "new": 10,
+   "status": "changed"
+  },
+  {
+   "file": "bench/problems/SYN000+2.p",
+   "old": "ValueError: unsupported TPTP: include(...) in /Users/michaeljagdeo/Downloads/talentOS-2026/repos/lean-countermodel/bench/problems/SYN000+2.p; cm.py reads self-contained fof",
+   "new": "ValueError: unsupported TPTP: role 'unknown' (supported: assumption, axiom, conjecture, corollary, definition, hypothesis, lemma, negated_conjecture, plain, theorem) at lin",
+   "status": "rejected by both"
+  },
+  {
+   "file": "bench/problems/SYN092-1.003.p",
+   "old": 42,
+   "new": 42,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN307-1.p",
+   "old": 4,
+   "new": 4,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN322+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN324+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN342-10.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN419+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN422+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN424+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN434+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN438+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN441-1.p",
+   "old": 364,
+   "new": 364,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN446-1.p",
+   "old": 184,
+   "new": 184,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN449-1.p",
+   "old": 188,
+   "new": 188,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN456+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN492+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN493-1.p",
+   "old": 52,
+   "new": 52,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN526+1.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN529-1.p",
+   "old": 136,
+   "new": 136,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN530-1.p",
+   "old": 95,
+   "new": 95,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN536-1.p",
+   "old": 87,
+   "new": 87,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN747-1.p",
+   "old": 41,
+   "new": 41,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN754-1.p",
+   "old": 41,
+   "new": 41,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN773-1.p",
+   "old": 22,
+   "new": 22,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN779-1.p",
+   "old": 32,
+   "new": 32,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN780-1.p",
+   "old": 32,
+   "new": 32,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN791-1.p",
+   "old": 42,
+   "new": 42,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN795-1.p",
+   "old": 42,
+   "new": 42,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN799-1.p",
+   "old": 52,
+   "new": 52,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN803-1.p",
+   "old": 52,
+   "new": 52,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN807-1.p",
+   "old": 52,
+   "new": 52,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN817-1.p",
+   "old": 1588,
+   "new": 1588,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN821-1.p",
+   "old": 1716,
+   "new": 1716,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN832-1.p",
+   "old": 2215,
+   "new": 2215,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN864-1.p",
+   "old": 1832,
+   "new": 1832,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYN903-1.p",
+   "old": 455,
+   "new": 455,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO584+1.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO593-1.p",
+   "old": 1363,
+   "new": 1363,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO595-1.p",
+   "old": 4850,
+   "new": 4850,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO603+1.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO609+1.p",
+   "old": 12,
+   "new": 12,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO640-10.p",
+   "old": 6,
+   "new": 6,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO690-1.000.p",
+   "old": 16,
+   "new": 16,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO690-1.001.p",
+   "old": 13,
+   "new": 13,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO698+1.p",
+   "old": 7,
+   "new": 7,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO700+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO710+1.p",
+   "old": 9,
+   "new": 9,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO744+1.p",
+   "old": 9,
+   "new": 9,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO746+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO753+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO760+1.p",
+   "old": 9,
+   "new": 9,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO763+1.p",
+   "old": 9,
+   "new": 9,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO770+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO772+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO779+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO785+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO789+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO805+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "bench/problems/SYO816+1.p",
+   "old": 8,
+   "new": 8,
+   "status": "identical"
+  },
+  {
+   "file": "examples/circle_of_fifths.p",
+   "old": 5,
+   "new": 5,
+   "status": "identical"
+  },
+  {
+   "file": "examples/group_comm.p",
+   "old": 4,
+   "new": 4,
+   "status": "identical"
+  },
+  {
+   "file": "examples/guarded_definition.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "examples/nakamura_a12.p",
+   "old": 13,
+   "new": 13,
+   "status": "identical"
+  },
+  {
+   "file": "examples/nakamura_a15.p",
+   "old": 13,
+   "new": 13,
+   "status": "identical"
+  },
+  {
+   "file": "examples/p14_bridge_weaker.p",
+   "old": 16,
+   "new": 16,
+   "status": "identical"
+  },
+  {
+   "file": "examples/p7_needs_a4c.p",
+   "old": 7,
+   "new": 7,
+   "status": "identical"
+  },
+  {
+   "file": "examples/p7_needs_b1.p",
+   "old": 7,
+   "new": 7,
+   "status": "identical"
+  },
+  {
+   "file": "examples/p7_needs_b1c.p",
+   "old": 7,
+   "new": 7,
+   "status": "identical"
+  },
+  {
+   "file": "examples/propositional.p",
+   "old": 4,
+   "new": 4,
+   "status": "identical"
+  },
+  {
+   "file": "examples/quantifier_scope.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "examples/quoted_capture.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "examples/quoted_names.p",
+   "old": 2,
+   "new": 2,
+   "status": "identical"
+  },
+  {
+   "file": "examples/single_formula.p",
+   "old": 1,
+   "new": 1,
+   "status": "identical"
+  },
+  {
+   "file": "examples/transitive_cnf.p",
+   "old": 3,
+   "new": 3,
+   "status": "identical"
+  },
+  {
+   "file": "ablation/nakamura_register.p",
+   "old": 17,
+   "new": 17,
+   "status": "identical"
+  }
+ ]
+}

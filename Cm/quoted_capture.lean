@@ -22,11 +22,11 @@ abbrev «'T'» : T := T.e2
 abbrev «c» : T := T.e3
 abbrev «p» (x0 : T) : Prop := (3 >>> (1 * x0.idx)) % 2 = 1
 
-theorem c0 : (((«p» «'X'») ∧ («p» «'T'»)) ∧ ¬(«p» «c»)) := by decide
+theorem c0' : (((«p» «'X'») ∧ («p» «'T'»)) ∧ ¬(«p» «c»)) := by decide
 
-theorem c1 : ¬(∀ X' : T, (¬(«p» X') ∨ (X' = «'X'»))) := by decide
+theorem c1' : ¬(∀ X' : T, (¬(«p» X') ∨ (X' = «'X'»))) := by decide
 
 theorem countermodel : Nonempty T ∧ (((((«p» «'X'») ∧ («p» «'T'»)) ∧ ¬(«p» «c»))) ∧ (¬(∀ X' : T, (¬(«p» X') ∨ (X' = «'X'»))))) :=
-  ⟨⟨T.e1⟩, ⟨c0, c1⟩⟩
+  ⟨⟨T.e1⟩, ⟨c0', c1'⟩⟩
 
 end quoted_capture

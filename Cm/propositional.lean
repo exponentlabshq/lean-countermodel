@@ -23,15 +23,15 @@ abbrev «rain» : Prop := False
 abbrev «snow» : Prop := True
 abbrev «wet» (x0 : T) : Prop := (1 >>> (1 * x0.idx)) % 2 = 1
 
-theorem c0 : («river» ≠ «town») := by decide
+theorem c0' : («river» ≠ «town») := by decide
 
-theorem c1 : («rain» ∨ «snow») := by decide
+theorem c1' : («rain» ∨ «snow») := by decide
 
-theorem c2 : (∀ X' : T, ((«wet» X') ↔ («rain» ∨ (X' = «river»)))) := by decide
+theorem c2' : (∀ X' : T, ((«wet» X') ↔ («rain» ∨ (X' = «river»)))) := by decide
 
-theorem c3 : ¬«rain» := by decide
+theorem c3' : ¬«rain» := by decide
 
 theorem countermodel : Nonempty T ∧ ((((«river» ≠ «town»)) ∧ ((«rain» ∨ «snow»))) ∧ (((∀ X' : T, ((«wet» X') ↔ («rain» ∨ (X' = «river»))))) ∧ (¬«rain»))) :=
-  ⟨⟨T.e1⟩, ⟨⟨c0, c1⟩, ⟨c2, c3⟩⟩⟩
+  ⟨⟨T.e1⟩, ⟨⟨c0', c1'⟩, ⟨c2', c3'⟩⟩⟩
 
 end propositional

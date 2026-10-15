@@ -2,7 +2,7 @@
 import glob, itertools, os, random, re, shutil, subprocess, pytest
 from functools import cache
 from concurrent.futures import ThreadPoolExecutor
-from cm import TOKENS, VARS, emit, emit_reflect, model, problem, uncomment
+from cm import TOKENS, VARS, emit, emit_reflect, model, problem, statements
 
 # Each test says what it needs, so the translator's rejection and preprocessing tests run without Vampire or Lean.
 needs_vampire = pytest.mark.skipif(not shutil.which(os.getenv("VAMPIRE", "vampire")), reason="needs vampire")
@@ -57,11 +57,54 @@ def holds(s, n, consts, tables, env={}):
     return form()(env)
 
 
+# The oracle's own reader of source records. It shares no code with cm.statements: a separate lexer and a token-level
+# record matcher, written to the TPTP grammar for annotated formulas. Peer review found that an earlier oracle copied
+# cm.py's record regex, so both silently skipped the same records; this one counts records independently.
+ORACLE_LEX = re.compile(r"""(?P<ws>\s+)|(?P<comment>%[^\n]*)|(?P<sq>'(?:[^'\\]|\\.)*')|(?P<dq>"(?:[^"\\]|\\.)*")
+                            |(?P<word>[A-Za-z0-9_$]+)|(?P<op><~>|<=>|=>|<=|~\||~&|!=|.)""", re.X | re.S)
+ORACLE_ROLES = ("axiom", "hypothesis", "definition", "assumption", "lemma", "theorem", "corollary", "plain",
+                "negated_conjecture", "conjecture")
+
+
+def records(text):
+    """[(kind, name, role, formula)] for every record of a TPTP text, or ValueError: nothing may be left over."""
+    toks = [(m.lastgroup, m[0]) for m in ORACLE_LEX.finditer(text) if m.lastgroup not in ("ws", "comment")]
+    if any(a == "/" and b == "*" for (_, a), (_, b) in zip(toks, toks[1:])):
+        raise ValueError("block comment")
+    out, i = [], 0
+    while i < len(toks):
+        if toks[i] not in (("word", "fof"), ("word", "cnf")) or toks[i + 1:i + 2] != [("op", "(")]:
+            raise ValueError(f"not a fof/cnf record: {toks[i:i + 3]}")
+        kind, args, cur, depth, i = toks[i][1], [], [], 0, i + 2
+        while True:
+            if i >= len(toks):
+                raise ValueError("unterminated record")
+            t = toks[i][1]
+            i += 1
+            if t in "([" and toks[i - 1][0] == "op":
+                depth += 1
+            elif t in ")]" and toks[i - 1][0] == "op":
+                if depth == 0:
+                    args.append(cur)
+                    break
+                depth -= 1
+            elif t == "," and depth == 0:
+                args.append(cur)
+                cur = []
+                continue
+            cur.append(t)
+        if toks[i:i + 1] != [("op", ".")]:
+            raise ValueError("record not closed by '.'")
+        i += 1
+        if len(args) < 3 or len(args[0]) != 1 or len(args[1]) != 1 or args[1][0] not in ORACLE_ROLES or not args[2]:
+            raise ValueError(f"malformed record: {args[:2]}")
+        out.append((kind, args[0][0], args[1][0], " ".join(args[2])))
+    return out
+
+
 def raw(path):
-    """[(role, formula)] read straight from the source, without cm.py's rewriting; cnf clauses closed by ∀."""
-    src = uncomment(open(path).read())
-    fs = re.findall(r"(fof|cnf)\(\s*[\w']+\s*,\s*(\w+)\s*,(.*?)\)\s*\.(?=\s*(?:fof|cnf)\(|\s*$)", src, re.S)
-    return [(r, f"![{','.join(sorted(VARS(f)))}]: ({f})" if k == "cnf" and VARS(f) else f) for k, r, f in fs]
+    """[(role, formula)] for every source record, read by the oracle's own reader; cnf clauses closed by ∀."""
+    return [(r, f"![{','.join(sorted(VARS(f)))}]: ({f})" if k == "cnf" and VARS(f) else f) for k, _, r, f in records(open(path).read())]
 
 
 def countermodel(path, n, consts, tables):
@@ -145,11 +188,11 @@ def test_a_theorem_has_no_counter_model(tmp_path):
 def test_rewriting_preserves_meaning(p):
     """Each miniscoped formula agrees with the original, on the model and on every one-entry mutation of it."""
     n, consts, tables = M(p)
-    raw = re.findall(r"(fof|cnf)\(\s*[\w']+\s*,\s*\w+\s*,(.*?)\)\s*\.(?=\s*(?:fof|cnf)\(|\s*$)", uncomment(open(p).read()), re.S)
-    raw = [f"![{','.join(sorted(VARS(f)))}]: ({f})" if k == "cnf" and VARS(f) else f for k, f in raw]
+    source, rewritten = raw(p), problem(p)
+    assert len(source) == len(rewritten)  # one rewritten formula per source record, none dropped
     other = lambda v: not v if isinstance(v, bool) else v % n + 1
     models = [tables] + [{**tables, f: {**t, a: other(v)}} for f, t in tables.items() for a, v in t.items()]
-    for f, (_, g) in zip(raw, problem(p)):
+    for (_, f), (_, g) in zip(source, rewritten):
         assert all(holds(f, n, consts, m) == holds(g, n, consts, m) for m in models)
 
 
@@ -361,3 +404,76 @@ def test_benchmark_inputs_match_their_sources():
             assert sha(open(f"bench/problems/{f}", "rb").read()) == h["expanded"] == sha(expand(src.decode("latin-1"), read).encode("latin-1")), f
     for f, h in m["axioms"].items():
         assert sha(open(f"bench/axioms/{f}", "rb").read()) == h, f
+
+
+# Round-4 review: two contradictory files whose first axiom the old record regex dropped (a quoted name with a hyphen;
+# a comment between `fof` and `(`). Both are legal TPTP and have no model at all.
+DROPPED = ["fof('critical-axiom', axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n",
+           "fof % legal comment between tokens\n(critical, axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n"]
+RECORD_COUNTS = [  # (source, records): hand-checked
+    (DROPPED[0], 2), (DROPPED[1], 2),
+    ("fof ( a , axiom , p ) .\n", 1),
+    ("fof(a, axiom, p, file('x.p', a)).\n", 1),  # annotations are not part of the formula
+    ("fof(1, axiom, p).\nfof('thm.bool.TRUTH', axiom, q).\nfof('it\\'s', axiom, r).\n", 3),  # SWW-style names
+    ("fof('50%', axiom, p % ). fof(b, axiom, q).\n   ).\n", 1),  # '%' in a name, and a comment hiding a fake record
+    ("cnf(c, negated_conjecture, ~ r(X) | s(X)).\n", 1),
+]
+REJECTED = ["hello.\n", "fof(a, axiom).\n", "fof(a, unknown, p).\n", "tff(a, axiom, p).\n", "include('Axioms/A.ax').\n",
+            "fof(a, axiom, p)\n", "fof(a, axiom, (p).\n", "fof(a, axiom, p).\n/* fof(b, axiom, q). */\n", "fof(a b, axiom, p).\n"]
+
+
+@pytest.mark.parametrize("src,n", RECORD_COUNTS)
+def test_every_record_is_accounted_for(src, n, tmp_path):
+    """cm.statements and the oracle's own reader each find exactly the hand-counted records."""
+    (p := tmp_path / "t.p").write_text(src)
+    assert len(statements(str(p))) == n == len(records(src)) == len(problem(str(p)))
+
+
+def test_annotations_are_not_formulas(tmp_path):
+    (p := tmp_path / "t.p").write_text("fof(a, axiom, p, file('x.p', a)).\n")
+    assert statements(str(p))[0]["formula"].strip() == "p" == records(p.read_text())[0][3]
+
+
+@pytest.mark.parametrize("src", REJECTED)
+def test_unreadable_records_are_rejected_not_skipped(src, tmp_path):
+    """Text that is not a complete, supported fof/cnf record makes both readers refuse the whole file."""
+    (p := tmp_path / "t.p").write_text(src)
+    with pytest.raises(ValueError):
+        statements(str(p))
+    with pytest.raises(ValueError):
+        records(src)
+
+
+@needs_lake
+@pytest.mark.parametrize("src", DROPPED)
+def test_a_model_of_part_of_the_problem_is_rejected(src, tmp_path):
+    """The reviewer's protocol: a candidate that satisfies only ~p(a). The oracle, the shallow certificate and the
+    reflected certificate must all reject it, because the dropped axiom p(a) is now part of the problem."""
+    (p := tmp_path / "t.p").write_text(src)
+    wrong = (1, {"a": 1}, {"p": {(1,): False}})
+    assert len(problem(str(p))) == 2 and not countermodel(str(p), *wrong)
+    assert run("lake", "build", "Checker").returncode == 0
+    assert not lean_accepts(str(p), wrong, tmp_path, emit)
+    assert not lean_accepts(str(p), wrong, tmp_path, emit_reflect)
+
+
+@needs_lake
+def test_source_symbols_cannot_collide_with_generated_names(tmp_path):
+    """Symbols named like the shallow emitter's own declarations (c0, P0, C0, chunk0, countermodel) still certify."""
+    (p := tmp_path / "t.p").write_text("fof(a, axiom, c0 = countermodel).\nfof(b, axiom, p0(c0) & chunk0).\n"
+                                       "fof(g, conjecture, q(countermodel)).\n")
+    m = (1, {"c0": 1, "countermodel": 1, "chunk0": True}, {"p0": {(1,): True}, "q": {(1,): False}})
+    assert countermodel(str(p), *m)
+    assert run("lake", "build", "Checker").returncode == 0
+    assert lean_accepts(str(p), m, tmp_path, emit) and lean_accepts(str(p), m, tmp_path, emit_reflect)
+
+
+def test_a_failing_finder_is_not_a_search_outcome(tmp_path):
+    """A finder that prints no SZS status and exits non-zero is an error: never 'no model', never cached."""
+    (fake := tmp_path / "vampire").write_text("#!/bin/sh\necho 'segmentation fault' >&2\nexit 3\n")
+    fake.chmod(0o755)
+    (p := tmp_path / "t.p").write_text("fof(a, axiom, p(a)).\n")
+    env = {**os.environ, "VAMPIRE": str(fake), "CM_CACHE": str(tmp_path / "cache")}
+    out = subprocess.run(["python3", "cm.py", str(p)], env=env, capture_output=True, text=True)
+    assert out.returncode != 0 and "vampire failed" in out.stderr and "no finite" not in out.stderr
+    assert not (tmp_path / "cache").exists() or not os.listdir(tmp_path / "cache")

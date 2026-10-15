@@ -68,7 +68,10 @@ def run(problem, method, workers):
         ok = ok and all(pool.map(build, stage("Chunk") + stage("Part")))
     ok = ok and build("Main")
     open(f"{work}/ax.lean", "w").write(f"import {ns}.Main\n#print axioms {ns}.countermodel\n")
-    ax = subprocess.run([lean_bin, f"{work}/ax.lean"], capture_output=True, text=True, env=lenv, cwd=work).stdout.strip()
+    audit = subprocess.run([lean_bin, f"{work}/ax.lean"], capture_output=True, text=True, env=lenv, cwd=work)
+    ax = audit.stdout.strip()
+    # A run counts only if every module built, the axiom audit itself succeeded, and it shows no unsound escape.
+    ok = ok and audit.returncode == 0 and "countermodel" in ax and not any(b in ax for b in ("sorryAx", "ofReduceBool", "_native"))
     sampler.stop = True; sampler.join()
     ru1 = resource.getrusage(resource.RUSAGE_CHILDREN)
     shutil.rmtree(work)
@@ -81,10 +84,12 @@ def run(problem, method, workers):
 if __name__ == "__main__":
     problem, reps = sys.argv[1], int(sys.argv[2])
     workers = int(sys.argv[3]) if len(sys.argv) > 3 else 3
-    info = machine()
+    info, failed = machine(), False
     for rep in range(reps):
         for method in ("shallow", "reflected"):  # interleaved, so slow drift in load affects both alike
             r = {**run(problem, method, workers), "rep": rep, "machine": info, "definitions": __doc__.split("Definitions")[1].strip()}
             open(os.path.join(ROOT, "bench", "perf.jsonl"), "a").write(json.dumps(r) + "\n")
             print(f"rep {rep} {method:9} ok={r['ok']} wall {r['wall_s']:7.1f} s  cpu {r['cpu_s']:7.1f} s  "
                   f"peak/process {r['peak_rss_process_mb']} MB  peak/aggregate {r['peak_rss_aggregate_mb']} MB", flush=True)
+            failed = failed or not r["ok"]
+    sys.exit(1 if failed else 0)  # a failed build or audit fails the command, not just its record

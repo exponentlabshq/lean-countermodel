@@ -3,6 +3,15 @@
  "drawn_from": "bench/eligible.tsv minus the 100 development problems, the 100 second-sample problems and the 4 exploratory problems in bench/problems (2357 problems)",
  "method": "random.Random(seed).sample(sorted(pool), 100): uniform, without replacement",
  "drawn": "2026-10-15, before any result on these problems existed; committed with the frozen code, run once, and reported without code changes",
+ "excluded_exploratory": [
+  "BOO059-1.p",
+  "MSC018+1.p",
+  "PRD003+1.p",
+  "PUZ067+1.p"
+ ],
+ "pool_size": 2357,
+ "pool_sha256": "255c0d0f3d376b9305f0e4d25a8dbfc29c75e6f78641e5b3db950849483e1a74",
+ "pool_rule": "sorted({first tab-separated field of each line of bench/eligible.tsv} + '.p' minus the development, second-sample and excluded_exploratory problems); pool_sha256 hashes the names joined by newlines",
  "problems": [
   "LAT133-1.p",
   "SYO805+1.p",

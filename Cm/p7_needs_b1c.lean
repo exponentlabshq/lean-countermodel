@@ -22,21 +22,21 @@ abbrev «conceivedThrough» (x0 x1 : T) : Prop := (2 >>> (1 * x0.idx + 2 * x1.id
 abbrev «ideaOf» (x0 x1 : T) : Prop := (3 >>> (1 * x0.idx + 2 * x1.idx)) % 2 = 1
 abbrev «isIdea» (x0 : T) : Prop := (3 >>> (1 * x0.idx)) % 2 = 1
 
-theorem c0 : (∀ C' E' : T, (¬(«cause» C' E') ∨ («conceivedThrough» E' C'))) := by decide
+theorem c0' : (∀ C' E' : T, (¬(«cause» C' E') ∨ («conceivedThrough» E' C'))) := by decide
 
-theorem c1 : (∀ C' E' : T, (¬(«conceivedThrough» E' C') ∨ («cause» C' E'))) := by decide
+theorem c1' : (∀ C' E' : T, (¬(«conceivedThrough» E' C') ∨ («cause» C' E'))) := by decide
 
-theorem c2 : (∀ C' E' : T, (¬(«conceivedThrough» E' C') ∨ (∀ IE' : T, (¬(«ideaOf» IE' E') ∨ (∀ IC' : T, (¬(«ideaOf» IC' C') ∨ («conceivedThrough» IE' IC'))))))) := by decide
+theorem c2' : (∀ C' E' : T, (¬(«conceivedThrough» E' C') ∨ (∀ IE' : T, (¬(«ideaOf» IE' E') ∨ (∀ IC' : T, (¬(«ideaOf» IC' C') ∨ («conceivedThrough» IE' IC'))))))) := by decide
 
-theorem c3 : (∀ I' : T, (¬(«isIdea» I') ∨ (∀ J' : T, (¬(«isIdea» J') ∨ (¬(«conceivedThrough» I' J') ∨ («cause» J' I')))))) := by decide
+theorem c3' : (∀ I' : T, (¬(«isIdea» I') ∨ (∀ J' : T, (¬(«isIdea» J') ∨ (¬(«conceivedThrough» I' J') ∨ («cause» J' I')))))) := by decide
 
-theorem c4 : (∀ I' : T, (¬(«isIdea» I') ∨ (∀ J' : T, (¬(«isIdea» J') ∨ (¬(«cause» J' I') ∨ («conceivedThrough» I' J')))))) := by decide
+theorem c4' : (∀ I' : T, (¬(«isIdea» I') ∨ (∀ J' : T, (¬(«isIdea» J') ∨ (¬(«cause» J' I') ∨ («conceivedThrough» I' J')))))) := by decide
 
-theorem c5 : (∀ I' : T, ((«isIdea» I') ∨ (∀ X' : T, ¬(«ideaOf» I' X')))) := by decide
+theorem c5' : (∀ I' : T, ((«isIdea» I') ∨ (∀ X' : T, ¬(«ideaOf» I' X')))) := by decide
 
-theorem c6 : ¬(∀ I' X' : T, (¬(«ideaOf» I' X') ∨ (∀ J' : T, (¬(«cause» I' J') ∨ (∀ Y' : T, (¬(«ideaOf» J' Y') ∨ («cause» X' Y'))))))) := by decide
+theorem c6' : ¬(∀ I' X' : T, (¬(«ideaOf» I' X') ∨ (∀ J' : T, (¬(«cause» I' J') ∨ (∀ Y' : T, (¬(«ideaOf» J' Y') ∨ («cause» X' Y'))))))) := by decide
 
 theorem countermodel : Nonempty T ∧ ((((∀ C' E' : T, (¬(«cause» C' E') ∨ («conceivedThrough» E' C')))) ∧ (((∀ C' E' : T, (¬(«conceivedThrough» E' C') ∨ («cause» C' E')))) ∧ ((∀ C' E' : T, (¬(«conceivedThrough» E' C') ∨ (∀ IE' : T, (¬(«ideaOf» IE' E') ∨ (∀ IC' : T, (¬(«ideaOf» IC' C') ∨ («conceivedThrough» IE' IC')))))))))) ∧ ((((∀ I' : T, (¬(«isIdea» I') ∨ (∀ J' : T, (¬(«isIdea» J') ∨ (¬(«conceivedThrough» I' J') ∨ («cause» J' I'))))))) ∧ ((∀ I' : T, (¬(«isIdea» I') ∨ (∀ J' : T, (¬(«isIdea» J') ∨ (¬(«cause» J' I') ∨ («conceivedThrough» I' J')))))))) ∧ (((∀ I' : T, ((«isIdea» I') ∨ (∀ X' : T, ¬(«ideaOf» I' X'))))) ∧ (¬(∀ I' X' : T, (¬(«ideaOf» I' X') ∨ (∀ J' : T, (¬(«cause» I' J') ∨ (∀ Y' : T, (¬(«ideaOf» J' Y') ∨ («cause» X' Y'))))))))))) :=
-  ⟨⟨T.e1⟩, ⟨⟨c0, ⟨c1, c2⟩⟩, ⟨⟨c3, c4⟩, ⟨c5, c6⟩⟩⟩⟩
+  ⟨⟨T.e1⟩, ⟨⟨c0', ⟨c1', c2'⟩⟩, ⟨⟨c3', c4'⟩, ⟨c5', c6'⟩⟩⟩⟩
 
 end p7_needs_b1c

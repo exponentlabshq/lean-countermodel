@@ -25,11 +25,11 @@ abbrev «on_sale» (x0 : T) : Prop := (1 >>> (1 * x0.idx)) % 2 = 1
 abbrev «said» (x0 : T) : Prop := (3 >>> (1 * x0.idx)) % 2 = 1
 abbrev «in» (x0 x1 : T) : Prop := (15 >>> (1 * x0.idx + 2 * x1.idx)) % 2 = 1
 
-theorem c0 : (((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»)) := by decide
+theorem c0' : (((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»)) := by decide
 
-theorem c1 : ¬(∀ X' : T, («on_sale» X')) := by decide
+theorem c1' : ¬(∀ X' : T, («on_sale» X')) := by decide
 
 theorem countermodel : Nonempty T ∧ (((((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»))) ∧ (¬(∀ X' : T, («on_sale» X')))) :=
-  ⟨⟨T.e1⟩, ⟨c0, c1⟩⟩
+  ⟨⟨T.e1⟩, ⟨c0', c1'⟩⟩
 
 end quoted_names

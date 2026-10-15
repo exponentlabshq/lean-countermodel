@@ -30,33 +30,33 @@ abbrev «conceivedThroughAnother» (x0 : T) : Prop := (0 >>> (1 * x0.idx)) % 2 =
 abbrev «natureRequiresExistence» (x0 : T) : Prop := (0 >>> (1 * x0.idx)) % 2 = 1
 abbrev «involvesExistence» (x0 : T) : Prop := (0 >>> (1 * x0.idx)) % 2 = 1
 
-theorem c0 : (∀ X' : T, ((«substance» X') ↔ ((«inItself» X') ∧ («perSeConceived» X')))) := by decide
+theorem c0' : (∀ X' : T, ((«substance» X') ↔ ((«inItself» X') ∧ («perSeConceived» X')))) := by decide
 
-theorem c1 : (∀ A' S' : T, ((«attribute» A' S') ↔ ((«substance» S') ∧ («intellectPerceivesAsEssence» S' A')))) := by decide
+theorem c1' : (∀ A' S' : T, ((«attribute» A' S') ↔ ((«substance» S') ∧ («intellectPerceivesAsEssence» S' A')))) := by decide
 
-theorem c2 : (∀ G' : T, ((«isGod» G') ↔ ((((«substance» G') ∧ («absolutelyInfinite» G')) ∧ (∃ A' : T, («attribute» A' G'))) ∧ (∀ A' : T, ((«attribute» A' G') → («expressesEternalEssence» A')))))) := by decide
+theorem c2' : (∀ G' : T, ((«isGod» G') ↔ ((((«substance» G') ∧ («absolutelyInfinite» G')) ∧ (∃ A' : T, («attribute» A' G'))) ∧ (∀ A' : T, ((«attribute» A' G') → («expressesEternalEssence» A')))))) := by decide
 
-theorem c3 : (∀ X' : T, ((«inItself» X') ∨ («inAnother» X'))) := by decide
+theorem c3' : (∀ X' : T, ((«inItself» X') ∨ («inAnother» X'))) := by decide
 
-theorem c4 : (∀ X' : T, ¬((«inItself» X') ∧ («inAnother» X'))) := by decide
+theorem c4' : (∀ X' : T, ¬((«inItself» X') ∧ («inAnother» X'))) := by decide
 
-theorem c5 : (∀ X' : T, ((«perSeConceived» X') ∨ («conceivedThroughAnother» X'))) := by decide
+theorem c5' : (∀ X' : T, ((«perSeConceived» X') ∨ («conceivedThroughAnother» X'))) := by decide
 
-theorem c6 : (∀ X' : T, (¬¬(«natureRequiresExistence» X') ∨ ¬(«involvesExistence» X'))) := by decide
+theorem c6' : (∀ X' : T, (¬¬(«natureRequiresExistence» X') ∨ ¬(«involvesExistence» X'))) := by decide
 
-theorem c7 : (∀ X' : T, ((«inItself» X') ↔ («perSeConceived» X'))) := by decide
+theorem c7' : (∀ X' : T, ((«inItself» X') ↔ («perSeConceived» X'))) := by decide
 
-theorem c8 : (∀ X' : T, ((«inAnother» X') ↔ («conceivedThroughAnother» X'))) := by decide
+theorem c8' : (∀ X' : T, ((«inAnother» X') ↔ («conceivedThroughAnother» X'))) := by decide
 
-theorem c9 : (∀ A' : T, ((«perSeConceived» A') ∨ (∀ S' : T, ¬(«attribute» A' S')))) := by decide
+theorem c9' : (∀ A' : T, ((«perSeConceived» A') ∨ (∀ S' : T, ¬(«attribute» A' S')))) := by decide
 
-theorem c10 : (∀ X' : T, ((«involvesExistence» X') ↔ («natureRequiresExistence» X'))) := by decide
+theorem c10' : (∀ X' : T, ((«involvesExistence» X') ↔ («natureRequiresExistence» X'))) := by decide
 
-theorem c11 : (∀ S' : T, (¬(«substance» S') ∨ (∀ A' : T, (¬(«attribute» A' S') ∨ (∃ G' : T, ((«isGod» G') ∧ («attribute» A' G'))))))) := by decide
+theorem c11' : (∀ S' : T, (¬(«substance» S') ∨ (∀ A' : T, (¬(«attribute» A' S') ∨ (∃ G' : T, ((«isGod» G') ∧ («attribute» A' G'))))))) := by decide
 
-theorem c12 : ¬(∀ G' : T, (¬(«isGod» G') ∨ (∀ S' : T, (¬(«substance» S') ∨ (∀ A' : T, (¬(«attribute» A' S') ∨ («attribute» A' G'))))))) := by decide
+theorem c12' : ¬(∀ G' : T, (¬(«isGod» G') ∨ (∀ S' : T, (¬(«substance» S') ∨ (∀ A' : T, (¬(«attribute» A' S') ∨ («attribute» A' G'))))))) := by decide
 
 theorem countermodel : Nonempty T ∧ (((((∀ X' : T, ((«substance» X') ↔ ((«inItself» X') ∧ («perSeConceived» X'))))) ∧ (((∀ A' S' : T, ((«attribute» A' S') ↔ ((«substance» S') ∧ («intellectPerceivesAsEssence» S' A'))))) ∧ ((∀ G' : T, ((«isGod» G') ↔ ((((«substance» G') ∧ («absolutelyInfinite» G')) ∧ (∃ A' : T, («attribute» A' G'))) ∧ (∀ A' : T, ((«attribute» A' G') → («expressesEternalEssence» A'))))))))) ∧ (((∀ X' : T, ((«inItself» X') ∨ («inAnother» X')))) ∧ (((∀ X' : T, ¬((«inItself» X') ∧ («inAnother» X')))) ∧ ((∀ X' : T, ((«perSeConceived» X') ∨ («conceivedThroughAnother» X'))))))) ∧ ((((∀ X' : T, (¬¬(«natureRequiresExistence» X') ∨ ¬(«involvesExistence» X')))) ∧ (((∀ X' : T, ((«inItself» X') ↔ («perSeConceived» X')))) ∧ ((∀ X' : T, ((«inAnother» X') ↔ («conceivedThroughAnother» X')))))) ∧ ((((∀ A' : T, ((«perSeConceived» A') ∨ (∀ S' : T, ¬(«attribute» A' S'))))) ∧ ((∀ X' : T, ((«involvesExistence» X') ↔ («natureRequiresExistence» X'))))) ∧ (((∀ S' : T, (¬(«substance» S') ∨ (∀ A' : T, (¬(«attribute» A' S') ∨ (∃ G' : T, ((«isGod» G') ∧ («attribute» A' G')))))))) ∧ (¬(∀ G' : T, (¬(«isGod» G') ∨ (∀ S' : T, (¬(«substance» S') ∨ (∀ A' : T, (¬(«attribute» A' S') ∨ («attribute» A' G')))))))))))) :=
-  ⟨⟨T.e1⟩, ⟨⟨⟨c0, ⟨c1, c2⟩⟩, ⟨c3, ⟨c4, c5⟩⟩⟩, ⟨⟨c6, ⟨c7, c8⟩⟩, ⟨⟨c9, c10⟩, ⟨c11, c12⟩⟩⟩⟩⟩
+  ⟨⟨T.e1⟩, ⟨⟨⟨c0', ⟨c1', c2'⟩⟩, ⟨c3', ⟨c4', c5'⟩⟩⟩, ⟨⟨c6', ⟨c7', c8'⟩⟩, ⟨⟨c9', c10'⟩, ⟨c11', c12'⟩⟩⟩⟩⟩
 
 end nakamura_a15

@@ -16,10 +16,16 @@ def unsupported(k):
         raise ValueError(f"unsupported TPTP syntax: {k!r} (see README: supported features)")
 
 
+# Names the shallow emitter declares itself. Its helpers (c0', P0', C0', chunk0') carry a prime, which no TPTP lower word
+# has and every quoted name is emitted inside its quotes, so they cannot collide with a source symbol; the public
+# theorem keeps its name, so a symbol `countermodel` is emitted quoted ('countermodel' is the same TPTP symbol).
+RESERVED = {"countermodel"}
+
+
 def sym(k):
     """A TPTP symbol as a Lean name: «abc» if TPTP needs no quotes, «'X'» if it does. Quoted names keep their
     quotes, so a constant 'X' or 'T' can never become the variable X or the type T."""
-    return f"«{k}»" if re.fullmatch(r"[a-z]\w*", k) else f"«'{k}'»"
+    return f"«{k}»" if re.fullmatch(r"[a-z]\w*", k) and k not in RESERVED else f"«'{k}'»"
 
 
 def lean(s):
@@ -151,44 +157,160 @@ def check_arities(forms, path):
                 raise ValueError(f"unsupported TPTP: {k} used at arities {seen[k.strip(chr(39))]} and {n} in {path}")
 
 
+KINDS = {"fof", "cnf", "tff", "thf", "tcf", "tpi", "include"}  # TPTP's top-level statements
+ROLES = {"axiom", "hypothesis", "definition", "assumption", "lemma", "theorem", "corollary", "plain", "negated_conjecture",
+         "conjecture"}  # roles that assert a formula; any other role (type, unknown, fi_*, question, ...) is rejected
+PLAIN = re.compile(r"[^'\"%/()\[\],]+")  # characters with no meaning to the record reader
+RECORD_NAME = rf"[a-z]\w*|{QUOTED}|\d+"  # a statement's name: a lower word, a single-quoted word or an integer
+
+
+def statements(path):
+    """Every top-level statement of a TPTP file, as dicts (kind, name, role, formula, annotations, text, line).
+    Total, never partial: the whole file must consist of whitespace, `%` comments and complete fof/cnf records,
+    so no record can be skipped silently. Anything else (another statement kind, a malformed record, an unknown role,
+    a `/* */` comment) raises ValueError naming the line."""
+    src, out = open(path).read(), []
+    seen = [0, 1]  # (offset, line) of the last position asked about: lines are counted incrementally, once
+
+    def line(i):
+        if i < seen[0]:
+            seen[:] = [0, 1]
+        seen[:] = [i, seen[1] + src.count("\n", seen[0], i)]
+        return seen[1]
+
+    def fail(i, why):
+        raise ValueError(f"unsupported TPTP: {why} at line {line(i)} of {path}")
+
+    def skip(i):  # whitespace and comments between tokens
+        while i < len(src):
+            if src[i].isspace():
+                i += 1
+            elif src[i] == "%":
+                j = src.find("\n", i)
+                i = len(src) if j < 0 else j + 1
+            elif src.startswith("/*", i):
+                fail(i, "/* block comment */ (cm.py reads % comments only)")
+            else:
+                break
+        return i
+
+    i = skip(0)
+    while i < len(src):
+        start, m = i, re.compile(r"[a-z]\w*").match(src, i)
+        if not m or m[0] not in KINDS:
+            fail(i, f"unexpected text {src[i:i + 40]!r}; every record must be an annotated formula")
+        kind, i = m[0], skip(m.end())
+        if kind not in ("fof", "cnf"):
+            fail(start, f"{kind}(...); cm.py reads self-contained fof/cnf only")
+        if src[i:i + 1] != "(":
+            fail(i, f"'(' expected after {kind}")
+        parts, cur, depth, i = [], [], 0, i + 1
+        while True:  # the record's top-level arguments, split at depth-0 commas; quoted text and comments respected
+            if i >= len(src):
+                fail(start, f"unterminated {kind} record")
+            if run := PLAIN.match(src, i):  # ordinary characters, in one step
+                cur.append(run[0])
+                i = run.end()
+                continue
+            c = src[i]
+            if c in "'\"":
+                j = i + 1
+                while j < len(src) and src[j] != c:
+                    j += 2 if src[j] == "\\" else 1
+                if j >= len(src):
+                    fail(i, "unterminated quoted token")
+                cur.append(src[i:j + 1])
+                i = j + 1
+                continue
+            if c == "%":  # a comment inside a record ends at the line's end
+                j = src.find("\n", i)
+                cur.append(" ")
+                i = len(src) if j < 0 else j
+                continue
+            if src.startswith("/*", i):
+                fail(i, "/* block comment */ (cm.py reads % comments only)")
+            if c in "([":
+                depth += 1
+            elif c in ")]":
+                if depth == 0:
+                    if c == "]":
+                        fail(i, "unbalanced ']'")
+                    parts.append("".join(cur))
+                    i += 1
+                    break
+                depth -= 1
+            elif c == "," and depth == 0:
+                parts.append("".join(cur))
+                cur, i = [], i + 1
+                continue
+            cur.append(c)
+            i += 1
+        i = skip(i)
+        if src[i:i + 1] != ".":
+            fail(i, f"'.' expected after the {kind} record starting at line {line(start)}")
+        i += 1
+        if len(parts) < 3:
+            fail(start, f"{kind} record with {len(parts)} argument(s); name, role and formula are required")
+        name, role, formula = parts[0].strip(), parts[1].strip(), parts[2]
+        if not re.fullmatch(RECORD_NAME, name):
+            fail(start, f"record name {name!r}")
+        if role not in ROLES:
+            fail(start, f"role {role!r} (supported: {', '.join(sorted(ROLES))})")
+        if not formula.strip():
+            fail(start, "empty formula")
+        out.append({"kind": kind, "name": name, "role": role, "formula": formula, "annotations": parts[3:],
+                    "text": src[start:i], "line": line(start)})
+        i = skip(i)
+    return out
+
+
 def problem(path):
-    """[(role, formula)] from a TPTP file: cnf clauses closed by ∀, and those plus ∀-implications in fof miniscoped."""
-    src = uncomment(open(path).read())
-    if m := re.search(r"\b(tff|thf|tcf|tpi|include)\s*\(", src):  # never certify a silently shortened problem
-        raise ValueError(f"unsupported TPTP: {m[1]}(...) in {path}; cm.py reads self-contained fof/cnf only")
-    if "/*" in re.sub(QUOTED, "", src):  # a formula inside a block comment must not be read as part of the problem
-        raise ValueError(f"unsupported TPTP: /* block comment */ in {path}")
+    """[(role, formula)] from a TPTP file: cnf clauses closed by ∀, and those plus ∀-implications in fof miniscoped.
+    Every record of the file is accounted for (statements), so the list has one entry per source record."""
     out = []
-    for k, r, f in re.findall(r"(fof|cnf)\(\s*[\w']+\s*,\s*(\w+)\s*,(.*?)\)\s*\.(?=\s*(?:fof|cnf)\(|\s*$)", src, re.S):
-        scope, lits = literals(f, k == "cnf")
-        ok = k == "cnf" or scope and len(lits) > 1
-        out.append((r, miniscope(scope, lits) if ok else f))
+    for r in statements(path):
+        scope, lits = literals(r["formula"], r["kind"] == "cnf")
+        ok = r["kind"] == "cnf" or scope and len(lits) > 1
+        out.append((r["role"], miniscope(scope, lits) if ok else r["formula"]))
     check_arities(out, path)
     return out
 
 
+UNCACHED = {"Timeout", "MemoryOut", "ResourceOut", "Error", "InputError", "OSError"}  # depend on the run, not the problem
+
+
+def szs(out):
+    """The SZS status Vampire reports, or None."""
+    return m[1] if (m := re.search(r"SZS status (\w+)", out)) else None
+
+
 def vampire(path):
     """Vampire's output, cached in $CM_CACHE (if set) under a hash of the problem, the flags and Vampire's version:
-    a Lean upgrade then reruns only Lean."""
+    a Lean upgrade then reruns only Lean. An answer without an SZS status is an operational failure: it raises
+    RuntimeError and is never cached. Timeouts and other run-dependent statuses are not cached either."""
     # `-updr off`: otherwise Vampire may settle the problem by deleting unused predicates, without printing a model
     cmd = [os.getenv("VAMPIRE", "vampire"), "-sa", "fmb", "-updr", "off", "-t", "30"]
+    hit = None
     if cache := os.getenv("CM_CACHE"):
         version = subprocess.run([cmd[0], "--version"], capture_output=True, text=True).stdout
         key = hashlib.sha256(open(path, "rb").read() + " ".join(cmd[1:]).encode() + version.encode()).hexdigest()
         if os.path.exists(hit := os.path.join(cache, key)):
             return open(hit).read()
-    out = subprocess.run(cmd + [path], capture_output=True, text=True).stdout
-    if cache and "Time limit" not in out:  # a timeout depends on the machine's load, not the problem
+    run = subprocess.run(cmd + [path], capture_output=True, text=True)
+    status = szs(run.stdout)
+    if status is None:
+        raise RuntimeError(f"vampire failed on {path}: exit {run.returncode}, no SZS status; stderr: {run.stderr.strip()[-300:]}")
+    if hit and status not in UNCACHED:
         os.makedirs(cache, exist_ok=True)
-        open(hit, "w").write(out)
-    return out
+        open(hit, "w").write(run.stdout)
+    return run.stdout
 
 
 def model(path):
     """Vampire's finite model as (size, {constant: element}, {symbol: {args: element or bool}})."""
     out = vampire(path)
     if "FiniteModel" not in out:
-        sys.exit(f"{path}: no finite counter-model found")
+        sys.exit(f"{path}: no finite counter-model found (SZS status {szs(out)})")
     m, el = out[out.index("FiniteModel"):], lambda s: int(re.search(r"\d+$", s)[0])
     tables = {}
     for neg, f, args, val in re.findall(rf"(~?)({NAME})\(('fmb[^)]*)\)(?: = '(fmb[^']*)')?", m):
@@ -240,11 +362,11 @@ def emit(path, n, consts, tables):
         else:  # function: a pattern-matching table
             out.append(f"def {sym(f)} : {' → '.join(['T'] * (k + 1))}\n  " + " ".join(f"| {row(a)} => {e(v)}" for a, v in tbl.items()))
     if len(parts) <= CHUNK:  # one file: one theorem per formula, so each `decide` starts with fresh caches
-        out += [f"\ntheorem c{i} : {f} := by decide" for i, f in enumerate(parts)]
-        proof = "⟨⟨T.e1⟩, " + tree([f"c{i}" for i in range(len(parts))], "⟨{}, {}⟩") + "⟩"
+        out += [f"\ntheorem c{i}' : {f} := by decide" for i, f in enumerate(parts)]
+        proof = "⟨⟨T.e1⟩, " + tree([f"c{i}'" for i in range(len(parts))], "⟨{}, {}⟩") + "⟩"
         return "\n".join(out) + f"\n\ntheorem countermodel : {claim} :=\n  {proof}\n\nend {ns}\n"
-    # Many formulas: modules, aggregated as a tree. Base holds the model; each chunk names its formulas (P_i),
-    # proves them (c_i) and their conjunction (C_j); Main combines the C_j. No file restates the whole problem,
+    # Many formulas: modules, aggregated as a tree. Base holds the model; each chunk names its formulas (P_i'),
+    # proves them (c_i') and their conjunction (C_j'); Main combines the C_j'. No file restates the whole problem,
     # and lake checks the chunks in parallel.
     opts = "\n".join(l for l in out[:5] if l.startswith("set_option"))
     files = {"Base": "\n".join(out) + f"\n\nend {ns}\n"}
@@ -255,16 +377,18 @@ def emit(path, n, consts, tables):
     imports = "".join(f"import {ns}.{f}\n" for f in files)
     for j in range(0, len(parts), CHUNK):
         ks = range(j, min(j + CHUNK, len(parts)))
-        body = "\n".join(f"def P{i} : Prop := {parts[i]}\ntheorem c{i} : P{i} := by unfold P{i}; decide" for i in ks)
+        body = "\n".join(f"def P{i}' : Prop := {parts[i]}\ntheorem c{i}' : P{i}' := by unfold P{i}'; decide" for i in ks)
         c = j // CHUNK
+        conj, proofs = tree([f"P{i}'" for i in ks], "({} ∧ {})"), tree([f"c{i}'" for i in ks], "⟨{}, {}⟩")
         files[f"Chunk{c}"] = (f"{imports}{opts}\nnamespace {ns}\n\n{body}\n\n"
-                              f"def C{c} : Prop := {tree([f'P{i}' for i in ks], '({} ∧ {})')}\n"
-                              f"theorem chunk{c} : C{c} := by unfold C{c}; exact {tree([f'c{i}' for i in ks], '⟨{}, {}⟩')}\n\nend {ns}\n")
+                              f"def C{c}' : Prop := {conj}\n"
+                              f"theorem chunk{c}' : C{c}' := by unfold C{c}'; exact {proofs}\n\nend {ns}\n")
     m = sum(f.startswith("Chunk") for f in files)
+    conj, proofs = tree([f"C{c}'" for c in range(m)], "({} ∧ {})"), tree([f"chunk{c}'" for c in range(m)], "⟨{}, {}⟩")
     files["Main"] = ("".join(f"import {ns}.Chunk{c}\n" for c in range(m)) + f"namespace {ns}\n\n"
-                     f"/-- The domain is nonempty and every formula holds in the model: C_j is the conjunction of chunk j's formulas P_i. -/\n"
-                     f"theorem countermodel : Nonempty T ∧ {tree([f'C{c}' for c in range(m)], '({} ∧ {})')} :=\n"
-                     f"  ⟨⟨T.e1⟩, {tree([f'chunk{c}' for c in range(m)], '⟨{}, {}⟩')}⟩\n\nend {ns}\n")
+                     f"/-- The domain is nonempty and every formula holds in the model: C_j' is the conjunction of chunk j's formulas P_i'. -/\n"
+                     f"theorem countermodel : Nonempty T ∧ {conj} :=\n"
+                     f"  ⟨⟨T.e1⟩, {proofs}⟩\n\nend {ns}\n")
     return files
 
 

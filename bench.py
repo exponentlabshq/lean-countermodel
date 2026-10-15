@@ -76,7 +76,7 @@ def run(f):
     r = {"problem": f, "lang": "cnf" if "-" in f else "fof", "cm_s": round(time.time() - t, 1)}
     if cm.returncode:
         return {**r, "verdict": "no model" if "no finite" in cm.stderr else "unsupported input" if "unsupported TPTP" in cm.stderr
-                else "cm.py error", "why": cm.stderr.strip()[-300:]}
+                else "finder error" if "vampire failed" in cm.stderr else "cm.py error", "why": cm.stderr.strip()[-300:]}
     r["size"] = int(re.search(r"a (\d+)-element", cm.stdout)[1])
     r["work"] = max(r["size"] ** len(set(re.findall(r"\b[A-Z]\w*", f))) for _, f in problem(p))  # decide's cases, worst formula
     stem = f"{DIR}/lean/{f[:-2].replace('-', '_').replace('.', '_')}"
@@ -117,7 +117,7 @@ def run_reflect(f):
     r = {"problem": f, "lang": "cnf" if "-" in f else "fof", "cm_s": round(time.time() - t, 1), "method": "reflect"}
     if cm.returncode:
         return {**r, "verdict": "no model" if "no finite" in cm.stderr else "unsupported input" if "unsupported TPTP" in cm.stderr
-                else "cm.py error", "why": cm.stderr.strip()[-300:]}
+                else "finder error" if "vampire failed" in cm.stderr else "cm.py error", "why": cm.stderr.strip()[-300:]}
     d = f"{DIR}/lean/{ns}"
     first = open(f"{d}/{'Base' if os.path.exists(d + '/Base.lean') else 'Main'}.lean").readline()
     r["size"] = int(re.search(r"a (\d+)-element", first)[1])
