@@ -20,6 +20,8 @@ sets = {"final-dev": [json.loads(l)["problem"] for l in open(f"{OUT}/results.jso
         "final-second": json.load(open(f"{OUT}/heldout-sample.json"))["problems"],
         "final-third": json.load(open(f"{OUT}/third-sample.json"))["problems"]}
 inputs = json.load(open(f"{OUT}/inputs.json"))["problems"]
+for d in ("lean", "olean"):  # certificates are written here; a fresh worktree has neither (both are git-ignored)
+    os.makedirs(f"bench/{d}", exist_ok=True)
 for name, probs in sets.items():
     t = time.time()
     with ThreadPoolExecutor(2) as pool:
