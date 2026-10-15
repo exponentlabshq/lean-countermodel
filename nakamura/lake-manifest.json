@@ -1,0 +1,15 @@
+{"version": "1.1.0",
+ "packagesDir": ".lake/packages",
+ "packages":
+ [{"url": "https://github.com/Nakammura/spinoza-ethica-lean",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "6d4c0461265e50a3bbedb640fe60d9ad292b50a7",
+   "name": "ethica",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "6d4c046",
+   "inherited": false,
+   "configFile": "lakefile.toml"}],
+ "name": "nakamura",
+ "lakeDir": ".lake"}

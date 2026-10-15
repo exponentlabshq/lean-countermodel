@@ -1,0 +1,13 @@
+# Counter-models for Nakamura's S-A12 and S-A15, as instances of his own classes,
+# checked against his unmodified library at commit 6d4c046.
+name = "nakamura"
+defaultTargets = ["AutoCM"]
+
+[[require]]
+name = "ethica"
+git = "https://github.com/Nakammura/spinoza-ethica-lean"
+rev = "6d4c046"
+
+[[lean_lib]]
+name = "AutoCM"
+globs = ["AutoCM.+"]

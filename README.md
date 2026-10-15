@@ -17,7 +17,7 @@ python3 cm.py examples/circle_of_fifths.p > Cm/circle_of_fifths.lean && lake bui
 | Claim | Evidence |
 |---|---|
 | **Works on independent problems** | 100 problems sampled from TPTP, the standard prover benchmark. Lean certifies **67 of the 73 models Vampire finds**, 64 of them with the kernel alone. **None of the 6 failures is a wrong model.** |
-| **Beats hand construction on a published Lean project** | It reproduces both of Nakamura's hand-built Spinoza counter-models [1] from his axioms alone, with **2-element** models against his 4 and 3 (§4.1) |
+| **Beats hand construction on a published Lean project** | It reproduces both of Nakamura's hand-built Spinoza counter-models [1] from his axioms alone, with **2-element** models against his 4 and 3, checked against his own library (§4.1) |
 | **Makes brute-force checking feasible** | It takes a clause needing ~10¹¹ cases down to 46,746 atom checks for the whole problem; the median is 3 s per problem (§3) |
 | **Readable by non-specialists** | Certified: the circle-of-fifths axioms cannot tell a fifth from a fourth, and a pitch collection does not fix its tonic (§4.2) |
 | **Small** | `cm.py` 8.3 KB · `bench.py` 5.0 KB · `test_cm.py` 5.5 KB, with 52 tests running in about 4 s |
@@ -68,16 +68,46 @@ We found no Lean 4 tool in the last row. This project is a prototype of one. It 
 
 ### 4.1 Spinoza's *Ethics*: Nakamura's Lean formalization [1]
 
-Nakamura formalizes *Ethics* I in Lean 4 and proves two non-derivability results using counter-models built **by hand**. We transcribed his definitions and `StatedAxioms` (spinoza-ethica-lean @ 6d4c046) into TPTP and let the tool find counter-models.
+**The question.** Nakamura formalizes *Ethics* I in Lean 4. His *demote experiments* ask whether a contested axiom of Spinoza's follows from a weaker principle. Two of his published answers are negative:
+
+- **S-A12:** A12 (an attribute belongs to one substance) does not follow from his `StatedAxioms` plus `PSRSubstance`, a principle of sufficient reason requiring distinct substances to differ in some attribute.
+- **S-A15:** A15 (every attribute of a substance is an attribute of God) does not follow from `StatedAxioms` plus plenitude.
+
+He proves both with counter-models he built **by hand** ([1] §4.4), with 4 and 3 elements. We asked whether the tool could find them on its own.
+
+**How we got the result.**
+
+| Step | What we did | Check |
+|---|---|---|
+| 1. Read | His `Definitions.lean`: 13 primitive predicates (`inItself`, `perSeConceived`, `intellectPerceivesAsEssence`, …) and the defined `Substance`, `Attribute` and `IsGod`. His `Axioms.lean`: the 12 `StatedAxioms` fields, 4 of which are `True` placeholders. His sufficient-reason classes. All at commit 6d4c046. | — |
+| 2. Transcribe | Into first-order logic: primitives → predicates; `def`s → biconditionals; the 8 substantive `StatedAxioms` fields → axioms; the weaker principle Σ → axiom; the target → conjecture. See `examples/nakamura_a12.p`. | Each line cites its Lean source |
+| 3. Validate | The transcription must reproduce his **positive** results before its negative ones mean anything | It does: weak P5 follows from StatedAxioms + `PSRSubstance`, and A15 from StatedAxioms + A25 + A26 (Z3, unsat cores) |
+| 4. Search, blind | `vampire -sa fmb` on each problem. The encoding came from his definitions and axioms only; we had read his `A15CounterModel` earlier, but not his `A12CounterModel`, and the search is automatic either way. | 2-element models in about 0.1 s. Z3 failed on S-A12. |
+| 5a. Certify (transcription) | `cm.py` compiles the model; `decide` proves `axioms ∧ ¬conjecture` | `Cm/nakamura_a12.lean`, `Cm/nakamura_a15.lean` |
+| 5b. Certify (**his library**) | The same models are compiled into instances of **his own classes**: a finite `T`, `instance : EthicaWorld T` (13 tables), and `instance : StatedAxioms T` (every field by `decide`). Then `theorem result : StatedAxioms T ∧ Σ ∧ ¬A`. | `nakamura/`: builds against a fresh clone of his unmodified library; `#print axioms` gives `[propext]` |
+
+**The models**, with `attribute(a, s)` meaning "a is an attribute of s":
+
+| | Universe | Substances | Attribute relation | Why the target fails |
+|---|---|---|---|---|
+| **S-A12** | {1, 2} | both | 1 is an attribute of 1; 2 is an attribute of 1 and of 2 | The two substances **share** attribute 2, so A12 fails. They also **differ** in attribute 1, so the sufficient-reason principle still holds. This is the shape of the classic objection to I P5: substances sharing one attribute and differing in another. |
+| **S-A15** | {1, 2} | both, and **both are gods** | 1 is an attribute of 1 and 2; 2 is an attribute of 2 only | Attribute 2 belongs to a substance, but not to god 1, so A15 fails. Plenitude holds, since every substance is itself a god. Two gods, as in his model. |
+
+**Results.**
 
 | Claim | His model (by hand) | Ours (automatic) |
 |---|---|---|
-| **S-A12:** A12 does not follow from `StatedAxioms` + `PSRSubstance` | 4 elements | **2 elements**, 0.1 s |
-| **S-A15:** A15 does not follow from `StatedAxioms` + plenitude | 3 elements | **2 elements**, 0.1 s |
-| The P14 bridge H, with A14 and a unique god, does not give A15 | — | 2 elements |
-| *Ethics* II P7 needs each of its bridges (the converse of I A4 and two idea–thing bridges) | — | 2 elements each |
+| S-A12 | 4 elements | **2 elements**, 0.1 s |
+| S-A15 | 3 elements | **2 elements**, 0.1 s |
 
-The theorems here are about the TPTP transcription. Separately, we compiled the S-A12 and S-A15 models into instances of his own `EthicaWorld` and `StatedAxioms` classes and checked them against his unmodified library.
+**Caveat on "smaller".** In our models the same objects are both substances and attributes. Nakamura's axioms permit that: attributes are conceived through themselves, and so they count as substances under his definitions. But it is part of why the models are smaller. A sorted encoding that kept substances and attributes apart would test whether 2 elements still suffice.
+
+**Further results in the same framework** (found earlier in this project, with an LLM proposing candidate premises and provers screening them; the counter-models were first written by hand and are now generated by `cm.py`):
+
+| Example | Claim |
+|---|---|
+| `p14_bridge_weaker` | The P14 bridge H ("every substance shares an attribute with God"), with A14 and a unique god, does not give A15 |
+| `p7_needs_a4c`, `p7_needs_b1c`, `p7_needs_b1` | *Ethics* II P7 (the order of ideas is the order of things) needs each of its bridges: the converse of I A4, and two idea–thing bridges |
 
 ### 4.2 Tonal harmony: the circle of fifths
 
@@ -126,6 +156,7 @@ Lean alone cannot show what each result *depends on*. The counter-models can:
 |---|---|
 | Requirements | Lean 4.13 (elan) and Vampire 5.1 (on `PATH`, or set `VAMPIRE`) |
 | Examples | `lake build`; check axioms with `lake env lean Axioms.lean` |
+| Nakamura, against his library | `cd nakamura && lake build && lake env lean Axioms.lean` (clones spinoza-ethica-lean @ 6d4c046, about 11 MB) |
 | Tests | `pytest test_cm.py`: 52 tests, about 4 s |
 | Benchmark | `python3 bench.py N [WORKERS]` samples from `bench/eligible.tsv` (the 2,561 eligible TPTP problems); results go to `bench/results.jsonl` |
 | Paper | `paper/paper.md` |
