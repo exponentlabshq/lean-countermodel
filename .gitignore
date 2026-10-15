@@ -7,6 +7,7 @@ bench/problems/
 bench/axioms/
 bench/lean/
 bench/*.log
+!bench/recheck.log
 bench/results-before-*.jsonl
 bench/vampire-cache/
 bench/olean/

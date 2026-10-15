@@ -1081,7 +1081,7 @@ We found no direct precedent for the exact combination, but our first search mis
 | Connectives `<~>`, `<=`, `~\|`, `~&` | **rejected** |
 | `$distinct`, other `$`-defined symbols, numbers, strings | **rejected** |
 | `tff`, `thf`, `tcf`, `tpi` statements | **rejected** (the whole file) |
-| `include(...)` | **rejected**; the benchmark records such inputs as *unsupported input* and keeps them in the denominator |
+| `include(...)` | **rejected** by `cm.py`. The benchmark harness, when it downloads a problem, inlines each plain `include('Axioms/F.ax').` by textual substitution of that axiom file (`bench.fetch`; trusted, untested code). A *selective* include, `include('Axioms/F.ax', [names])`, is not inlined, so the input is rejected and recorded as *unsupported input* (`SYN000+2`) |
 | One symbol used at two arities (TPTP's `p/1` and `p/2` are distinct symbols) | **rejected** (the model tables are keyed by name) |
 | Purely propositional problems Vampire settles without printing a finite model | not handled (no model to certify) |
 

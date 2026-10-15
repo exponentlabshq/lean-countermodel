@@ -79,23 +79,20 @@ No validity theorem is needed, because there is no encoded semantics: the statem
 
 Ready for you now:
 
-- **Snapshot:** commit **`[FINAL]`**, tagged `review-2026-10-15`, provided to you as a `git archive` tarball with SHA-256 `[SHA]`. It contains:
+- **Snapshot:** the commit tagged `review-2026-10-15`, provided to you as a `git archive` tarball. The commit hash and the tarball's SHA-256 are in our cover message; this letter is inside the snapshot, so it cannot state the checksum of the snapshot itself. It contains:
   - the revised manuscript (Markdown and PDF);
   - all sources and tests;
   - `lean-toolchain` (Lean 4.35.0) and the Vampire version string;
   - both certificate libraries for all 15 examples (`Cm/` shallow, `Refl/` reflected);
-  - the raw benchmark logs, and `bench/recheck.log`.
+  - the raw benchmark logs (`bench/results-final-*.jsonl`, `bench/superseded-*.jsonl`, `bench/perf.jsonl`), the input audit, and `bench/recheck.log`.
 - **`recheck.sh`:**
   - rebuilds everything;
   - prints `#print axioms` for all 30 shipped certificates;
   - replays three modules through the kernel from scratch with `leanchecker --fresh`, which ships with Lean 4.35: `Checker`, `AllShallow` (all 15 shallow certificates) and `AllReflected` (all 15 reflected certificates);
   - fails on any `sorryAx`, native-evaluation axiom or error.
-- **On this machine, all three replays pass**:
-  - `Checker`: 133 s;
-  - `AllShallow`: 70 s;
-  - `AllReflected`: 85 s.
-- **Axioms:** every certificate depends only on `propext` and `Quot.sound`, or on no axioms at all.
-- **Scope:** these are the shipped example certificates. The benchmark certificates are generated during runs and deleted afterwards, so the snapshot holds their logs and axiom output, not the `.olean` files. Rebuilding them is `bench.py`.
+- **At the snapshot commit, on an idle machine, all three replays pass** (`bench/recheck.log`): `Checker` in 34 s, `AllShallow` in 33 s, `AllReflected` in 36 s.
+- **Axioms:** the 15 shallow certificates depend on `propext` only; the 15 reflected ones on `propext` and `Quot.sound`. None uses `sorryAx` or a native-evaluation axiom.
+- **Scope:** these are the shipped example certificates. Benchmark certificates are generated during runs and deleted afterwards, so the snapshot holds their verdict logs, not their Lean files or `#print axioms` output; `bench/frozen.py` regenerates them. We would rather say that plainly than imply the benchmark certificates are archived.
 
 ## 3. The frozen held-out evaluation, and version consistency
 
@@ -119,6 +116,8 @@ Ready for you now:
 3. **Contention on our side.** `LAT112-1` fell back to native evaluation after a 60 s kernel timeout, because we were running the test suite and `leanchecker` on the same 8 GB machine during the run. Run alone, it certifies strictly in 19.7 s; it needed 18.8 s in the original run.
 
 **A translator defect found by the `62d43d6` run.** `GEG001+1` binds a variable named `T`, which is the name of the shallow certificate's domain type. Inside the quantifier, `: T` referred to the variable, and Lean rejected the file with a type error. A variable named `True` would capture `$true` in the same way. Every case we constructed failed closed, as a Lean error, never as a certificate with a changed meaning; but it is a defect in trusted code. The shallow translator now emits variables primed (`X'`), a character TPTP variables cannot contain. Five tests cover it, and we checked that the `T` and `True` cases fail on the earlier translator. Reflected certificates use de Bruijn indices and were unaffected. `GEG001+1` now fails like the other deeply nested problems, in instance search.
+
+**Input expansion, documented as you asked.** The harness does expand some inputs before checking. When it downloads a problem, it replaces each plain `include('Axioms/F.ax').` with the text of that axiom file (`bench.fetch`). This is trusted code with no test of its own; the paper now says so (§8.1). A selective include, `include('Axioms/F.ax', [names])`, is not expanded, because loading the whole file would add formulas the problem excludes. Such an input reaches `cm.py` with the directive intact, and is rejected and counted as unsupported (`SYN000+2`). Our first-round statement that includes are simply rejected was incomplete.
 
 **Both sets were rerun on `51481a4`**, on an otherwise idle machine. Apart from `GEG001+1`'s failure mode, every verdict matches the `62d43d6` run, problem for problem. The run used a separate git worktree, the same 30 s Vampire limit and the same model cache, so the finder's answers are unchanged. That includes the development set, so the 70/77 figure is no longer inherited from the old checker. Earlier figures stay in the paper only as labeled history.
 

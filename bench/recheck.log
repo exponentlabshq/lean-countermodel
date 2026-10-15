@@ -1,0 +1,38 @@
+commit c0107ed
+Lean (version 4.35.0, arm64-apple-darwin24.6.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)
+Build completed successfully (38 jobs).
+== axioms: Cm
+'circle_of_fifths.countermodel' depends on axioms: [propext]
+'group_comm.countermodel' depends on axioms: [propext]
+'guarded_definition.countermodel' depends on axioms: [propext]
+'nakamura_a12.countermodel' depends on axioms: [propext]
+'nakamura_a15.countermodel' depends on axioms: [propext]
+'p14_bridge_weaker.countermodel' depends on axioms: [propext]
+'p7_needs_a4c.countermodel' depends on axioms: [propext]
+'p7_needs_b1.countermodel' depends on axioms: [propext]
+'p7_needs_b1c.countermodel' depends on axioms: [propext]
+'propositional.countermodel' depends on axioms: [propext]
+'quantifier_scope.countermodel' depends on axioms: [propext]
+'quoted_capture.countermodel' depends on axioms: [propext]
+'quoted_names.countermodel' depends on axioms: [propext]
+'single_formula.countermodel' depends on axioms: [propext]
+'transitive_cnf.countermodel' depends on axioms: [propext]
+== axioms: Refl
+'circle_of_fifths.countermodel' depends on axioms: [propext, Quot.sound]
+'group_comm.countermodel' depends on axioms: [propext, Quot.sound]
+'guarded_definition.countermodel' depends on axioms: [propext, Quot.sound]
+'nakamura_a12.countermodel' depends on axioms: [propext, Quot.sound]
+'nakamura_a15.countermodel' depends on axioms: [propext, Quot.sound]
+'p14_bridge_weaker.countermodel' depends on axioms: [propext, Quot.sound]
+'p7_needs_a4c.countermodel' depends on axioms: [propext, Quot.sound]
+'p7_needs_b1.countermodel' depends on axioms: [propext, Quot.sound]
+'p7_needs_b1c.countermodel' depends on axioms: [propext, Quot.sound]
+'propositional.countermodel' depends on axioms: [propext, Quot.sound]
+'quantifier_scope.countermodel' depends on axioms: [propext, Quot.sound]
+'quoted_capture.countermodel' depends on axioms: [propext, Quot.sound]
+'quoted_names.countermodel' depends on axioms: [propext, Quot.sound]
+'single_formula.countermodel' depends on axioms: [propext, Quot.sound]
+'transitive_cnf.countermodel' depends on axioms: [propext, Quot.sound]
+== leanchecker --fresh Checker: ok in 34 s
+== leanchecker --fresh AllShallow: ok in 33 s
+== leanchecker --fresh AllReflected: ok in 36 s
