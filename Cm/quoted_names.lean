@@ -29,7 +29,7 @@ theorem c0 : (((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («i
 
 theorem c1 : ¬(∀ X' : T, («on_sale» X')) := by decide
 
-theorem countermodel : (((((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»))) ∧ (¬(∀ X' : T, («on_sale» X')))) :=
-  ⟨c0, c1⟩
+theorem countermodel : Nonempty T ∧ (((((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»))) ∧ (¬(∀ X' : T, («on_sale» X')))) :=
+  ⟨⟨T.e1⟩, ⟨c0, c1⟩⟩
 
 end quoted_names

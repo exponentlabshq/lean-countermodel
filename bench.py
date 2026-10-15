@@ -2,7 +2,7 @@
 Usage: python3 bench.py N [WORKERS]   -> fetch and run N more problems, append to bench/results.jsonl"""
 import html, json, os, queue, random, re, subprocess, sys, threading, time, urllib.request
 from concurrent.futures import ThreadPoolExecutor
-from cm import VARS, lean as translate, problem
+from cm import QUOTED, VARS, lean as translate, problem
 
 SEE, DIR = "https://tptp.org/cgi-bin/SeeTPTP?Category=", "bench"
 
@@ -18,18 +18,49 @@ def get(q, tries=4):
                 raise
 
 
+INCLUDE = rf"({QUOTED})|%.*|/\*[\s\S]*?\*/|include\(\s*'([^']*)'\s*(,[^)]*)?\)\s*\."
+
+
+def expand(src, read):
+    """src with each plain `include('Axioms/F').` replaced by read(F), so the problem is self-contained.
+    Quoted names and comments are never read as includes. A selective include (`include('Axioms/F', [names]).`) is
+    left in place, so cm.py refuses the problem as unsupported input. A path outside Axioms/, a missing file or an
+    included file that itself includes raises ValueError: the problem is never certified as a shortened problem."""
+    def one(m):
+        if m[2] is None or m[3]:  # a quoted name, a comment or a selective include: unchanged
+            return m[0]
+        if not m[2].startswith("Axioms/") or "/" in m[2][7:]:
+            raise ValueError(f"unsupported TPTP: include of {m[2]!r}, outside Axioms/")
+        try:
+            text = read(m[2][7:])
+        except OSError:
+            raise ValueError(f"unsupported TPTP: unresolved include {m[2]!r}")
+        if any(n[2] is not None for n in re.finditer(INCLUDE, text)):
+            raise ValueError(f"unsupported TPTP: nested include in {m[2]!r}")
+        return text
+    return re.sub(INCLUDE, one, src)
+
+
+def source(category, f):
+    """A TPTP file exactly as distributed: from a local copy of the TPTP release in $TPTP if set, else the web page."""
+    if root := os.getenv("TPTP"):
+        return open(f"{root}/{category}/{f[:3] + '/' if category == 'Problems' else ''}{f}", encoding="latin-1").read()
+    src = get(f"{category}&Domain={f[:3]}&File={f}" if category == "Problems" else f"{category}&File={f}")
+    return src[src.index("%-----"):]
+
+
 def fetch(name):
-    """A problem with its includes inlined, so it is self-contained."""
-    src = get(f"Problems&Domain={name[:3]}&File={name}")
-    return re.sub(r"include\('Axioms/([^']+)'\)\.", lambda m: axioms(m[1]), src[src.index("%-----"):])
+    """A problem with its includes inlined, so it is self-contained. The original is kept in bench/sources/."""
+    src = source("Problems", name)
+    open(f"{DIR}/sources/{name}", "w", encoding="latin-1").write(src)
+    return expand(src, axioms)
 
 
 def axioms(f):
-    """An axiom file, downloaded once: many problems share the same axiom sets."""
+    """An axiom file, fetched once: many problems share the same axiom sets."""
     if not os.path.exists(path := f"{DIR}/axioms/{f}"):
-        src = get(f"Axioms&File={f}")
-        open(path, "w").write(src[src.index("%-----"):])
-    return open(path).read()
+        open(path, "w", encoding="latin-1").write(source("Axioms", f))
+    return open(path, encoding="latin-1").read()
 
 
 def pick(n, seen):
@@ -129,7 +160,7 @@ def run_hybrid(f, threshold=0.9):
 
 
 if __name__ == "__main__":
-    for d in ("problems", "lean", "axioms"):
+    for d in ("problems", "sources", "lean", "axioms"):
         os.makedirs(f"{DIR}/{d}", exist_ok=True)
     log, n, workers = f"{DIR}/results.jsonl", int(sys.argv[1]), int(sys.argv[2]) if len(sys.argv) > 2 else 2
     seen = [json.loads(l)["problem"] for l in open(log)] if os.path.exists(log) else []

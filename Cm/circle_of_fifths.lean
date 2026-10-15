@@ -33,7 +33,7 @@ theorem c3 : (∀ X' : T, ((«g» («f» X')) = X')) := by decide
 
 theorem c4 : ¬(∀ X' : T, ((«f» X') = («g» X'))) := by decide
 
-theorem countermodel : ((((∀ X' : T, ((«f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» X')))))))))))) = X'))) ∧ (((«f» («f» («f» («f» «c»)))) ≠ «c»))) ∧ ((((«f» («f» («f» («f» («f» («f» «c»)))))) ≠ «c»)) ∧ (((∀ X' : T, ((«g» («f» X')) = X'))) ∧ (¬(∀ X' : T, ((«f» X') = («g» X'))))))) :=
-  ⟨⟨c0, c1⟩, ⟨c2, ⟨c3, c4⟩⟩⟩
+theorem countermodel : Nonempty T ∧ ((((∀ X' : T, ((«f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» X')))))))))))) = X'))) ∧ (((«f» («f» («f» («f» «c»)))) ≠ «c»))) ∧ ((((«f» («f» («f» («f» («f» («f» «c»)))))) ≠ «c»)) ∧ (((∀ X' : T, ((«g» («f» X')) = X'))) ∧ (¬(∀ X' : T, ((«f» X') = («g» X'))))))) :=
+  ⟨⟨T.e1⟩, ⟨⟨c0, c1⟩, ⟨c2, ⟨c3, c4⟩⟩⟩⟩
 
 end circle_of_fifths

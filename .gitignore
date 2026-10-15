@@ -5,9 +5,12 @@ __pycache__/
 # regenerable benchmark data: re-fetched from TPTP and recompiled by bench.py
 bench/problems/
 bench/axioms/
+bench/sources/
+bench/replay/
 bench/lean/
 bench/*.log
 !bench/recheck.log
+!bench/replay.log
 bench/results-before-*.jsonl
 bench/vampire-cache/
 bench/olean/

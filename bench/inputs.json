@@ -1,0 +1,1279 @@
+{
+ "release": "TPTP-v9.3.1",
+ "url": "https://tptp.org/TPTP/Distribution/TPTP-v9.3.1.tgz",
+ "tarball_bytes": 933955664,
+ "tarball_sha256": "8e9462d9443a2250000224cf4f7002a64ea02cbe07fa5cdcdecfd0fe8cd81f03",
+ "includes_in_comments": [
+  "BOO008-3.p",
+  "RNG025-9.p"
+ ],
+ "problems": {
+  "LCL643+1.005.p": {
+   "source": "1f591c8f85da84117e23efd041b1d6fe5d3351a05e7673449918e859ff687405",
+   "expanded": "1f591c8f85da84117e23efd041b1d6fe5d3351a05e7673449918e859ff687405"
+  },
+  "NLP219-1.p": {
+   "source": "44f89fad31cf2ed1748f4c34a00ea293fa971f1d9064251dcdb6f7c90ef6ff94",
+   "expanded": "44f89fad31cf2ed1748f4c34a00ea293fa971f1d9064251dcdb6f7c90ef6ff94"
+  },
+  "SWB017+3.p": {
+   "source": "7ac42b8fcc33e06108240fa3274ec4f68cfb5bf0339db255e4fa0a203bc599cf",
+   "expanded": "2ac255c113e23f11f1ffb0de171ca2898529553093089c79f722176bd4697ab7"
+  },
+  "HAL007+1.p": {
+   "source": "1d264c45a96d8e9c89ed43d4ee5d49899be183a6eabdf2a2f47c6b8372b548d0",
+   "expanded": "d505f5badfe3781b70d48bf77d7bb3c22e0a5481cf6635401dca61b8394170b9"
+  },
+  "GRP126-4.005.p": {
+   "source": "542c921a581e10b9f52b949e6cac93c6e9dca07f8a00edfc4b2608c91fdb9c4b",
+   "expanded": "542c921a581e10b9f52b949e6cac93c6e9dca07f8a00edfc4b2608c91fdb9c4b"
+  },
+  "PLA025+1.p": {
+   "source": "7a1603b65729b1550311211f83e7e0be65ca65957b7028770f54205327beb7f9",
+   "expanded": "9e39e485226a5d48ed46043675050c8e10b95fe0478d68bb5d6118304e37a7d1"
+  },
+  "PHI032+1.p": {
+   "source": "29ccbe0e53b65420d44014372ffedc560959dcc32e8fb156ddbfc0d5710ddfd4",
+   "expanded": "4e1fd5b0eceb4c1cabf3277999c114922e66c416b2fbb7e1c7b52bd7359f7840"
+  },
+  "BIO001+1.p": {
+   "source": "3477b52a38d996e62bc9dd9563a70d17bd8ccfa3fb47f79864ec5c362a957a5e",
+   "expanded": "7b0e9d386ec5664c00dc675164671f716d3454d00ab04b20b09dd593c1513f21"
+  },
+  "MED004+1.p": {
+   "source": "52d99c059b1876b1fdb9e529718cca7dff22283643ac750a68cb71b89e1145c3",
+   "expanded": "8aef26170f42421cf4ec045dd85657eec58756cabe9b9c5521fb0ea9706df94c"
+  },
+  "PLA041-1.p": {
+   "source": "73810a7beb39a4a66e0541f1f4e411808508f1494a76aa5e744232202730bff3",
+   "expanded": "73810a7beb39a4a66e0541f1f4e411808508f1494a76aa5e744232202730bff3"
+  },
+  "PLA026+1.p": {
+   "source": "1f429e5a1a5ec769f972883e2cb246e8ab37af351cc25ed91e41517109ec7f31",
+   "expanded": "517863cec76e0fda8751b5cd2725d8d12e9935869e5a591ee95ec05392768f9c"
+  },
+  "PHI016+1.p": {
+   "source": "b59bed58b1bd7a7b242a96fcadde879173466dcff42d9ac2465adc474d688e86",
+   "expanded": "681430502c4686c556c6eb40d768b3edbf4610d406834cb97f26993491d6b8e6"
+  },
+  "KRS006-1.p": {
+   "source": "7c158b2c3aa2d1cd8d44f7fc26d881433088c2433c32acf465e789ca8d864c5b",
+   "expanded": "7c158b2c3aa2d1cd8d44f7fc26d881433088c2433c32acf465e789ca8d864c5b"
+  },
+  "ROB029-1.p": {
+   "source": "6374d4b6dfee4b4bddf704e8e831fa0a0e13c5a90d01c1c2e5a618f565a6ab9b",
+   "expanded": "a0307b9f06fa6f765367b7011615a61f77755432b573004daaa774451992bb4d"
+  },
+  "SYN807-1.p": {
+   "source": "66b840ad42af449c09b3c4a4186429053c73a2d8fc79291c93f37f4c3ac23f6b",
+   "expanded": "66b840ad42af449c09b3c4a4186429053c73a2d8fc79291c93f37f4c3ac23f6b"
+  },
+  "PHI030+1.p": {
+   "source": "3f7b4a96fcda8df2912c78374c0c88514942655ca293c0dfe37b9622daace6f1",
+   "expanded": "0feaf3243c86ddb02ee68b12ce94889f0b63dc06607734eeabb3d464c4def68e"
+  },
+  "LDA030-1.p": {
+   "source": "1de434c6a8fd4571e1e0490e542d7eb9de755a7c466f1690c1966dbd63328c8b",
+   "expanded": "1de434c6a8fd4571e1e0490e542d7eb9de755a7c466f1690c1966dbd63328c8b"
+  },
+  "NLP165-1.p": {
+   "source": "0694797303b843b9b223badae2fb6c41cf0373607c2e36776e0cfc3e98f2b9e0",
+   "expanded": "0694797303b843b9b223badae2fb6c41cf0373607c2e36776e0cfc3e98f2b9e0"
+  },
+  "SWV495-1.040.p": {
+   "source": "646c9b3205fdeb7a21ca6e7a06f157e4ca81cc1c6fc7d862792b46a51dc8e5a7",
+   "expanded": "646c9b3205fdeb7a21ca6e7a06f157e4ca81cc1c6fc7d862792b46a51dc8e5a7"
+  },
+  "NUM448+1.p": {
+   "source": "70c6d8c6970a21426347ef382ab76052d05b5722bfc802e0c8ee7384fd745244",
+   "expanded": "70c6d8c6970a21426347ef382ab76052d05b5722bfc802e0c8ee7384fd745244"
+  },
+  "LCL183-1.p": {
+   "source": "be0f2c84f78f1fcffc84dfb6e85df11b463336ff9a45dc09e6f56043c13f3bb2",
+   "expanded": "897be9f3f47e00d33c29d75bf63b7da7a92db3e2a193094dc7a39af700cc45d7"
+  },
+  "KRS009-1.p": {
+   "source": "6bbe64f44b5d1a61ffa37686c6105caca91f9f1b26b5583addf8b744d6f85bb3",
+   "expanded": "6bbe64f44b5d1a61ffa37686c6105caca91f9f1b26b5583addf8b744d6f85bb3"
+  },
+  "NLP226-10.p": {
+   "source": "ec957a371659eda34e2476463acaae9979f572379c993ca427d646d20ecbff2f",
+   "expanded": "ec957a371659eda34e2476463acaae9979f572379c993ca427d646d20ecbff2f"
+  },
+  "SYO609+1.p": {
+   "source": "cb66bc56c179aeb52b95ba929440e0dcdab0a92818d4d2a4a8f84d6430b0471c",
+   "expanded": "cb66bc56c179aeb52b95ba929440e0dcdab0a92818d4d2a4a8f84d6430b0471c"
+  },
+  "LCL645+1.015.p": {
+   "source": "616f29b9c632728cd593cfae542d40a2fb0486767aad8be54908996a3508963c",
+   "expanded": "616f29b9c632728cd593cfae542d40a2fb0486767aad8be54908996a3508963c"
+  },
+  "NLP083+1.p": {
+   "source": "5f8716a685ffca9654731034877d248068ec61dab878d8c300923801e470bcae",
+   "expanded": "5f8716a685ffca9654731034877d248068ec61dab878d8c300923801e470bcae"
+  },
+  "SWB016-10.p": {
+   "source": "55bcc14be140ffb101d8ee53d7105e6d7f7f0f9eadb5d0f13767211c4172d0c9",
+   "expanded": "55bcc14be140ffb101d8ee53d7105e6d7f7f0f9eadb5d0f13767211c4172d0c9"
+  },
+  "CSR161+1.p": {
+   "source": "9dac3ee0d3b53cea83e39120054c263931963107698cb3b598ee65efe0c202e7",
+   "expanded": "d9bebfec172540343ce9860064014a78b2047a790ba8b42ab9ab3c705dedab25"
+  },
+  "KRS173+1.p": {
+   "source": "aaedb88ff9209b9e531c86eab682dffccfd5b6c76b9dba609bc7601709e28c35",
+   "expanded": "aaedb88ff9209b9e531c86eab682dffccfd5b6c76b9dba609bc7601709e28c35"
+  },
+  "LAT024-1.p": {
+   "source": "1e6acd7db4e6ad9e13642813911c17e7ca99ab770834ec229fc86c1596f03ab3",
+   "expanded": "e46f461c8f59f80759dbc2592657a928907d47a2a80d8fbe3c1ecc1a8865b9e3"
+  },
+  "SYN779-1.p": {
+   "source": "9fd08e46998fb46eda0cc823adaf3a25bc34e88ac27dac85237b08a7aeac592f",
+   "expanded": "9fd08e46998fb46eda0cc823adaf3a25bc34e88ac27dac85237b08a7aeac592f"
+  },
+  "LCL661+1.015.p": {
+   "source": "3e12504a5d19e21ee6edc1fd2d3a4040898e60e459eaadd9bfcd36f6585c38e1",
+   "expanded": "3e12504a5d19e21ee6edc1fd2d3a4040898e60e459eaadd9bfcd36f6585c38e1"
+  },
+  "LAT051-1.p": {
+   "source": "654ca4f45ed06a992b78d2279efb9e80adc97fa57949cfeb0b8c808d9c4662c3",
+   "expanded": "485f38a17cec8bb9f5f42e59233ed08ca37c9cbca156991c6a45626e2c74f8c3"
+  },
+  "SWV920-1.p": {
+   "source": "98ea9784883a48afccd6d81ed43643322a04eaf6a5db0a16d7ca13621e94444f",
+   "expanded": "98ea9784883a48afccd6d81ed43643322a04eaf6a5db0a16d7ca13621e94444f"
+  },
+  "SYO779+1.p": {
+   "source": "db659ad6f448527aeb73937a6a77827bb357cd2b07115f44eddb9eaf2eafa8ed",
+   "expanded": "db659ad6f448527aeb73937a6a77827bb357cd2b07115f44eddb9eaf2eafa8ed"
+  },
+  "NLP018-10.p": {
+   "source": "8356ddb08caecbb524d6dc83aa0a9f9b9a03e094e9b6e414a7b7140d3abea1bd",
+   "expanded": "8356ddb08caecbb524d6dc83aa0a9f9b9a03e094e9b6e414a7b7140d3abea1bd"
+  },
+  "GRP133-1.004.p": {
+   "source": "983079cf88c6c97532fce5a45fde12d6b16d011dcf13dad1a94b944049d81841",
+   "expanded": "983079cf88c6c97532fce5a45fde12d6b16d011dcf13dad1a94b944049d81841"
+  },
+  "COL071-1.p": {
+   "source": "7d08b5a0579418493c56f2abc764d3097fe5fe2b751d0c76429d8e8483c59708",
+   "expanded": "7d08b5a0579418493c56f2abc764d3097fe5fe2b751d0c76429d8e8483c59708"
+  },
+  "NLP137-1.p": {
+   "source": "97df524bf0bcc40b650c9da5235d3674874b382ea7623331e117908a4a1b1237",
+   "expanded": "97df524bf0bcc40b650c9da5235d3674874b382ea7623331e117908a4a1b1237"
+  },
+  "NLP232+1.p": {
+   "source": "b0edeb8d0c756806110841573f15017a017bb070284e23fc1591a11d7faaf485",
+   "expanded": "b0edeb8d0c756806110841573f15017a017bb070284e23fc1591a11d7faaf485"
+  },
+  "AGT042+1.p": {
+   "source": "81789b27195296017344a308c02e8742caa02651129b71568704a0e29b0d3806",
+   "expanded": "3201ed1f2eb80ac36e588aa5d5a296a3ea9e9ab95a08299343da636638b920ae"
+  },
+  "HWV048-2.p": {
+   "source": "b63f34d0ef1e989216d69520b51c518f263d0fbf745d712ac57dbce06f361f3f",
+   "expanded": "b63f34d0ef1e989216d69520b51c518f263d0fbf745d712ac57dbce06f361f3f"
+  },
+  "LCL659+1.020.p": {
+   "source": "3c276aeeafb8db220821897e06eadc549c583ce4bccfe0487688d7f359b1f1f7",
+   "expanded": "3c276aeeafb8db220821897e06eadc549c583ce4bccfe0487688d7f359b1f1f7"
+  },
+  "NLP060-1.p": {
+   "source": "259a5e141cac6c33883d88dc32e85da50a90a669b9fe4491a0f359e6639919a8",
+   "expanded": "259a5e141cac6c33883d88dc32e85da50a90a669b9fe4491a0f359e6639919a8"
+  },
+  "NLP108+1.p": {
+   "source": "a7a073643a6ebd5eb8be591ea53afd7b28e33f7ea4269577dae8296dc5f57265",
+   "expanded": "a7a073643a6ebd5eb8be591ea53afd7b28e33f7ea4269577dae8296dc5f57265"
+  },
+  "SYN424+1.p": {
+   "source": "6c0e78771e8b2545e1b1dd8b9c3e42d42b107d6f303c6775998ce3aeda028db0",
+   "expanded": "6c0e78771e8b2545e1b1dd8b9c3e42d42b107d6f303c6775998ce3aeda028db0"
+  },
+  "PHI040+1.p": {
+   "source": "d441ff39c126707b6f11988a032938f7c871f86f581acd649eaa5c3dd7d1c26e",
+   "expanded": "6691a9cc4d1237644b791d4e05dcfc418248ac265f49487a2e0357aaced3310e"
+  },
+  "SYN903-1.p": {
+   "source": "2de7a6b667cd8329536f901e5077a00e86bb0e87f05c0387f79bd9ad4417baf9",
+   "expanded": "2de7a6b667cd8329536f901e5077a00e86bb0e87f05c0387f79bd9ad4417baf9"
+  },
+  "NLP106+1.p": {
+   "source": "917136b2dd7c6d95f041e4a578f26ca7a6964b640c5ffaf576c8a7a858761691",
+   "expanded": "917136b2dd7c6d95f041e4a578f26ca7a6964b640c5ffaf576c8a7a858761691"
+  },
+  "SYN773-1.p": {
+   "source": "fad95b11baefb120ad2c8a2e45b98756472b6ab9bbbd3647209ca08c0a1d09f6",
+   "expanded": "fad95b11baefb120ad2c8a2e45b98756472b6ab9bbbd3647209ca08c0a1d09f6"
+  },
+  "SWV497-1.040.p": {
+   "source": "28e338e38b7a95fe4179cd2c9cb5c166090b8d2292d5049c311a75707b18f4fd",
+   "expanded": "28e338e38b7a95fe4179cd2c9cb5c166090b8d2292d5049c311a75707b18f4fd"
+  },
+  "HWV042+1.p": {
+   "source": "79ab847f17b077dca8c645cd0cec3c92be43d07a6bc56bb0531a3075e79eea97",
+   "expanded": "79ab847f17b077dca8c645cd0cec3c92be43d07a6bc56bb0531a3075e79eea97"
+  },
+  "SWB014+4.p": {
+   "source": "60a61a4ecb111863e52a25d51e4198e5dd4f8ceb76178a08705c0ac74f9a73b5",
+   "expanded": "a93ff208cb28a6001de7a842e3ea8b1b3f232a8e54b8813b642ecd6067197acf"
+  },
+  "SYN092-1.003.p": {
+   "source": "6d5cd6307ea8ad9aa2f303547c5258d4cfd507fb172d661be7c4929be55bd22e",
+   "expanded": "6d5cd6307ea8ad9aa2f303547c5258d4cfd507fb172d661be7c4929be55bd22e"
+  },
+  "ROB012-2.p": {
+   "source": "58ccbe242f2fcd8c4e3dac187cca2f783906b002d2a8c37041c75c10c71e3f66",
+   "expanded": "163387cffccbc62a90173ca36051be13c68dc1096d77db9e328a996dba3c2a42"
+  },
+  "NUM288-1.p": {
+   "source": "2b3a52225a82c2960ecd903caf59f27730925a7f0ecdf9917c47777451f4478b",
+   "expanded": "fdba09a1d3053f2c201404dfc6415ac87da63eedb71a0f351580924ed71d3dbc"
+  },
+  "SYO698+1.p": {
+   "source": "85196cbbec0ebe883dcca8b32d917c6dcb74c468abbaadc7422f7a0bf6f60abc",
+   "expanded": "85196cbbec0ebe883dcca8b32d917c6dcb74c468abbaadc7422f7a0bf6f60abc"
+  },
+  "SET502-6.p": {
+   "source": "450106c91d1cc3eb8f3abde8b38880d8c5eb92378ca7f58dcf94206dcefdf6c0",
+   "expanded": "4c0f01737dcf70c9f5752d02e73f794967b041903cd38b100fa58208a876772f"
+  },
+  "NLP051-1.p": {
+   "source": "77f751c454550a5a92fcae1a1422929a176938169d6faa24b3bdd4baf669cc58",
+   "expanded": "77f751c454550a5a92fcae1a1422929a176938169d6faa24b3bdd4baf669cc58"
+  },
+  "LCL645+1.010.p": {
+   "source": "d7f0ba517070605b639c6df4a65b21436657c0662e2f65d6872df99ff26a2a9a",
+   "expanded": "d7f0ba517070605b639c6df4a65b21436657c0662e2f65d6872df99ff26a2a9a"
+  },
+  "SET226-6.p": {
+   "source": "8d48d6326e54e5221b84f6ddc6db33d9018965146efbdc3648e904844e22d82b",
+   "expanded": "bfe13fb38e7eb8f4eb7f196acdaf0e202b6f56d49e0d44c8c2903c37ebd7862c"
+  },
+  "SYN493-1.p": {
+   "source": "3196057ab5b205b40d4446cf7b3f6fc9062016c64c8cc19dbb41e01c97f715be",
+   "expanded": "3196057ab5b205b40d4446cf7b3f6fc9062016c64c8cc19dbb41e01c97f715be"
+  },
+  "SYN342-10.p": {
+   "source": "c0db19ec8ab8f346c3e65b65792fba1a5019182919b3c39ec3ccceacd3b06bf3",
+   "expanded": "c0db19ec8ab8f346c3e65b65792fba1a5019182919b3c39ec3ccceacd3b06bf3"
+  },
+  "KRS244+1.p": {
+   "source": "ba60feabca60e9a11e739030a5e738358aa12b1066c1dde978918bc8ced338cd",
+   "expanded": "ba94ccc6848b479b89ba6abf2a9375140f8488ddc47ba151133effa0b3db8ecf"
+  },
+  "SYN529-1.p": {
+   "source": "61cf22edd5b56cfc24d0e9a5592768d5ca94319e8dd5541529da22f5aeab9e16",
+   "expanded": "61cf22edd5b56cfc24d0e9a5592768d5ca94319e8dd5541529da22f5aeab9e16"
+  },
+  "NLP162-1.p": {
+   "source": "835c063a1f392c88f65975faabda083578dbdf36be449c94d6f1ab131aa09f0c",
+   "expanded": "835c063a1f392c88f65975faabda083578dbdf36be449c94d6f1ab131aa09f0c"
+  },
+  "LDA032-1.p": {
+   "source": "5d0174f9bc9a3542490c41df64b25ad75e21ddd9e29d4cc9278fd4626378aba6",
+   "expanded": "5d0174f9bc9a3542490c41df64b25ad75e21ddd9e29d4cc9278fd4626378aba6"
+  },
+  "SYN307-1.p": {
+   "source": "5f6f7e146be3bd1ae758f835ca6f5ea091e54a0979255e9c3c1b0bf2ef81cb78",
+   "expanded": "5f6f7e146be3bd1ae758f835ca6f5ea091e54a0979255e9c3c1b0bf2ef81cb78"
+  },
+  "SYO770+1.p": {
+   "source": "ce486712ab695805490d0a3351961964ab3fc2be035f479ed0abcbca47ce7c0d",
+   "expanded": "ce486712ab695805490d0a3351961964ab3fc2be035f479ed0abcbca47ce7c0d"
+  },
+  "NLP225+1.p": {
+   "source": "4b61c8220ca152f40b7931e12e455248d01efcdabf42ffb8701605f6e992e19c",
+   "expanded": "4b61c8220ca152f40b7931e12e455248d01efcdabf42ffb8701605f6e992e19c"
+  },
+  "SYN803-1.p": {
+   "source": "e0eec7ee1f9514f4f5897f3cffdd9abeaaf27075f4479db05615b2913791996f",
+   "expanded": "e0eec7ee1f9514f4f5897f3cffdd9abeaaf27075f4479db05615b2913791996f"
+  },
+  "LCL647+1.010.p": {
+   "source": "649588cad5ffa908894fec799506f6f1c08ad36a93c3efa7ef6a2d92857f196c",
+   "expanded": "649588cad5ffa908894fec799506f6f1c08ad36a93c3efa7ef6a2d92857f196c"
+  },
+  "LCL673+1.015.p": {
+   "source": "53da62a3ea4de336ebad68a12c40c8ebc0645fb24602a48aaff345b4db7eeb28",
+   "expanded": "53da62a3ea4de336ebad68a12c40c8ebc0645fb24602a48aaff345b4db7eeb28"
+  },
+  "ALG306-1.p": {
+   "source": "3d7d0310eeb39daf023550ed8ef92b2c14ccc6403e823c8142c4eee25ae6ca7a",
+   "expanded": "3d7d0310eeb39daf023550ed8ef92b2c14ccc6403e823c8142c4eee25ae6ca7a"
+  },
+  "SYO772+1.p": {
+   "source": "1c31c181604f7c71633b173aec78bc929847a6ccbdd9ff99c330d408c8d14a9c",
+   "expanded": "1c31c181604f7c71633b173aec78bc929847a6ccbdd9ff99c330d408c8d14a9c"
+  },
+  "SYN324+1.p": {
+   "source": "0ed3bf29ff6e627f4666889299fd52d0bbb33c1196c991c8b631e13937446300",
+   "expanded": "0ed3bf29ff6e627f4666889299fd52d0bbb33c1196c991c8b631e13937446300"
+  },
+  "RNG025-9.p": {
+   "source": "285fcc38aebd9c6030a5cc19e6a648742092536ec689a3517769923ddb52ddb5",
+   "expanded": "285fcc38aebd9c6030a5cc19e6a648742092536ec689a3517769923ddb52ddb5"
+  },
+  "LAT112-1.p": {
+   "source": "c02b0dea5628a16444b0af5964d20a6927c6c0b2e043595c702dee4088fcac1a",
+   "expanded": "d21f9c753339a34319bafa52d2ffbbdcabd67f2553f41f720569165d9fb31c30"
+  },
+  "KLE171+1.p": {
+   "source": "d44c98119601985a1090c1ed3ab10226a9cf703bb54a92c6913752629618bb84",
+   "expanded": "04c24a80cde6823133353cf6f370b1fe13a2e9a871fb9449b9b8691837e79182"
+  },
+  "NLP184-1.p": {
+   "source": "3ab5513a3dad0e880296a2ad570f6beeee6549d290dafc2202a1101e0ea40c10",
+   "expanded": "3ab5513a3dad0e880296a2ad570f6beeee6549d290dafc2202a1101e0ea40c10"
+  },
+  "NLP091-1.p": {
+   "source": "e6f50ad35e4a9acf439176a0ff9ddcc7cd994306e65ea32c1a6149287f2b717f",
+   "expanded": "e6f50ad35e4a9acf439176a0ff9ddcc7cd994306e65ea32c1a6149287f2b717f"
+  },
+  "SWV500-1.030.p": {
+   "source": "162bb619b30d28b431ac9eda06ba64264a804683b75fe4af2c8d4d4416511e65",
+   "expanded": "162bb619b30d28b431ac9eda06ba64264a804683b75fe4af2c8d4d4416511e65"
+  },
+  "LCL683+1.015.p": {
+   "source": "2939c441fc06bd3dcab32a87dbc03478c2b53dba0eef04db4ad8e6f829e76448",
+   "expanded": "2939c441fc06bd3dcab32a87dbc03478c2b53dba0eef04db4ad8e6f829e76448"
+  },
+  "LCL179-1.p": {
+   "source": "8902d0b52138dba9eb58c714019aa699e40ab07f24516e13e22cecaac62ff5ba",
+   "expanded": "1341b00db94b252d2a4f1afef979c1d5e577448dac9e88af39c02686fffd7301"
+  },
+  "SWB013+4.p": {
+   "source": "318fbf7bf1c1c3823e52a2d87a4a24ac820dce4ec39a9fbed2fd83d03eb20939",
+   "expanded": "119367dd5db22a1c495d7262bd3e0a75606fb8d25d75d7f061bada7a66a65382"
+  },
+  "GEO158-1.p": {
+   "source": "417c55eed82699f7c6ca015608e88f5840b4aad1f72745afb23de92147fff476",
+   "expanded": "ac1827370d19268d3b5c4ad6c0a6a0a600e20c7fc31b7c535aa34de9514f7af3"
+  },
+  "SWW883+1.p": {
+   "source": "65f8b6bdbc1e75ca56c8ccf11ad4833337c3bbb900a38899d7727955b6dc9120",
+   "expanded": "65f8b6bdbc1e75ca56c8ccf11ad4833337c3bbb900a38899d7727955b6dc9120"
+  },
+  "REL053-1.p": {
+   "source": "b39dba331b681639795dd04023e0954b15624def6971593cbb94cd9b4442a032",
+   "expanded": "dbb123ee0f11e20a379408f8007b1c04159e9c9ccf9f130d0c5301a8ce884b11"
+  },
+  "SYN832-1.p": {
+   "source": "b56beb7e063adf59568c73130f22ca2354cb3e9bd884d3cdaff2533f49627082",
+   "expanded": "b56beb7e063adf59568c73130f22ca2354cb3e9bd884d3cdaff2533f49627082"
+  },
+  "LCL685+1.010.p": {
+   "source": "5cb8db584097aae421afda28834fc5b3065c9bb59ee83f2d6bfbcb0a3521025f",
+   "expanded": "5cb8db584097aae421afda28834fc5b3065c9bb59ee83f2d6bfbcb0a3521025f"
+  },
+  "NLP042-10.p": {
+   "source": "63e299a1384b0b6b39c1e591a07991f796476f2aff3dfe469fbe5f2ede0404ca",
+   "expanded": "63e299a1384b0b6b39c1e591a07991f796476f2aff3dfe469fbe5f2ede0404ca"
+  },
+  "LCL661+1.020.p": {
+   "source": "ada8fbd4f61d5569b55cfdb1dcbc7bf47c5ce95c6be5ad17152fdda36deed716",
+   "expanded": "ada8fbd4f61d5569b55cfdb1dcbc7bf47c5ce95c6be5ad17152fdda36deed716"
+  },
+  "NUM374+2.p": {
+   "source": "d998277cd45277af3cb7ea7b5c0c10f9f39f14daa833dbe996722fa6492e2a01",
+   "expanded": "d998277cd45277af3cb7ea7b5c0c10f9f39f14daa833dbe996722fa6492e2a01"
+  },
+  "ALG334-1.p": {
+   "source": "cdaf00b064134535e0f2c478bb78e930fb23283ff42d75426232bdf58efac126",
+   "expanded": "cdaf00b064134535e0f2c478bb78e930fb23283ff42d75426232bdf58efac126"
+  },
+  "NLP263+1.p": {
+   "source": "19b17e9e83f8e707d0b803e791ae8dc399c9bf81151f73b8ee8c90d20f16ebff",
+   "expanded": "81b055a1c4594acf3e95607cf8678dc63abcb5b22b1ea4324a4a31011adaca1d"
+  },
+  "SWV495-1.050.p": {
+   "source": "8374759a3c03aeaff6bb1b8effa675682eb03609b750c9d0449c43cfa3360a98",
+   "expanded": "8374759a3c03aeaff6bb1b8effa675682eb03609b750c9d0449c43cfa3360a98"
+  },
+  "LCL681+1.001.p": {
+   "source": "f30fc124ba26c1543f932dc3b9751c48859cdebfc8862c724bc9986ac79f552e",
+   "expanded": "f30fc124ba26c1543f932dc3b9751c48859cdebfc8862c724bc9986ac79f552e"
+  },
+  "PLA029-1.p": {
+   "source": "bdfd35787f995ff85a200f5b6472c1bd549f81c3dc8bd7836c8175867c17c660",
+   "expanded": "05d91eeeae92837197b33ae0bc6bd03e852661067721ae847168183c0e8152a8"
+  },
+  "PRO007+3.p": {
+   "source": "d027b0f8fb8fa7db56b817383702989d7e4ad32b4b9b0efc239f81618e8b127b",
+   "expanded": "d027b0f8fb8fa7db56b817383702989d7e4ad32b4b9b0efc239f81618e8b127b"
+  },
+  "SWB023+3.p": {
+   "source": "252f55dde76cda704641170a4fefe5bb6932bf6ccbbd66ea5cbf8f943f9c41a2",
+   "expanded": "c04ec97a579380fd00f612498609f6aa9a5dfd62d9598b9b593046db2dbe5d87"
+  },
+  "MSC013-10.p": {
+   "source": "38edeb91249e1ac9c6c8dd2405453f8619afabe0a623353df8ef921f1a38ff51",
+   "expanded": "38edeb91249e1ac9c6c8dd2405453f8619afabe0a623353df8ef921f1a38ff51"
+  },
+  "LDA031-1.p": {
+   "source": "066c4754ea975d6f17a661ddfa7221b65d223a38801cb6d77cffdfbd740f47f5",
+   "expanded": "066c4754ea975d6f17a661ddfa7221b65d223a38801cb6d77cffdfbd740f47f5"
+  },
+  "SWV544-1.007.p": {
+   "source": "cf6e6336a7b3186ff830052c54353d7eb74e869d3cc9877341e07ab1a5f5b188",
+   "expanded": "cf6e6336a7b3186ff830052c54353d7eb74e869d3cc9877341e07ab1a5f5b188"
+  },
+  "SYN322+1.p": {
+   "source": "40c6c58a17c6d72032d18b5f6c390ad169ee046385c2b85eaaf9bbe01925cbce",
+   "expanded": "40c6c58a17c6d72032d18b5f6c390ad169ee046385c2b85eaaf9bbe01925cbce"
+  },
+  "BOO008-3.p": {
+   "source": "39d08b3159bfe2f02d940bbbd06bf9cd5c6dd74c365f32bdfca4130ffec3ff1a",
+   "expanded": "39d08b3159bfe2f02d940bbbd06bf9cd5c6dd74c365f32bdfca4130ffec3ff1a"
+  },
+  "GEO661+1.p": {
+   "source": "52dc79a20eaff570bc15321faa64c1e9b52408aa0ac3038b6346d10698687b6e",
+   "expanded": "52dc79a20eaff570bc15321faa64c1e9b52408aa0ac3038b6346d10698687b6e"
+  },
+  "GEG001+1.p": {
+   "source": "1cce74aa55289849cdb0ca8d3fc057b46f5756363816cb2658bef7d0fa672bcf",
+   "expanded": "1cce74aa55289849cdb0ca8d3fc057b46f5756363816cb2658bef7d0fa672bcf"
+  },
+  "LCL914+1.p": {
+   "source": "18c532fb30b6e6641a8197383cfd54507e946d0006a861851a253a8590340cda",
+   "expanded": "e94aa49e214561d472eae03eafcd652a5d7efbe4fef8dc48795d7330293cd72a"
+  },
+  "SYN754-1.p": {
+   "source": "4ec745866841a9917fdd7d6302cb38c496310f952046bfdf8c1e339a431d6875",
+   "expanded": "4ec745866841a9917fdd7d6302cb38c496310f952046bfdf8c1e339a431d6875"
+  },
+  "SWV499-1.050.p": {
+   "source": "88b3c860c7fde7bc1430d7d61e4a4043f60e74f0621ee4fbd1467fe372f5b64c",
+   "expanded": "88b3c860c7fde7bc1430d7d61e4a4043f60e74f0621ee4fbd1467fe372f5b64c"
+  },
+  "SWB011+4.p": {
+   "source": "d1a57e56f45584e2d3b92fe2349b44eefa2c0b6f1e2c0575c2e6e45ad5250ff5",
+   "expanded": "08aee55aefeda3faf78e431f14052fc4dc2974e5a21975039cbda6d2d72ae272"
+  },
+  "SYO746+1.p": {
+   "source": "48ccfe6823d165ff1215b54164fd6f0efd8a89024940cedec92f8649d8e1c0f4",
+   "expanded": "48ccfe6823d165ff1215b54164fd6f0efd8a89024940cedec92f8649d8e1c0f4"
+  },
+  "SWB007+3.p": {
+   "source": "1c747d0314c7ab3f72e870e31303281efad30b8a671b756ef457077f697810e2",
+   "expanded": "f22da062f26e6eb2292262d5109c99ed23648ba047d3eed2f223f8f3038476e4"
+  },
+  "NLP040-1.p": {
+   "source": "e5bcf47c54fe6fa9bc7d95be6034512c0537bf2347d8f27e3dc81714b984896a",
+   "expanded": "e5bcf47c54fe6fa9bc7d95be6034512c0537bf2347d8f27e3dc81714b984896a"
+  },
+  "SYN456+1.p": {
+   "source": "8161d045352a83ca2375df4bfb9e23a459f2b0ff9e31cc4aa9dfbc89db81d338",
+   "expanded": "8161d045352a83ca2375df4bfb9e23a459f2b0ff9e31cc4aa9dfbc89db81d338"
+  },
+  "GRP135-1.005.p": {
+   "source": "bb00c72174e9bf0f29c278e8e4960a0442c09e070f68b45709967bf5bfccbb9c",
+   "expanded": "bb00c72174e9bf0f29c278e8e4960a0442c09e070f68b45709967bf5bfccbb9c"
+  },
+  "NLP043-1.p": {
+   "source": "f645baadb5f6c7d598735c454f03fcfb6768e42fe9d301613601546f8bb3e9a5",
+   "expanded": "f645baadb5f6c7d598735c454f03fcfb6768e42fe9d301613601546f8bb3e9a5"
+  },
+  "SYO593-1.p": {
+   "source": "2e216d732f9008594836719a832897e664b1bda593d35615d7d717cf50b9224e",
+   "expanded": "2e216d732f9008594836719a832897e664b1bda593d35615d7d717cf50b9224e"
+  },
+  "LCL673+1.005.p": {
+   "source": "c2b6655e5f41c4db5374d76d644e1135ac0ec6af09b3da5dbcf4f26672a3e082",
+   "expanded": "c2b6655e5f41c4db5374d76d644e1135ac0ec6af09b3da5dbcf4f26672a3e082"
+  },
+  "GRP398-1.p": {
+   "source": "4a92dd96d258acb9cd93d4bc2fe8d5482abdc3c5b81e53224005b6ddd0873fc3",
+   "expanded": "658b5ae9dad6266e05f0ad823850bccb374d3a54f5fa0d2681ac292a2e61d201"
+  },
+  "NLP125-1.p": {
+   "source": "6c583c0f68bb6bf610ff687f9ccf6e7019a40a83ade3b2c426d5f5255914674a",
+   "expanded": "6c583c0f68bb6bf610ff687f9ccf6e7019a40a83ade3b2c426d5f5255914674a"
+  },
+  "GRP773-1.p": {
+   "source": "c92353a861ce7219ef4d36c160cbe56e36132c07de56f5e5a9003b9fe9d07a74",
+   "expanded": "c92353a861ce7219ef4d36c160cbe56e36132c07de56f5e5a9003b9fe9d07a74"
+  },
+  "NUN091+1.p": {
+   "source": "bbdda0df46191bbe751f39bddd37438b73140a9006ae43bd47732283fc2417bf",
+   "expanded": "bbdda0df46191bbe751f39bddd37438b73140a9006ae43bd47732283fc2417bf"
+  },
+  "NLP051+1.p": {
+   "source": "bb89b421ffbb7dd3fa48747399962b5a0be3df562f23800b83b219d851d95407",
+   "expanded": "bb89b421ffbb7dd3fa48747399962b5a0be3df562f23800b83b219d851d95407"
+  },
+  "NLP124+1.p": {
+   "source": "0b22dca482707f80e55123887880cae5c7628f7f1bb60f381b3a2723717a9457",
+   "expanded": "0b22dca482707f80e55123887880cae5c7628f7f1bb60f381b3a2723717a9457"
+  },
+  "SWB004+4.p": {
+   "source": "5483f89e3b8946282b1523671d3728353a2a9e44c056f3464e38a7b70eb27cfa",
+   "expanded": "644f583a51d2a22f3ae826be59f0e86c4b01b83ffb8d716574a7f9b3c7dc3a8b"
+  },
+  "LCL667+1.001.p": {
+   "source": "064dd02935dae35d455ddfc1f7232f144a31db26a21fcb84b88a300ec66fd35e",
+   "expanded": "064dd02935dae35d455ddfc1f7232f144a31db26a21fcb84b88a300ec66fd35e"
+  },
+  "COM150+1.p": {
+   "source": "dc1845ef838dcfb98c77d31c66c80662a1309c343abf77eb5fe999146e8d0828",
+   "expanded": "1bce0f2dc735d93def20b25592682ccfc8c8a4e36d438ec005266071fd954899"
+  },
+  "GRP027-1.p": {
+   "source": "6d53a8d42818c4bad313f68aed1f5a8de7f83dd7ac46ee6e68257727ff16f088",
+   "expanded": "0e359e168079c9323b11ac32e4aeecd0559f5c69d10751d52c4537837c0eb4d1"
+  },
+  "ALG301-1.p": {
+   "source": "9d1ba868b4621625eae428661c08c4d5e808adfd9f680ea8f9ea47e63e90b4ef",
+   "expanded": "9d1ba868b4621625eae428661c08c4d5e808adfd9f680ea8f9ea47e63e90b4ef"
+  },
+  "SYN817-1.p": {
+   "source": "395cae422a56d8efef04ca28e22ad162fd17a73ecdc128819806815f4282e2a1",
+   "expanded": "395cae422a56d8efef04ca28e22ad162fd17a73ecdc128819806815f4282e2a1"
+  },
+  "SWV542-1.007.p": {
+   "source": "2b0865aee44f77e60bc5fda9b5b6463cfda59267f83ec601809dafcc401ac27c",
+   "expanded": "2b0865aee44f77e60bc5fda9b5b6463cfda59267f83ec601809dafcc401ac27c"
+  },
+  "SWV504-1.050.p": {
+   "source": "db2c23e7359d54933dd15494b37481e215d1b8beadcccbca5d48c141e67a8289",
+   "expanded": "db2c23e7359d54933dd15494b37481e215d1b8beadcccbca5d48c141e67a8289"
+  },
+  "LCL649+1.015.p": {
+   "source": "a7bf041d253dd9fc33092a5fac235f2a5b585ab1c1fa76747c3fb5a5f77b77ad",
+   "expanded": "a7bf041d253dd9fc33092a5fac235f2a5b585ab1c1fa76747c3fb5a5f77b77ad"
+  },
+  "BOO042-1.p": {
+   "source": "32bcc33fbe18a9e9301f85cb54878275f3db3398c9b9cecd709f03c84e109f34",
+   "expanded": "32bcc33fbe18a9e9301f85cb54878275f3db3398c9b9cecd709f03c84e109f34"
+  },
+  "SWV554-1.010.p": {
+   "source": "3c7c0330ec8842ef9bacc8ca21d6d0bfb2d3bdc2cb416534daa4675e912b8efe",
+   "expanded": "3c7c0330ec8842ef9bacc8ca21d6d0bfb2d3bdc2cb416534daa4675e912b8efe"
+  },
+  "SYN446-1.p": {
+   "source": "82eb7ac13e370d6df400c9df9cc6382ae41ab18c58c06b360b0f3586b269db1a",
+   "expanded": "82eb7ac13e370d6df400c9df9cc6382ae41ab18c58c06b360b0f3586b269db1a"
+  },
+  "GRP134-1.005.p": {
+   "source": "aeb0c175c91469d60bf92decc7f6364cce18bcc3e367f4ebaa4e6e66fa539438",
+   "expanded": "aeb0c175c91469d60bf92decc7f6364cce18bcc3e367f4ebaa4e6e66fa539438"
+  },
+  "KRS210+1.p": {
+   "source": "ba877dd1db7f0f604fcc9014e008680dcb29e0168b09368f3542dc0f636db431",
+   "expanded": "b5360fe86fd2452c0f957d8e21287ac6d92846b9cbcaab5bf302bc112b11cb71"
+  },
+  "GRP800+1.p": {
+   "source": "fc7c92392787c71c2bf0d3f164cf4823d2dcc75912d7493fbac6cc378ac6d505",
+   "expanded": "fc7c92392787c71c2bf0d3f164cf4823d2dcc75912d7493fbac6cc378ac6d505"
+  },
+  "LCL883+1.p": {
+   "source": "0e7245d32cba6089b7e41b62de0664d0cb04b3e0c184e453f3aa5963c06770ad",
+   "expanded": "0e7245d32cba6089b7e41b62de0664d0cb04b3e0c184e453f3aa5963c06770ad"
+  },
+  "SYN795-1.p": {
+   "source": "ed53bfe625cc05aa69151fa72db997dbe1909b118fa254241acc83ccc3f28296",
+   "expanded": "ed53bfe625cc05aa69151fa72db997dbe1909b118fa254241acc83ccc3f28296"
+  },
+  "GEO224+1.p": {
+   "source": "cd64011b06d1764c946114513e1cec0a12d5509979d674f8b96cf0c72be64b17",
+   "expanded": "0ed5c829bca44ae512af146bb84b5e957c72526bad8db748e0303605d9d66be2"
+  },
+  "SWV546-1.007.p": {
+   "source": "f64abd1e8a0809824d8f3a48990f4f30ffee02c719bbb5caf23bc3726fb0ec01",
+   "expanded": "f64abd1e8a0809824d8f3a48990f4f30ffee02c719bbb5caf23bc3726fb0ec01"
+  },
+  "SYO690-1.000.p": {
+   "source": "c498f53d3b1925fd165f7cac990a696eb7c35eec552c08915c10cca30664e66b",
+   "expanded": "c498f53d3b1925fd165f7cac990a696eb7c35eec552c08915c10cca30664e66b"
+  },
+  "MGT037-2.p": {
+   "source": "f4422810c06de859688c8ed420a52797b6227a22d0dd8b1559ea26f7a7d21143",
+   "expanded": "f4422810c06de859688c8ed420a52797b6227a22d0dd8b1559ea26f7a7d21143"
+  },
+  "SWW938+1.p": {
+   "source": "54268876e5a36c80e3fe459c0242c92d1d55708b05c3e6208b3d5777eeb0945a",
+   "expanded": "54268876e5a36c80e3fe459c0242c92d1d55708b05c3e6208b3d5777eeb0945a"
+  },
+  "CAT020-2.p": {
+   "source": "537f4f1a9584790f9ea73b53ed6408e887e948093dd282c482dbc79f8bce1ec7",
+   "expanded": "8eb9b70762d50606d35059f24d8adbb148f0c5950d60611c87d3b698bf43414c"
+  },
+  "SWW902+1.p": {
+   "source": "dffb691c87c68850d206eb95a6fddb6f5682c46c0084fa27bba9c7f3ab225b2c",
+   "expanded": "dffb691c87c68850d206eb95a6fddb6f5682c46c0084fa27bba9c7f3ab225b2c"
+  },
+  "SYO700+1.p": {
+   "source": "48d5be0b9dad68fd470d82ac080bc4677b9c7fbf877efb73734b918d0249e8c6",
+   "expanded": "48d5be0b9dad68fd470d82ac080bc4677b9c7fbf877efb73734b918d0249e8c6"
+  },
+  "LCL681+1.010.p": {
+   "source": "c68c6f98215f926004aa7b0be36fc679afe3fce301c0dc39d81eaa918acec930",
+   "expanded": "c68c6f98215f926004aa7b0be36fc679afe3fce301c0dc39d81eaa918acec930"
+  },
+  "SYO789+1.p": {
+   "source": "f5aeabecbe9b16730eb396392b26a2440f3fb9bb90dc533c2e3ddc68131edb41",
+   "expanded": "f5aeabecbe9b16730eb396392b26a2440f3fb9bb90dc533c2e3ddc68131edb41"
+  },
+  "NLP126-10.p": {
+   "source": "78cdc65e420740f4a5fb33a08c457778f7329d5add27d0a3e1a8ae4e6768cdec",
+   "expanded": "78cdc65e420740f4a5fb33a08c457778f7329d5add27d0a3e1a8ae4e6768cdec"
+  },
+  "NLP072+1.p": {
+   "source": "fb97f12b5a0003fe6afb2c346b9b3d4fe55514d388110deda8047c9e26726f42",
+   "expanded": "fb97f12b5a0003fe6afb2c346b9b3d4fe55514d388110deda8047c9e26726f42"
+  },
+  "RNG132-1.p": {
+   "source": "a12a856c55316a5cac161d1eb34df111cbcff68b7a71d51d8b40a11c85c31c2f",
+   "expanded": "a12a856c55316a5cac161d1eb34df111cbcff68b7a71d51d8b40a11c85c31c2f"
+  },
+  "LAT102-1.p": {
+   "source": "5d466853b39637503af62a86e4e65a0e7bad80dfef21f648eba3a7ef97a0df31",
+   "expanded": "eeca3e0b915b78bc0ebf73a06fceeb2673a59103bd329b63fa386e3e4b5c8086"
+  },
+  "LAT100-1.p": {
+   "source": "81ee0b04c6ec6517da157d82986efbcd8fc5b4a4e325fe2e151fcb733b665499",
+   "expanded": "c99f47fce6069af9c8c059e9e2d34ce453a78885f0ce77539c7f7daa47731e0c"
+  },
+  "KLE181+1.p": {
+   "source": "3e19ea12b79a628c9495f801876deec6e87e90efa2ec36328c9e0a1f6780181c",
+   "expanded": "23191598868871e7b30023ed39b0ead693d1e24b9c659a99c7d436eb6b0b3b25"
+  },
+  "NLP199-1.p": {
+   "source": "55ce6ebbd3498d8e29ea005c7d811fec0020c15d84adda859a53a7e644769d5a",
+   "expanded": "55ce6ebbd3498d8e29ea005c7d811fec0020c15d84adda859a53a7e644769d5a"
+  },
+  "GEO153-2.p": {
+   "source": "c2b606f00eb4f9778d63bf4a3380a0e9ae037d6c01c4c033229b4599778020e0",
+   "expanded": "cd227f385c66df5eb9c62afcd0517f49f1f6e53d036b06a6f7017d92b432c616"
+  },
+  "GEO154-2.p": {
+   "source": "6d2faca0d6005fbb3293cd9b191b4e61ec8b28b4f4f655c765a5c4e0e232099a",
+   "expanded": "27f50a918c5e53e83ab68874b599d680f8b46cff7d2318fcf0885d816d310dff"
+  },
+  "SET538-6.p": {
+   "source": "53ce31a9af59cc9d1e1f4e8e7cb1198ab32cec2752878d29fbba4ce45a5bbdc1",
+   "expanded": "1650f7aab09e461aefd58d6e082c8fd4988f8d01686841f77617734a6c622830"
+  },
+  "SYN536-1.p": {
+   "source": "7436644bad192eff513e6e19d5d7626fddf8b3f1703c8d78bd31274789fccafe",
+   "expanded": "7436644bad192eff513e6e19d5d7626fddf8b3f1703c8d78bd31274789fccafe"
+  },
+  "PHI021+1.p": {
+   "source": "4e9b208717b7dc3f057bd24d641acb5736f486bb18e23a9edc6b304a6e6dc742",
+   "expanded": "6dc9d52d22ebdc55491df62df1797611344d367a67635e9d0702b22ccd785eba"
+  },
+  "NLP055-1.p": {
+   "source": "7b17f290c1ae556fdcd945c253823647030959ccdf28817209b03cbdcd1cb145",
+   "expanded": "7b17f290c1ae556fdcd945c253823647030959ccdf28817209b03cbdcd1cb145"
+  },
+  "SWV017+1.p": {
+   "source": "858619d6746fc0b021dcf0d2e9776f3bb5bc7c34e0ef48d09b9f9898f9ccf461",
+   "expanded": "858619d6746fc0b021dcf0d2e9776f3bb5bc7c34e0ef48d09b9f9898f9ccf461"
+  },
+  "SWW415-1.p": {
+   "source": "2bdc138317fca76bfd4be1b27049a6ac288683d3889972c4ea0423452894e684",
+   "expanded": "43158efbded23234112387964f5fd604f5f181f96471b0c0f3160f73a3b7bec4"
+  },
+  "SWW882+1.p": {
+   "source": "e3af088b2721c56f644f404e0ef9935dabfa01afb5b8073b6a2c075b64a95d8d",
+   "expanded": "e3af088b2721c56f644f404e0ef9935dabfa01afb5b8073b6a2c075b64a95d8d"
+  },
+  "BOO030-1.p": {
+   "source": "d9e73ee368a48a0594f2677ac472e63ce6d10454c5d1a4179ee5237c4628ce26",
+   "expanded": "d9e73ee368a48a0594f2677ac472e63ce6d10454c5d1a4179ee5237c4628ce26"
+  },
+  "NLP179+1.p": {
+   "source": "576a8987dc648e4598b9f29bbd1cdcea535e339ad221b9f7ff468720ee5e79df",
+   "expanded": "576a8987dc648e4598b9f29bbd1cdcea535e339ad221b9f7ff468720ee5e79df"
+  },
+  "MGT040-2.p": {
+   "source": "1f025b468121547433a4eae0522180af335aa4fec9931cf8b82807e0bd1679bc",
+   "expanded": "1f025b468121547433a4eae0522180af335aa4fec9931cf8b82807e0bd1679bc"
+  },
+  "GEO352-1.p": {
+   "source": "38e6ae1cedc2556fe574645304255f7c5e9b5437a91903fbf87c96b721c77c17",
+   "expanded": "82f46cd0218eeb2015c4cd2f6d15f1289337366064bbaecbc0ba45bfebcfe87b"
+  },
+  "NLP192-1.p": {
+   "source": "64dc33b4d8a8a6128fdb996599e2f5fc71cae7dd82c2195c157f0781e86352d3",
+   "expanded": "64dc33b4d8a8a6128fdb996599e2f5fc71cae7dd82c2195c157f0781e86352d3"
+  },
+  "LAT106-1.p": {
+   "source": "dd1c70482850cc57fe97a4ac009379e4ced1c5c78574d8e6b03555c783899e20",
+   "expanded": "faa5057308936f6056fe7f510327e9814366a07eded274b01016dc40ffdce025"
+  },
+  "NLP065+1.p": {
+   "source": "b31ec9a8537eb8fb91b12265319673750bcd7084e7f73a9eeeb291a42bf11fd7",
+   "expanded": "b31ec9a8537eb8fb91b12265319673750bcd7084e7f73a9eeeb291a42bf11fd7"
+  },
+  "SWW942+1.p": {
+   "source": "aeb4c887e83c7b71f3ba7d3dfa7d584d68b8b0a49a61c30f89d0b554af7f926d",
+   "expanded": "aeb4c887e83c7b71f3ba7d3dfa7d584d68b8b0a49a61c30f89d0b554af7f926d"
+  },
+  "SWV549-1.010.p": {
+   "source": "9d2dd919a3b3c50ba8df775fcca9691031de70e25231786645d92dfb50671d22",
+   "expanded": "9d2dd919a3b3c50ba8df775fcca9691031de70e25231786645d92dfb50671d22"
+  },
+  "SYN526+1.p": {
+   "source": "be49dc90f4240e74772464e5086faee7606196fc08dac0db00d859cd495af4ba",
+   "expanded": "be49dc90f4240e74772464e5086faee7606196fc08dac0db00d859cd495af4ba"
+  },
+  "SWB009-10.p": {
+   "source": "7789b88f3b479aa1e911762a3499873e0f6e14562c2767d30be8d1ae459500c0",
+   "expanded": "7789b88f3b479aa1e911762a3499873e0f6e14562c2767d30be8d1ae459500c0"
+  },
+  "NLP115+1.p": {
+   "source": "013eb71c89a6864f170181820698b27b8a794cb7dd1f0d91ebf6ca37b401be01",
+   "expanded": "013eb71c89a6864f170181820698b27b8a794cb7dd1f0d91ebf6ca37b401be01"
+  },
+  "NLP066+1.p": {
+   "source": "6973618fc0ca330b083a33df1eb0e395aa58e049dffa24bd77549228139d3a1c",
+   "expanded": "6973618fc0ca330b083a33df1eb0e395aa58e049dffa24bd77549228139d3a1c"
+  },
+  "SYO760+1.p": {
+   "source": "856acf2d66c0cff48499f9cb7194a749daf0926e8dfe2cb47fb90e26e50e04b4",
+   "expanded": "856acf2d66c0cff48499f9cb7194a749daf0926e8dfe2cb47fb90e26e50e04b4"
+  },
+  "LCL685+1.001.p": {
+   "source": "ebea260fab2b1d4c972a96225b83686535124b3736c2abc93f9a43566008e37e",
+   "expanded": "ebea260fab2b1d4c972a96225b83686535124b3736c2abc93f9a43566008e37e"
+  },
+  "SWV493-1.050.p": {
+   "source": "c6c19288cc0fc31c6c28501783150182da49afc0fd7dbe552f7e0ce7a1cd1702",
+   "expanded": "c6c19288cc0fc31c6c28501783150182da49afc0fd7dbe552f7e0ce7a1cd1702"
+  },
+  "BOO048-1.p": {
+   "source": "f02352c4433d90643f7c8d0f3c2228343287bb65d9af86013e0fa8cba2491884",
+   "expanded": "f02352c4433d90643f7c8d0f3c2228343287bb65d9af86013e0fa8cba2491884"
+  },
+  "SWV499-1.030.p": {
+   "source": "46dab96e360c32685a400dcac2882fcf5d68e3ef4d542b6f2f3f780cc9ab90f3",
+   "expanded": "46dab96e360c32685a400dcac2882fcf5d68e3ef4d542b6f2f3f780cc9ab90f3"
+  },
+  "KRS281-1.p": {
+   "source": "9afcc487c824be0d9b38a8c73793154596edf76e5dd3044f08d0cde44d753468",
+   "expanded": "9afcc487c824be0d9b38a8c73793154596edf76e5dd3044f08d0cde44d753468"
+  },
+  "SWB010+3.p": {
+   "source": "254fae5634e0b70f6392b1d0e02ddfbc747b042873d50c1cee8086cbe2a32864",
+   "expanded": "d89ab27afa8d44abd605515efab70ad86a4beddcb0af6e264fcf9211249fe32f"
+  },
+  "SYN000+2.p": {
+   "source": "d6806da26319ced839142268305f1669d35297969a85bf3e63b89ebd583f6003",
+   "expanded": "d6806da26319ced839142268305f1669d35297969a85bf3e63b89ebd583f6003"
+  },
+  "SYO640-10.p": {
+   "source": "4cfa52b35b349b302ce0dea91714812ab764bbf213cb090908daf72471a865d2",
+   "expanded": "4cfa52b35b349b302ce0dea91714812ab764bbf213cb090908daf72471a865d2"
+  },
+  "KRS182+1.p": {
+   "source": "a20f42d49bef5627c16700bf0998cf2076c72f743ef6ec5dad20475fa028b172",
+   "expanded": "0a0492c2bea9c2e9852b8afe4518763bccef8c859718433a5eff71e92f8f0513"
+  },
+  "LCL886+1.p": {
+   "source": "369f4146e47df8bf3440ed289d131235c50fdc77ad1616bbfe863b92ad876e87",
+   "expanded": "369f4146e47df8bf3440ed289d131235c50fdc77ad1616bbfe863b92ad876e87"
+  },
+  "KRS199+1.p": {
+   "source": "7c91c263dad1a199ee92c2fe97b57e0ec8076f45abbed972be78abbc41b40c7b",
+   "expanded": "53152c06cbb072020e90d3909827ed684429220b2e9784ceea5107675f555be8"
+  },
+  "SWB022+3.p": {
+   "source": "9b988c6ce62185b9b6fc8d22d24a5bdc8273581c5ab009dc122c5c6d359c14d9",
+   "expanded": "dcbca73cb0cfe02abe7bf27c2580f2c3b6e7621f935d2fdebc7966d423e9a629"
+  },
+  "PHI027+1.p": {
+   "source": "a867f6790cd60fa01b7645de7a3ec61a14ae907afae14fc6caa1a3809b94d9da",
+   "expanded": "adad53a02c66aa16d3a64418eb0cb326ec1686e85c14ea87c16d9a0c55c98e1a"
+  },
+  "NUM374+4.p": {
+   "source": "b8b23fc5f01a8e8ea1319414c6ca9edcfecb092abec51acd07bc72610a189e7a",
+   "expanded": "b8b23fc5f01a8e8ea1319414c6ca9edcfecb092abec51acd07bc72610a189e7a"
+  },
+  "GRP123-4.004.p": {
+   "source": "6fa9a47ef918247758bd429dbf98760734514eca032b79bb3f8aa22da2905f43",
+   "expanded": "6fa9a47ef918247758bd429dbf98760734514eca032b79bb3f8aa22da2905f43"
+  },
+  "GEO159-1.p": {
+   "source": "3418c4b56726470851fcd86f41ac416453c6f6930e2e123b8d1fc63b66253845",
+   "expanded": "c1baa039b34ef77726493176507b6d091eef3c2707412a84a49a1beb1caeca11"
+  },
+  "HWV076+1.p": {
+   "source": "b15b7d281fa0dd5243b4bc7620739c6d5f29a5ca7688cafe35604f2c07799428",
+   "expanded": "b15b7d281fa0dd5243b4bc7620739c6d5f29a5ca7688cafe35604f2c07799428"
+  },
+  "SYO763+1.p": {
+   "source": "5934433f12781319578447ff2317fae98fa437f29efb32a4cec9843cc13d3a43",
+   "expanded": "5934433f12781319578447ff2317fae98fa437f29efb32a4cec9843cc13d3a43"
+  },
+  "LAT133-1.p": {
+   "source": "b5136eb819dfc6df796733d0ffca38495fa3ab85a422ea64f5740d52c3446541",
+   "expanded": "798f4e2dcb74ed7338389583da5ab275f6c9f0cb9f8b1690c1a17c5ddd3f8b6f"
+  },
+  "SYO805+1.p": {
+   "source": "ff724686907a9a31375319df8a6e069123c646d6d37b4206815274002673f10d",
+   "expanded": "ff724686907a9a31375319df8a6e069123c646d6d37b4206815274002673f10d"
+  },
+  "SYN821-1.p": {
+   "source": "ec6cdbf355dcdd40220948c010a5ab1a48caab77b4a72f639b396e1321b9b7b9",
+   "expanded": "ec6cdbf355dcdd40220948c010a5ab1a48caab77b4a72f639b396e1321b9b7b9"
+  },
+  "SWV516-1.030.p": {
+   "source": "4aad1e94199e1b1feed53ee6e3c7bcae749219ca0b0247d0851d510988205dbe",
+   "expanded": "4aad1e94199e1b1feed53ee6e3c7bcae749219ca0b0247d0851d510988205dbe"
+  },
+  "SYO744+1.p": {
+   "source": "e310fff4b9abb9b8edf7268a91c9aaf2440a8114ab13241d94444f9b4113dd08",
+   "expanded": "e310fff4b9abb9b8edf7268a91c9aaf2440a8114ab13241d94444f9b4113dd08"
+  },
+  "NLP213+1.p": {
+   "source": "264e24dd99ade210b03e0f9e68088d6990864d6437a5d0ca5a8fecb5d671ed55",
+   "expanded": "264e24dd99ade210b03e0f9e68088d6990864d6437a5d0ca5a8fecb5d671ed55"
+  },
+  "SWW865+1.p": {
+   "source": "aa2fcdd82309960bdda6a8d637ded5f7494990ee461ea05b3d20acf78ef4c376",
+   "expanded": "aa2fcdd82309960bdda6a8d637ded5f7494990ee461ea05b3d20acf78ef4c376"
+  },
+  "LCL677+1.010.p": {
+   "source": "c4f906504411a9cab93339ecb55c5e6358100be129eaf5ba575fc3eb67346094",
+   "expanded": "c4f906504411a9cab93339ecb55c5e6358100be129eaf5ba575fc3eb67346094"
+  },
+  "KRS037+1.p": {
+   "source": "92587063b8cb85ff97c772e2a633760ee8927bd88c8cab4979c594282af9bdc7",
+   "expanded": "92587063b8cb85ff97c772e2a633760ee8927bd88c8cab4979c594282af9bdc7"
+  },
+  "SYO584+1.p": {
+   "source": "fd2f43b35fe3f6160c35afbb8ef66b8924904b7cf7452b60574196fd9ffe9fa2",
+   "expanded": "fd2f43b35fe3f6160c35afbb8ef66b8924904b7cf7452b60574196fd9ffe9fa2"
+  },
+  "NLP061+1.p": {
+   "source": "6d182baf8574274c4333aae222c62bd4699354168d0941244166eda425789595",
+   "expanded": "6d182baf8574274c4333aae222c62bd4699354168d0941244166eda425789595"
+  },
+  "SYO603+1.p": {
+   "source": "0a01d670f15b9e2dcbfeba1154fc90da313b7d83aa2629f4725e6c61c00ce3f3",
+   "expanded": "0a01d670f15b9e2dcbfeba1154fc90da313b7d83aa2629f4725e6c61c00ce3f3"
+  },
+  "NLP152+1.p": {
+   "source": "1f27eb460e5132350a819a0b91ae93495d984547c2d513840624d1cd7a3b1981",
+   "expanded": "1f27eb460e5132350a819a0b91ae93495d984547c2d513840624d1cd7a3b1981"
+  },
+  "GRP133-2.004.p": {
+   "source": "e8ed1394ad01e64c777b12d00cb9047e22d0583e73bba6e166fd190723e7aa2f",
+   "expanded": "e8ed1394ad01e64c777b12d00cb9047e22d0583e73bba6e166fd190723e7aa2f"
+  },
+  "LCL663+1.010.p": {
+   "source": "8dd7025ac4ef304121594bc5b37a8b40443249ad943cffcddec45b74d15de13a",
+   "expanded": "8dd7025ac4ef304121594bc5b37a8b40443249ad943cffcddec45b74d15de13a"
+  },
+  "GRP763+1.p": {
+   "source": "b0e086dadf83ee66ee54d204df190c7b3554cb22d44821b84a6bf50e225dc0d4",
+   "expanded": "b0e086dadf83ee66ee54d204df190c7b3554cb22d44821b84a6bf50e225dc0d4"
+  },
+  "ALG310-1.p": {
+   "source": "83de74e5f6fa3c1819abe38b155bda43f078353a24c71254bfec91ea674ef1b7",
+   "expanded": "83de74e5f6fa3c1819abe38b155bda43f078353a24c71254bfec91ea674ef1b7"
+  },
+  "SYN434+1.p": {
+   "source": "b646a8409ea463d27b162827b721abbbdcb7bc9cdb95c5f56d3ea0adacc869cd",
+   "expanded": "b646a8409ea463d27b162827b721abbbdcb7bc9cdb95c5f56d3ea0adacc869cd"
+  },
+  "PUZ133+3.p": {
+   "source": "f4724b60313c3ff6a608e704669b0344b2589e6ec09a2db4a6952e4f96197f41",
+   "expanded": "f4724b60313c3ff6a608e704669b0344b2589e6ec09a2db4a6952e4f96197f41"
+  },
+  "SYO816+1.p": {
+   "source": "9039670bae5767d0e8bff7c88e6bff9bb87a142cca9be60bfbc247d942362e3c",
+   "expanded": "9039670bae5767d0e8bff7c88e6bff9bb87a142cca9be60bfbc247d942362e3c"
+  },
+  "SWV513-1.040.p": {
+   "source": "5037be5067ad42b0094de59ba6d84f7bea37a12951828121129d26b21e335437",
+   "expanded": "5037be5067ad42b0094de59ba6d84f7bea37a12951828121129d26b21e335437"
+  },
+  "RNG007-5.p": {
+   "source": "a3a3bae7640cca3b94d2183c9687791086b778015093392cf2f1d26cf7942ad6",
+   "expanded": "712cb25911313d8f6cc3cf1befcf9c8c6e98acc4ffeb80dccfdb05888a8a8152"
+  },
+  "SWV015+1.p": {
+   "source": "bc288d7ce761b590ac2ccc74273a84db889bbeeb2f5776e2cac97b84d468e2ad",
+   "expanded": "bc288d7ce761b590ac2ccc74273a84db889bbeeb2f5776e2cac97b84d468e2ad"
+  },
+  "SYN422+1.p": {
+   "source": "d8465c24b602a572216a093fab1127e81f221e9a4179aa2445a0a0c72d1e4960",
+   "expanded": "d8465c24b602a572216a093fab1127e81f221e9a4179aa2445a0a0c72d1e4960"
+  },
+  "KRS290-1.p": {
+   "source": "bb0cd8b2428573f622256577fcfdb67400b8591af0c023bdef27f740f23c096b",
+   "expanded": "bb0cd8b2428573f622256577fcfdb67400b8591af0c023bdef27f740f23c096b"
+  },
+  "SWV953-1.p": {
+   "source": "3147c3b39529359d8d54c733e1fdd95526a2895dcbab5e1ce62e174355d1d94c",
+   "expanded": "3147c3b39529359d8d54c733e1fdd95526a2895dcbab5e1ce62e174355d1d94c"
+  },
+  "SWV542-1.004.p": {
+   "source": "ca28153aa4aa83ca2ee52a90dff5323bfb716bbc14a371c96d53ca1ec4412690",
+   "expanded": "ca28153aa4aa83ca2ee52a90dff5323bfb716bbc14a371c96d53ca1ec4412690"
+  },
+  "PRO013+3.p": {
+   "source": "387c4abb89a4bd47d03e133edcd9d86f5a831bf9cacc6d8ecc76b890c6cf0e86",
+   "expanded": "387c4abb89a4bd47d03e133edcd9d86f5a831bf9cacc6d8ecc76b890c6cf0e86"
+  },
+  "GRP760+1.p": {
+   "source": "9bb96d0361468985f26f4cfcd7597fa9bddad1d1642df2533ec0507e17fec899",
+   "expanded": "9bb96d0361468985f26f4cfcd7597fa9bddad1d1642df2533ec0507e17fec899"
+  },
+  "SYN747-1.p": {
+   "source": "adf44730065fc1e4093a0d38f65611fec05e874319a2117eb2ba11b5430638f7",
+   "expanded": "adf44730065fc1e4093a0d38f65611fec05e874319a2117eb2ba11b5430638f7"
+  },
+  "NLP063+1.p": {
+   "source": "3ba694f27012793905bdf346a8687d7f56bf13e482a621e44b35dd2ba8f8511a",
+   "expanded": "3ba694f27012793905bdf346a8687d7f56bf13e482a621e44b35dd2ba8f8511a"
+  },
+  "GEO078-5.p": {
+   "source": "b90f8fa77c416cf9794c86bc278954896372dd330014e7caab91d0fa3cb68840",
+   "expanded": "b8f5008dc01f78dac3a0fc4e1452e8f001dff553989bf02ef8cc0a5fef64ff78"
+  },
+  "SYN449-1.p": {
+   "source": "269f452ec899f1eeb862e4870b94c458801c4a12ee134579193aea32fc838c68",
+   "expanded": "269f452ec899f1eeb862e4870b94c458801c4a12ee134579193aea32fc838c68"
+  },
+  "NLP044+1.p": {
+   "source": "369153eb5e7fa3f0abb90019b2e90b9a1e4aebd66da05bdc50bbe4b5b457e3ae",
+   "expanded": "369153eb5e7fa3f0abb90019b2e90b9a1e4aebd66da05bdc50bbe4b5b457e3ae"
+  },
+  "SYO785+1.p": {
+   "source": "83849a7f7c73de19c034e3a8da98f0f993545b392f50db6ec358aa2ef28131d4",
+   "expanded": "83849a7f7c73de19c034e3a8da98f0f993545b392f50db6ec358aa2ef28131d4"
+  },
+  "SYN791-1.p": {
+   "source": "0e5bbdf2313103e06c520839d88ebbf0830b3b3c1169ba9921c3d36cc16560b5",
+   "expanded": "0e5bbdf2313103e06c520839d88ebbf0830b3b3c1169ba9921c3d36cc16560b5"
+  },
+  "NLP244-1.p": {
+   "source": "4e5ee6f501008967b6d54e008c7b44c307d70b592d367ffd6560e0df907c4baf",
+   "expanded": "4e5ee6f501008967b6d54e008c7b44c307d70b592d367ffd6560e0df907c4baf"
+  },
+  "LCL407-2.p": {
+   "source": "d2c176c02345f116c457d535d8c7f72d5c2d5c56983cb6bd9e8577482c8c14d6",
+   "expanded": "3dc5b2998bfa0a088c5454047772f74e33e3bca36d05c0be59088ec8a6ab86a1"
+  },
+  "LCL136-1.p": {
+   "source": "65baa512c7644196c2bc8c0dc695f0890097ec222219190de8611da92e1c4330",
+   "expanded": "76f79600a46f80904c8698f083aefcdbb98cbb0d566c1d3e60cf7ca9c5e16693"
+  },
+  "NLP111-1.p": {
+   "source": "b5174eaa7b5fb75010f293b958205707952e73c8c30ea7dfef6f6484be5a35c2",
+   "expanded": "b5174eaa7b5fb75010f293b958205707952e73c8c30ea7dfef6f6484be5a35c2"
+  },
+  "SYN864-1.p": {
+   "source": "5a3ed686edfd19fb2c80d484911ff0eaf65201530c7785ed627db545cec7549f",
+   "expanded": "5a3ed686edfd19fb2c80d484911ff0eaf65201530c7785ed627db545cec7549f"
+  },
+  "SYO710+1.p": {
+   "source": "3474c62236dcbc5e6d0058bd37646e4d40444ba298142ee4fc72e94b046b0b79",
+   "expanded": "3474c62236dcbc5e6d0058bd37646e4d40444ba298142ee4fc72e94b046b0b79"
+  },
+  "LCL413-1.p": {
+   "source": "c1d60665a0bed92e679ea89621330eda4665d0a22b57de2e67cba8818d8b2ea6",
+   "expanded": "94a3be2e09c57690d4c4e3df3d2118e39068fce6f8c68d9a9fce054936f65955"
+  },
+  "KRS016-1.p": {
+   "source": "428308dddbd8de6da30912b7067654e8d03cd5d66d13ac0ae0cd15adbbaf20f8",
+   "expanded": "428308dddbd8de6da30912b7067654e8d03cd5d66d13ac0ae0cd15adbbaf20f8"
+  },
+  "SWV497-1.030.p": {
+   "source": "b4383b7a7191610e75abb0b01c07c9f6dc0ea95078b61c9af7737ef978afde27",
+   "expanded": "b4383b7a7191610e75abb0b01c07c9f6dc0ea95078b61c9af7737ef978afde27"
+  },
+  "SWW889+1.p": {
+   "source": "bf5aae8acf2c040a7f0e5a038561f6a0e1ff6747416c468b1b4e0468705a69cd",
+   "expanded": "bf5aae8acf2c040a7f0e5a038561f6a0e1ff6747416c468b1b4e0468705a69cd"
+  },
+  "SYN441-1.p": {
+   "source": "fcbebfcaf0a7778f2e742f4aa4016283e7ff071c5aa12f3c26a28a2bcc018656",
+   "expanded": "fcbebfcaf0a7778f2e742f4aa4016283e7ff071c5aa12f3c26a28a2bcc018656"
+  },
+  "HWV070+1.p": {
+   "source": "24153057b116f77ae72d15d9ea812d3b5fcc33baff8c69cbe2b15bf7f504347d",
+   "expanded": "24153057b116f77ae72d15d9ea812d3b5fcc33baff8c69cbe2b15bf7f504347d"
+  },
+  "NLP186+1.p": {
+   "source": "b3e25c3993f4eaef58cfe309d311574b06c3d855e2dd7800a9a56b0475aff761",
+   "expanded": "b3e25c3993f4eaef58cfe309d311574b06c3d855e2dd7800a9a56b0475aff761"
+  },
+  "LAT396-1.p": {
+   "source": "2c3a023a91739693d16ae660d66fa9082a03d96612573fcdde69276e9e6390f8",
+   "expanded": "cefcb2d42aa3905f6472abb051f1e5a9085b1ff14eb3988ba399dbb0f5cb49f7"
+  },
+  "LAT048-1.p": {
+   "source": "7002c5c40913919c74611670290cd86d004cef51eefe81ba81efc2a1ee4405e4",
+   "expanded": "6213d599c00ec1f617bd7c695eb6794054fad14330cbf7c3258f25305d695bf3"
+  },
+  "LCL649+1.020.p": {
+   "source": "4781ac737463e4029aa959e54e9ccdce1c49672f0ecec0f90aa1f86374d01396",
+   "expanded": "4781ac737463e4029aa959e54e9ccdce1c49672f0ecec0f90aa1f86374d01396"
+  },
+  "NLP229-1.p": {
+   "source": "9af6e336fa0764fa768adf27adf71d232937506e466a685c98481ce6f1f3446c",
+   "expanded": "9af6e336fa0764fa768adf27adf71d232937506e466a685c98481ce6f1f3446c"
+  },
+  "PLA028+1.p": {
+   "source": "ce0b27b81cf89645b2a2604f480a8b34a7710b25683b29833fe0022b249ef368",
+   "expanded": "acd457cd24b477bff257b60b6ca2f6479faead352ef8be67693d3de40cfc731f"
+  },
+  "KRS224+1.p": {
+   "source": "73593a0ed225e079148bd67306ddfa014a4925133a4f22fca89e9ed347a21065",
+   "expanded": "a1e575ced4124ea4d66dd5198c826afdd28fb8564bf366fb19aced1ef8de2155"
+  },
+  "SYN419+1.p": {
+   "source": "8615ec90f05a0bca309edf5beceb9a0070cc204b7d146db1d6109c3c47d0f9c3",
+   "expanded": "8615ec90f05a0bca309edf5beceb9a0070cc204b7d146db1d6109c3c47d0f9c3"
+  },
+  "PRD002+1.p": {
+   "source": "f505416a5e8675333e6e4ff1430ab1507950f9135e7e67cc99f0606ec0b68232",
+   "expanded": "a00d6469d42e68e2e69bc7bcaaa734fc872214995d5b9589cbd164c26f49a75a"
+  },
+  "GRP204-1.p": {
+   "source": "0f73eae6921cf6688c2708cfc14952bc6e96ae1b50ec35d5afc5b1391c4b8bbe",
+   "expanded": "0f73eae6921cf6688c2708cfc14952bc6e96ae1b50ec35d5afc5b1391c4b8bbe"
+  },
+  "GRP818+1.p": {
+   "source": "229b1f462650327f415d8ab82e57bc9d9e76178ba2738cffa0037886cfc68ebe",
+   "expanded": "229b1f462650327f415d8ab82e57bc9d9e76178ba2738cffa0037886cfc68ebe"
+  },
+  "NUM289-1.p": {
+   "source": "2081a79582eb7399d8cfbedc5b37f29e1860dc8de64dff03182251f01b59867c",
+   "expanded": "b456089c7cc18418ae0bb7d16013179000c8b6a3a21dbdc11159e0cfe12ee8e6"
+  },
+  "KLE178+1.p": {
+   "source": "d44b08f4692f81cad8de928aa48461584eb35ba71ff6eceb890c0e6ec2a52fef",
+   "expanded": "cb3bca90a685b14855ec5fa65f4529b9534d2e13ae53a25b2f37af61a35584cf"
+  },
+  "PUZ028-1.p": {
+   "source": "acbe90bfac6e89720654a39f801730d7465c16445b7d72492baf8ea96438840d",
+   "expanded": "acbe90bfac6e89720654a39f801730d7465c16445b7d72492baf8ea96438840d"
+  },
+  "GRP790+1.p": {
+   "source": "d169e880c50a151ea3cc441bd4eacd6a4b5654707a4a2fe4b9d9bf3d8e830386",
+   "expanded": "d169e880c50a151ea3cc441bd4eacd6a4b5654707a4a2fe4b9d9bf3d8e830386"
+  },
+  "SYO753+1.p": {
+   "source": "51bb67cd2fc53ffe6a538c0cea80efcaf0823c47a1d4dd973602407fc3cc3250",
+   "expanded": "51bb67cd2fc53ffe6a538c0cea80efcaf0823c47a1d4dd973602407fc3cc3250"
+  },
+  "GRP814+1.p": {
+   "source": "5996497625803d15dec5b17d1084660b386ed90ee0f67a49c08e74485187ecbe",
+   "expanded": "5996497625803d15dec5b17d1084660b386ed90ee0f67a49c08e74485187ecbe"
+  },
+  "SWB025+3.p": {
+   "source": "d2068486c4128fad57f230602a86404144351274f4a7cb5e3818da29bf3073e7",
+   "expanded": "03687ec8438895bf8abe0d300c2b471cb0126e004f4b15385847bf16ba1e9a49"
+  },
+  "GRP810+1.p": {
+   "source": "719f0fed98ed2fe6bf9ab245a365d611944d1804e6b5ec32d7099d37596f287b",
+   "expanded": "719f0fed98ed2fe6bf9ab245a365d611944d1804e6b5ec32d7099d37596f287b"
+  },
+  "LAT109-1.p": {
+   "source": "81f3d2def78e2eb1f0c6b8e3837a36a66dc7af416527d4d554bcf36dbb9c0b13",
+   "expanded": "f326f7b8db7487f59571aac5fd2ee6ac52d89d77fe31b0f9ac0d8ae3e5df754e"
+  },
+  "SWV507-1.050.p": {
+   "source": "df7e12712c10d73442d189c6dcdbd41f74fc4862b6f2eef97f5a1e5c135e74b7",
+   "expanded": "df7e12712c10d73442d189c6dcdbd41f74fc4862b6f2eef97f5a1e5c135e74b7"
+  },
+  "SYN780-1.p": {
+   "source": "ced129da6c7f71462eaa0e77931320b2eccb75893f5d97b0c6f206f87a9bfc84",
+   "expanded": "ced129da6c7f71462eaa0e77931320b2eccb75893f5d97b0c6f206f87a9bfc84"
+  },
+  "KRS249+1.p": {
+   "source": "0f9cc4ce73c4a8942d2b9a85a53f545cd3fc81c8dbbc3e19bc4d23659e16a5ef",
+   "expanded": "7db380f81584c0f08da2202ae02b89b9fed9dd8afa74c4796de5defe20ac8b6b"
+  },
+  "LCL913+1.p": {
+   "source": "283880937aa9c61de8a16d1f79ad4d842d2efb1edddfc6d48256e700555a8db4",
+   "expanded": "301b93a72e523bbc34d051a7cef23a4a70e3e09d0b767a7ce0dd00d9698d351b"
+  },
+  "NLP238-1.p": {
+   "source": "168e9a33e7c92a0024617f26362bb0b8978a92e8c979f95c9fcc7b14bebb053e",
+   "expanded": "168e9a33e7c92a0024617f26362bb0b8978a92e8c979f95c9fcc7b14bebb053e"
+  },
+  "NLP104+1.p": {
+   "source": "100055ae886d1cd7c250aa849cbd4772ee4aeeebd169f029250bd00b8b79822e",
+   "expanded": "100055ae886d1cd7c250aa849cbd4772ee4aeeebd169f029250bd00b8b79822e"
+  },
+  "NLP249+1.p": {
+   "source": "e5b61299bb29d4c695c87e44ff04c0783c81064772ab2acdc45d52d9e905fb34",
+   "expanded": "e5b61299bb29d4c695c87e44ff04c0783c81064772ab2acdc45d52d9e905fb34"
+  },
+  "NUM349+1.p": {
+   "source": "e2cb065b3f2656273ab5f20acdfdd69290ac26d8c268671c2c11400948d17a33",
+   "expanded": "3c8ba54eae21b3bd1a9eceda4ae7725a433b9fea1a02a79c5808f812aa45899f"
+  },
+  "SWW465-1.p": {
+   "source": "4b01c13d4f7c2e1986810a6cbcbd51df8f42153e77c7fd568f5203da85c92e80",
+   "expanded": "98621546eeeaf6dd99382355f848a3d7e4c5b97ca17a980af18eda71284d586c"
+  },
+  "GRP792+1.p": {
+   "source": "c0ba40b9266f66eb8c011ab86be177905c62c230bf3c6f0e383e1a85e1697b2d",
+   "expanded": "c0ba40b9266f66eb8c011ab86be177905c62c230bf3c6f0e383e1a85e1697b2d"
+  },
+  "LAT062-1.p": {
+   "source": "9f3a59a448729e6855a108b7ed8a19449ace0dd2f5b0e9d5a409f92467d87655",
+   "expanded": "c1360349621b69323e946d6af4aa9de440f805a20adcd943a5e348fa1c790161"
+  },
+  "SYN799-1.p": {
+   "source": "6f3f8a25b027627d373d03faa98e689eb6f5722f8714a588c0810ebfddb79eea",
+   "expanded": "6f3f8a25b027627d373d03faa98e689eb6f5722f8714a588c0810ebfddb79eea"
+  },
+  "SWW467-1.p": {
+   "source": "102cbfa3e64c1e34907025e6ef5de922052392ab5f43cc9927e3d11ba28e7989",
+   "expanded": "4d6bac80ad3aa5c7421e77f941e602bd15aa44f51f328fd0b7d9e97a5bd2c23e"
+  },
+  "NUM366+1.p": {
+   "source": "0275f5112904bacc46e1e59b69cdd3c83f7b338845e70dec6b4ff9467282b912",
+   "expanded": "367aad86854b72419c9a823eadf3c49059d49b1ccc879d77b6980739ad7ae218"
+  },
+  "NLP016+1.p": {
+   "source": "b002eadbdee411c7f5299d57665a8be88fdec0357ea8e4eebce413a460856cde",
+   "expanded": "b002eadbdee411c7f5299d57665a8be88fdec0357ea8e4eebce413a460856cde"
+  },
+  "SYN438+1.p": {
+   "source": "e5ba9d6328670724c95b24222a73a2a4aed069ee261dc383acfaf690b7b8f899",
+   "expanded": "e5ba9d6328670724c95b24222a73a2a4aed069ee261dc383acfaf690b7b8f899"
+  },
+  "CSR175+1.p": {
+   "source": "93fedd3cdcdb6b643a06b11f277e4fa2777a3860224baa36bfb882f643a7414c",
+   "expanded": "1cb9a097300a01f698066c35f013df8c0d4826110dc03061907ca4b69155fdb4"
+  },
+  "SWW921+1.p": {
+   "source": "bc51755cf8591cbaef045c135cb43dda0b3190de5c0f1d3d024997c9a7995f9f",
+   "expanded": "bc51755cf8591cbaef045c135cb43dda0b3190de5c0f1d3d024997c9a7995f9f"
+  },
+  "SYN530-1.p": {
+   "source": "e582d787691ae8f058b0a2f12a3d1e4f9d7bd554271b5d4086d2e7e81083287a",
+   "expanded": "e582d787691ae8f058b0a2f12a3d1e4f9d7bd554271b5d4086d2e7e81083287a"
+  },
+  "GRP798+1.p": {
+   "source": "a5eb4716f814f65e74cb53c51cfb7b5ef6014775b240445050ed44fa86146ca0",
+   "expanded": "a5eb4716f814f65e74cb53c51cfb7b5ef6014775b240445050ed44fa86146ca0"
+  },
+  "SWV013-1.p": {
+   "source": "d79eae80794a90d5bcbfb8c024222a69e028c093f972940f7b55b523bdb4e749",
+   "expanded": "d79eae80794a90d5bcbfb8c024222a69e028c093f972940f7b55b523bdb4e749"
+  },
+  "SWW401-1.p": {
+   "source": "680e9d50f1359946d14226a6beb579db7be0893b47be46dc9f0f5238da4a2ff2",
+   "expanded": "a4b165b2f7e2608d02adfc8ed5e30d8314fc03501aa151920ef066f08bcb5598"
+  },
+  "GRP025-2.p": {
+   "source": "a4c7ab8003ab7c7e3b5031f57d894e39156fbafa67755c6b200c4deb5c1e6946",
+   "expanded": "cb565ab3c0af182f10900c207d9afddec0f5de2c0e58ced7a5f7f182d38524c5"
+  },
+  "SWV534-1.004.p": {
+   "source": "70d70f0f922ad6f3fed8efa51d25f4c01540ddbe82e51bb3dbd16b67e557ec49",
+   "expanded": "70d70f0f922ad6f3fed8efa51d25f4c01540ddbe82e51bb3dbd16b67e557ec49"
+  },
+  "HWV105+1.p": {
+   "source": "0a465d4cc3f6344a82d026706c04ea3a71264b087e25e5bec1114fbc0c5a6ef7",
+   "expanded": "0a465d4cc3f6344a82d026706c04ea3a71264b087e25e5bec1114fbc0c5a6ef7"
+  },
+  "SYN492+1.p": {
+   "source": "6b83d9063d8b6bcae7ff292091a1aec3e19796a52c596bbc181cc6c5083f215a",
+   "expanded": "6b83d9063d8b6bcae7ff292091a1aec3e19796a52c596bbc181cc6c5083f215a"
+  },
+  "SWV498-1.040.p": {
+   "source": "7d7a56c07e567049a52c9c8b28c5107d88e3c6a06b49a78d4d5961688f5d2cfb",
+   "expanded": "7d7a56c07e567049a52c9c8b28c5107d88e3c6a06b49a78d4d5961688f5d2cfb"
+  },
+  "SWV499-1.040.p": {
+   "source": "a9f1e76ed0781b027fe4c2d45a2975153b2f8aca938e944d00463b522d59d5db",
+   "expanded": "a9f1e76ed0781b027fe4c2d45a2975153b2f8aca938e944d00463b522d59d5db"
+  },
+  "SYO690-1.001.p": {
+   "source": "63b288c9e85628b556051e95565d9f394023dccdc3adfd0c27d35d0b00aca633",
+   "expanded": "63b288c9e85628b556051e95565d9f394023dccdc3adfd0c27d35d0b00aca633"
+  },
+  "SYO595-1.p": {
+   "source": "dfafa91f6d15a4287097d27181c4ed8d38a75260eb4ae315cbb40ef568290286",
+   "expanded": "dfafa91f6d15a4287097d27181c4ed8d38a75260eb4ae315cbb40ef568290286"
+  },
+  "NLP243+1.p": {
+   "source": "3e5989d3200d4b76f05a17df7794dd5181a060e4e54b61a64b3204583e20ac61",
+   "expanded": "3e5989d3200d4b76f05a17df7794dd5181a060e4e54b61a64b3204583e20ac61"
+  },
+  "MGT040-1.p": {
+   "source": "86675a35206aa7625d40f799a265828c3e276b53dd34aaf0cc4c6f9d69ed1448",
+   "expanded": "86675a35206aa7625d40f799a265828c3e276b53dd34aaf0cc4c6f9d69ed1448"
+  }
+ },
+ "axioms": {
+  "AGT001+0.ax": "606acc87c4f28087bdb626747d3b439cef3b00471183812d4a4b425c3f0c2d72",
+  "AGT001+1.ax": "5fb95689f83935a279f22f8c1c0d5a534ec96e9bf902bf6fcc0248c24a563550",
+  "AGT001+2.ax": "773c2115340f9341982ea483e67bd62910ba6f47d84085535c22f470106eec40",
+  "BIO001+0.ax": "47aa81937610fb6d58ae280c01b24e5d5cf346e0a2f4b70f208f9e572e980d54",
+  "CAT002-0.ax": "4c1e3e6cdbbadaa52b39c442dd2772d304af2012df2cb95d3c16d2b2195aacc8",
+  "COM001+0.ax": "4a7b790ec8d16f0d969e2371b424d8d68671c83b29f8c378c6b25b7320bf6539",
+  "COM001+1.ax": "6ae4ddde869abaa58d062987740fb52b255b5281b9733d8c8e993f5688d6cdcb",
+  "CSR006+0.ax": "de6f70cf5aeaeb42f18203213779e1e7b0e954c44196b73ef0353106f7d77cbc",
+  "GEO002-0.ax": "ad4ab6f10e936a4ce5790ca03954370e7bf43bc8489d2e57ec2e0648ce80c3be",
+  "GEO002-1.ax": "64137aaa77da66819310864f46620ee601b40951d31bb8bf7e5445eee23efe70",
+  "GEO002-2.ax": "85b3cdadca9acda1a457fb8826be8c319e3e07d29117cede2b54a18113bfc08d",
+  "GEO002-3.ax": "59c83f5dfe3088c76e8d789815e8e12946b88d41c32ad07564923a961a749366",
+  "GEO003-0.ax": "bb67f85d971f7f00038d5821eeae2a12d096d9ea66fe3514c7373476d4dca8d4",
+  "GEO004-0.ax": "087385d153ad8499732df1df6abea7118110e1a806d6b52fec237cf4363a2d14",
+  "GEO004-1.ax": "6528ecea8dd3223fe8682b8ef591c4e5c7e7984a58921b9315732a685cec7666",
+  "GEO006+0.ax": "4562f80a48cad55aa181c2faa78ae2d2f4fff840a48a2d8e170859351706d631",
+  "GEO006+2.ax": "86a26b3a073adca071fddf53d86c279a3136e61f35a7bd5e6b7b2e47b8b7df22",
+  "GEO006+3.ax": "5a6f8c3d9905044d0cd8037742a52d81c36df971da056463400d45e8cf946678",
+  "GEO006+5.ax": "00f67c102b32d804708d116f26347a8b93f2f2e7968fa3b83c7b0c3de4b671e9",
+  "GRP003-0.ax": "0aa1fe8f5db61403a5fa3796d959bbf842cb17b1d77923be05cd53003a14c244",
+  "GRP003-1.ax": "5e79bb940b8782f91397198a29cbd764988a6333f4e2bc9dd5febc7b93f7196b",
+  "GRP006-0.ax": "a7cb1332bf3c5e06f5280931fc54f2cecb341d15cc7aefa5e626e78e4c187d09",
+  "HAL001+0.ax": "56352c7dc1368cd2a079f8d31bbf7221333a04556e78c0514373cc6d50337e94",
+  "KLE001+5.ax": "c70f3df99809e64bddda1a7c6e4e8bcfd1ef4a7f1e60fa2e0b0f82addb0ad577",
+  "KLE002+0.ax": "adfaa3a511e4ae7d02d6f0c04e8b2cc35a385e54b83f4b0eae95d092d12d4cf6",
+  "KLE003+0.ax": "55efd9cf544cb098dd74ce80e1281120e51bd6a5bf2223fa33359524e0449e63",
+  "KRS001+0.ax": "511edb9e8b3159012b839dbd164fe1c93de4d25182b86a08eb0745748b07a558",
+  "KRS001+1.ax": "65560404dc81dd8328404a64894d9c9fe22a065db115102d34da0ad8557cd2be",
+  "LAT001-0.ax": "d3d32395233cf2f96d16fa990f344d3afe1b1eea400f4aa0c1ee8bc623e8b58a",
+  "LAT001-4.ax": "97606ad8376d814f1e16d0bd8a3ab4d3b635677299eef7feb766ca8e8cce5044",
+  "LAT004-0.ax": "781e304b3411674bfdfc73c4dc1986f6b17205a8a314065375b66e6b3990795e",
+  "LCL001-0.ax": "a112c0609c51ba821d2657d7030101bb4d1d4cd7224c9d803453e00535c5f793",
+  "LCL002-0.ax": "eb62c06ed8a142d8aabd859d3e1cae6a15fbfd9ef2f75decff51fb10d9788a09",
+  "LCL003-0.ax": "bdea3bb4c5ec32ac1f21c9f4fa9d3ea36e650076255294bab89589d2ef0a2a30",
+  "LCL004-0.ax": "e61bee22886cf8778d7d68967cf75bc3d2e3df4a45cc2f0f03f55b22be288f84",
+  "LCL004-1.ax": "ce7f0eea6d603b654db8775bdb981fa50f7864aea0c057c2d5ac63612beca83f",
+  "LCL004-2.ax": "4fe26566093fcb9cea9059e9f659fe2ab03216295a5f1bbe636fb0410c38be82",
+  "LCL006+1.ax": "264717ac2bc7dcd40499bc7c25ff5f90ece2148bfde91fc15579cd6109cada3b",
+  "LCL007+0.ax": "318e4a5c92bc2be38a43834554c815183629ed112bde4304a24e8fee85007d07",
+  "LCL007+1.ax": "40aca9d1fa20ca5acae7f32fd31f4ea5dafe4987fb349271a7b1342aef08b345",
+  "LCL007+4.ax": "f96197bed2da41748261c00cc0542fba515a52eaaa756f476cd720c9fad2474f",
+  "LCL007+5.ax": "63b0e1f8a76e409e7aa4adeb4ba864bf052fc534f7b887191e710dd8bfdbaf27",
+  "MED001+0.ax": "043db295aade494acb51bda510dded992fe260c8e70e75281afb115b6c4fb682",
+  "NLP001+0.ax": "3e4d6073978e7897683fa7bd3a7e5cc327d111e0bf3310c77ef6eabd855c09a3",
+  "NUM001-0.ax": "adf87bdc24b8110edebde82cded5f50c79d2e814108e8b087d7c968d4b1858dc",
+  "NUM001-1.ax": "7f72141ccff5560463ef5308803ae30b45c212ac112a6c3175d885c56502ed06",
+  "NUM001-2.ax": "8b56fd4679a7066b8c34c1965193327cb6088a8da9dfe18da8466ca4ce15f4a3",
+  "NUM004-0.ax": "7ed250362679b485058a4ff1a4843319d93be400d00bf9ecf82447b107dd42b2",
+  "NUM005+0.ax": "4f69a7590de10a97986c8d5e43f370d8b3305182c71fd85e0fd169d9d630b528",
+  "NUM005+1.ax": "a511981621d0b05f6f3900ce16682b892998a44f5e10119a2a172ba6799a01bd",
+  "NUM005+2.ax": "5923a36eae659b515d4d2ea2bcfc7b97763c32b0795fe9981778fe34624c32a9",
+  "PHI002+0.ax": "5de11db1a1b8c5a540208b956ef27e7565d4a8870be5866e27a7b72bd7fee9fe",
+  "PHI002+1.ax": "5ef74d205b03cf1ea2f9ba7fcef68ee0c99fde429984c194263a5c7978c8d43f",
+  "PLA001-0.ax": "dc079c64149c5252b1ca47d39cd85b208c31171e9753739062cc8104211a9575",
+  "PLA002+0.ax": "6ef9bdacbfe7478d4d2f052e15f66c51c56b79258f783020c97e2ed67840092f",
+  "PRD001+0.ax": "a2ae26ecd9ea23d20b2ffeeac585054a78e8fc92110387ac43ce96eed00f7319",
+  "REL001-0.ax": "d280a6addb8a9e34f258c2cc4a7c5f99581e527b05551cc71270aab65c94ab1d",
+  "RNG001-0.ax": "0c3136369d5775b099c44c4faba2c23c1926a6d12ed63b83ef2d143ebbc94e7a",
+  "ROB001-0.ax": "1ae4cc4ec390f7164379744a7cc02d9dc44d1e409cf049927e0bf9a65910eb3f",
+  "ROB001-1.ax": "8a62f8fa7a526a54f23a8f5755a3f64b3d5a63fed74514e03e2d83dbcc023f37",
+  "SET004-0.ax": "f1a4c4d357b19ae37c1e443f9b8f0854d0f4c98da28d3061cdb95c9e7391c7bb",
+  "SET004-1.ax": "b794a5b83994d99f47f8e4150888d56097bd3f8bcb7cb313deefc659af9ed9bd",
+  "SWB002+0.ax": "1528d16fa7d7a028dd6084875a56c083757d98e78961c4b54582c23b08ff4483",
+  "SWB003+0.ax": "0a0c2cf74c9fe025ce63e7f9213d9849ac3c34413251f209decf7eb5826f4c1f",
+  "SWV013-0.ax": "58a1f2fc3cad0a5333feeb85e55d7fe15c3a601082ffee0735d106fce08f0b18"
+ }
+}

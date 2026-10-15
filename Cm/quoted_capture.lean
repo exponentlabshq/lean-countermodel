@@ -26,7 +26,7 @@ theorem c0 : (((«p» «'X'») ∧ («p» «'T'»)) ∧ ¬(«p» «c»)) := by d
 
 theorem c1 : ¬(∀ X' : T, (¬(«p» X') ∨ (X' = «'X'»))) := by decide
 
-theorem countermodel : (((((«p» «'X'») ∧ («p» «'T'»)) ∧ ¬(«p» «c»))) ∧ (¬(∀ X' : T, (¬(«p» X') ∨ (X' = «'X'»))))) :=
-  ⟨c0, c1⟩
+theorem countermodel : Nonempty T ∧ (((((«p» «'X'») ∧ («p» «'T'»)) ∧ ¬(«p» «c»))) ∧ (¬(∀ X' : T, (¬(«p» X') ∨ (X' = «'X'»))))) :=
+  ⟨⟨T.e1⟩, ⟨c0, c1⟩⟩
 
 end quoted_capture

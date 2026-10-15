@@ -4,8 +4,9 @@ from functools import cache
 from concurrent.futures import ThreadPoolExecutor
 from cm import TOKENS, VARS, emit, emit_reflect, model, problem, uncomment
 
-pytestmark = pytest.mark.skipif(not shutil.which(os.getenv("VAMPIRE", "vampire")) or not shutil.which("lake"),
-                                reason="needs vampire and lake")
+# Each test says what it needs, so the translator's rejection and preprocessing tests run without Vampire or Lean.
+needs_vampire = pytest.mark.skipif(not shutil.which(os.getenv("VAMPIRE", "vampire")), reason="needs vampire")
+needs_lake = pytest.mark.skipif(not shutil.which("lake"), reason="needs lake")
 EXAMPLES = sorted(glob.glob("examples/*.p"))
 run = lambda *a: subprocess.run(a, capture_output=True, text=True)
 
@@ -77,28 +78,33 @@ def lean_accepts(path, m, tmp, emitter=emit):
 M = cache(model)
 
 
+@needs_vampire
 @pytest.mark.parametrize("p", EXAMPLES)
 def test_compiles_to_committed_file(p):
     assert run("python3", "cm.py", p).stdout == open(f"Cm/{os.path.basename(p)[:-2]}.lean").read()
 
 
+@needs_vampire
 @pytest.mark.parametrize("p", EXAMPLES)
 def test_reflects_to_committed_file(p):
     """Refl/ holds the reflected certificate of every example; recheck.sh replays both libraries from scratch."""
     assert run("python3", "cm.py", "--reflect", p).stdout == open(f"Refl/{os.path.basename(p)[:-2]}.lean").read()
 
 
+@needs_lake
 def test_kernel_accepts_with_propext_only():
     assert run("lake", "build").returncode == 0
     out = run("lake", "env", "lean", "Axioms.lean").stdout.splitlines()
     assert len(out) == len(EXAMPLES) and all(l.endswith("[propext]") for l in out)
 
 
+@needs_vampire
 @pytest.mark.parametrize("p", EXAMPLES)
 def test_python_agrees_it_is_a_countermodel(p):
     assert countermodel(p, *M(p))
 
 
+@needs_vampire
 def test_circle_of_fifths_is_the_known_answer():
     """Minimal model: exactly 12 notes, and up-a-fifth is x -> x+7 (mod 12) under C=0, up-a-fourth its inverse."""
     n, consts, t = M("examples/circle_of_fifths.p")
@@ -109,6 +115,8 @@ def test_circle_of_fifths_is_the_known_answer():
     assert all(note[t["f"][(y,)]] == (note[y] + 7) % 12 and note[t["g"][(y,)]] == (note[y] + 5) % 12 for y in note)
 
 
+@needs_vampire
+@needs_lake
 def test_mutants_lean_and_python_agree(tmp_path):
     """Corrupt one table entry at a time: Lean must accept exactly the mutants Python says are still counter-models."""
     rnd, cases = random.Random(0), []
@@ -126,11 +134,13 @@ def test_mutants_lean_and_python_agree(tmp_path):
     assert not all(lean)  # the corruption actually breaks some models
 
 
+@needs_vampire
 def test_a_theorem_has_no_counter_model(tmp_path):
     (tmp_path / "t.p").write_text("fof(a, axiom, ![X]: p(X)).\nfof(c, conjecture, p(k)).\n")
     assert run("python3", "cm.py", str(tmp_path / "t.p")).returncode != 0
 
 
+@needs_vampire
 @pytest.mark.parametrize("p", EXAMPLES)
 def test_rewriting_preserves_meaning(p):
     """Each miniscoped formula agrees with the original, on the model and on every one-entry mutation of it."""
@@ -143,6 +153,8 @@ def test_rewriting_preserves_meaning(p):
         assert all(holds(f, n, consts, m) == holds(g, n, consts, m) for m in models)
 
 
+@needs_vampire
+@needs_lake
 def test_large_problems_split_into_modules(tmp_path):
     """Above CM_CHUNK formulas, cm.py writes Base, chunk and Main modules aggregated as a tree; lake must accept them."""
     for f in ("lean-toolchain",):
@@ -157,6 +169,8 @@ def test_large_problems_split_into_modules(tmp_path):
     assert "sorryAx" not in out and "countermodel" in out
 
 
+@needs_vampire
+@needs_lake
 def test_constants_split_into_name_modules(tmp_path):
     """Constants go in their own modules (Names*), so no file passes Lean's ~20,000-declaration limit."""
     (tmp_path / "lean-toolchain").write_text(open("lean-toolchain").read())
@@ -167,6 +181,7 @@ def test_constants_split_into_name_modules(tmp_path):
     assert subprocess.run(["lake", "build"], cwd=tmp_path, capture_output=True).returncode == 0
 
 
+@needs_vampire
 def test_vampire_cache_is_transparent(tmp_path):
     """With CM_CACHE set, the second run reads Vampire's answer from the cache and emits the same Lean."""
     env = {**os.environ, "CM_CACHE": str(tmp_path)}
@@ -176,6 +191,8 @@ def test_vampire_cache_is_transparent(tmp_path):
     assert first == second == open("Cm/group_comm.lean").read()
 
 
+@needs_vampire
+@needs_lake
 @pytest.mark.parametrize("p", EXAMPLES)
 def test_reflected_certificate(p, tmp_path):
     """The same model, certified through the verified evaluator (Checker.lean) instead of one decide per formula."""
@@ -183,6 +200,8 @@ def test_reflected_certificate(p, tmp_path):
     assert lean_accepts(p, M(p), tmp_path, emit_reflect)
 
 
+@needs_vampire
+@needs_lake
 def test_reflected_mutants_agree_with_python(tmp_path):
     """Corrupt one table entry at a time: the reflected certificate must accept exactly what Python accepts.
     This checks cm.py's translation into Fm data, the part of the reflected path that is trusted."""
@@ -202,6 +221,8 @@ def test_reflected_mutants_agree_with_python(tmp_path):
     assert not all(lean)
 
 
+@needs_vampire
+@needs_lake
 def test_ablation_finds_what_a_conclusion_needs(tmp_path):
     """p(c) needs axiom `a` (a certified counter-model without it) and not `b`; an underivable target never 'needs'."""
     from ablate import ablate, table
@@ -214,6 +235,7 @@ def test_ablation_finds_what_a_conclusion_needs(tmp_path):
     assert "**needed**" in table(report) and "still does not follow" in table(report)
 
 
+@needs_lake
 def test_boundary_cases_are_rejected_by_the_kernel():
     """tests/Boundary.lean: invalid models and ill-formed or malformed formulas cannot produce a certificate."""
     assert run("lake", "build", "Checker").returncode == 0
@@ -266,6 +288,8 @@ def test_benchmark_records_unsupported_input(tmp_path, monkeypatch):
         assert bench.run_hybrid("X.p")["verdict"] == "unsupported input", src
 
 
+@needs_vampire
+@needs_lake
 @pytest.mark.parametrize("v", ["T", "True", "False", "Nat", "Decidable"])
 def test_variables_cannot_capture_lean_names(v, tmp_path):
     """A TPTP variable named like the domain type or a Lean constant must not shadow it (GEG001+1 uses `T`)."""
@@ -274,3 +298,62 @@ def test_variables_cannot_capture_lean_names(v, tmp_path):
     out = tmp_path / "Out.lean"
     out.write_text(run("python3", "cm.py", str(p)).stdout)
     assert run("lake", "env", "lean", str(out)).returncode == 0
+
+
+def test_include_expansion(tmp_path):
+    """bench.expand: plain includes are inlined; comments and quoted names are left alone; a selective include stays
+    in place and cm.py refuses it; an unresolved, nested or non-Axioms include raises. Nothing is silently dropped."""
+    from bench import expand
+    files = {"A.ax": "fof(ax, axiom, p(a)).\n", "N.ax": "include('Axioms/A.ax').\n"}
+    def read(f):
+        return files[f] if f in files else open(tmp_path / "missing" / f).read()
+    assert expand("include('Axioms/A.ax').\nfof(c, conjecture, q).\n", read) == "fof(ax, axiom, p(a)).\n\nfof(c, conjecture, q).\n"
+    assert expand("include( 'Axioms/A.ax' ) .\n", read) == files["A.ax"] + "\n"  # TPTP allows the spaces
+    for unchanged in ("% include('Axioms/A.ax').\n",  # BOO008-3 and RNG025-9 comment their includes out
+                      "/* include('Axioms/A.ax'). */\n", "fof(f, axiom, p('include(')).\n"):
+        assert expand(unchanged, read) == unchanged
+    selective = "include('Axioms/A.ax', [ax]).\nfof(c, conjecture, q).\n"
+    assert expand(selective, read) == selective
+    (p := tmp_path / "sel.p").write_text(selective)
+    with pytest.raises(ValueError):
+        problem(str(p))
+    for bad in ("include('Axioms/Missing.ax').\n", "include('Axioms/N.ax').\n", "include('Other/A.ax').\n"):
+        with pytest.raises(ValueError):
+            expand(bad, read)
+
+
+def test_block_comments_are_rejected(tmp_path):
+    """cm.py strips `%` comments only; a `/* … */` comment is refused rather than read as formulas."""
+    p = tmp_path / "t.p"
+    p.write_text("/* fof(hidden, axiom, ~p(a)). */\nfof(a, axiom, p(a)).\nfof(c, conjecture, q(a)).\n")
+    with pytest.raises(ValueError):
+        problem(str(p))
+    p.write_text("fof(a, axiom, p('/*')).\nfof(c, conjecture, q(a)).\n")  # inside a quoted name it is just a name
+    assert len(problem(str(p))) == 2
+
+
+def test_shallow_certificate_proves_a_nonempty_domain():
+    """An inductive type with no constructors is empty, and `∀ x, False` holds over it; a first-order domain is
+    nonempty. emit refuses a 0-element model, and every shallow certificate proves `Nonempty T` in its statement."""
+    with pytest.raises(ValueError):
+        emit("examples/group_comm.p", 0, {}, {})
+    for p in EXAMPLES:
+        assert "theorem countermodel : Nonempty T ∧ " in open(f"Cm/{os.path.basename(p)[:-2]}.lean").read()
+
+
+@pytest.mark.skipif(not os.path.isdir("bench/sources"), reason="needs bench/sources (bench/inputs.py rebuild)")
+def test_benchmark_inputs_match_their_sources():
+    """Every benchmark input is its TPTP original with includes expanded by bench.expand, byte for byte, and both
+    match the SHA-256s recorded in bench/inputs.json (taken from the official TPTP release)."""
+    import json, hashlib
+    from bench import expand
+    sha = lambda b: hashlib.sha256(b).hexdigest()
+    m = json.load(open("bench/inputs.json"))
+    read = lambda f: open(f"bench/axioms/{f}", encoding="latin-1").read()
+    for f, h in m["problems"].items():
+        src = open(f"bench/sources/{f}", "rb").read()
+        assert sha(src) == h["source"], f
+        if h.get("expanded"):
+            assert sha(open(f"bench/problems/{f}", "rb").read()) == h["expanded"] == sha(expand(src.decode("latin-1"), read).encode("latin-1")), f
+    for f, h in m["axioms"].items():
+        assert sha(open(f"bench/axioms/{f}", "rb").read()) == h, f

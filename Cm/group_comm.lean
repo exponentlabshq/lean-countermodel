@@ -31,7 +31,7 @@ theorem c2 : (∀ X' : T, ((«mul» («inv» X') X') = «e»)) := by decide
 
 theorem c3 : ¬(∀ X' Y' : T, ((«mul» X' Y') = («mul» Y' X'))) := by decide
 
-theorem countermodel : ((((∀ X' Y' Z' : T, ((«mul» («mul» X' Y') Z') = («mul» X' («mul» Y' Z'))))) ∧ ((∀ X' : T, ((«mul» «e» X') = X')))) ∧ (((∀ X' : T, ((«mul» («inv» X') X') = «e»))) ∧ (¬(∀ X' Y' : T, ((«mul» X' Y') = («mul» Y' X')))))) :=
-  ⟨⟨c0, c1⟩, ⟨c2, c3⟩⟩
+theorem countermodel : Nonempty T ∧ ((((∀ X' Y' Z' : T, ((«mul» («mul» X' Y') Z') = («mul» X' («mul» Y' Z'))))) ∧ ((∀ X' : T, ((«mul» «e» X') = X')))) ∧ (((∀ X' : T, ((«mul» («inv» X') X') = «e»))) ∧ (¬(∀ X' Y' : T, ((«mul» X' Y') = («mul» Y' X')))))) :=
+  ⟨⟨T.e1⟩, ⟨⟨c0, c1⟩, ⟨c2, c3⟩⟩⟩
 
 end group_comm

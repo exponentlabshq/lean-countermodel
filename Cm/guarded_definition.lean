@@ -28,7 +28,7 @@ theorem c1 : («list» «l1») := by decide
 
 theorem c2 : ¬(∀ Z' : T, («good» Z')) := by decide
 
-theorem countermodel : (((∀ S' : T, (¬(«list» S') ∨ (∀ Z' : T, ((«member» Z' S') ↔ («good» Z')))))) ∧ (((«list» «l1»)) ∧ (¬(∀ Z' : T, («good» Z'))))) :=
-  ⟨c0, ⟨c1, c2⟩⟩
+theorem countermodel : Nonempty T ∧ (((∀ S' : T, (¬(«list» S') ∨ (∀ Z' : T, ((«member» Z' S') ↔ («good» Z')))))) ∧ (((«list» «l1»)) ∧ (¬(∀ Z' : T, («good» Z'))))) :=
+  ⟨⟨T.e1⟩, ⟨c0, ⟨c1, c2⟩⟩⟩
 
 end guarded_definition
