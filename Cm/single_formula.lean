@@ -21,7 +21,7 @@ abbrev «r» (x0 x1 : T) : Prop := (4 >>> (1 * x0.idx + 2 * x1.idx)) % 2 = 1
 
 theorem c0 : ¬(∀ X Y : T, (¬(«r» X Y) ∨ («r» Y X))) := by decide
 
-theorem countermodel : ¬(∀ X Y : T, (¬(«r» X Y) ∨ («r» Y X))) :=
+theorem countermodel : (¬(∀ X Y : T, (¬(«r» X Y) ∨ («r» Y X)))) :=
   c0
 
 end single_formula

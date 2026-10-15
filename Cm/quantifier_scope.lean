@@ -25,7 +25,7 @@ theorem c0 : (∀ F G : T, (¬(∀ X : T, ((«app» F X) = («app» G X))) ∨ (
 
 theorem c1 : ¬(∀ F : T, (F = «c»)) := by decide
 
-theorem countermodel : (∀ F G : T, (¬(∀ X : T, ((«app» F X) = («app» G X))) ∨ (F = G))) ∧ ¬(∀ F : T, (F = «c»)) :=
+theorem countermodel : (((∀ F G : T, (¬(∀ X : T, ((«app» F X) = («app» G X))) ∨ (F = G)))) ∧ (¬(∀ F : T, (F = «c»)))) :=
   ⟨c0, c1⟩
 
 end quantifier_scope

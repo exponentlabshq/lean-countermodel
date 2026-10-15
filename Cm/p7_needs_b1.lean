@@ -36,7 +36,7 @@ theorem c5 : (∀ I : T, ((«isIdea» I) ∨ (∀ X : T, ¬(«ideaOf» I X)))) :
 
 theorem c6 : ¬(∀ I X : T, (¬(«ideaOf» I X) ∨ (∀ Y : T, (¬(«cause» X Y) ∨ (∀ J : T, (¬(«ideaOf» J Y) ∨ («cause» I J))))))) := by decide
 
-theorem countermodel : (∀ C E : T, (¬(«cause» C E) ∨ («conceivedThrough» E C))) ∧ (∀ C E : T, (¬(«conceivedThrough» E C) ∨ («cause» C E))) ∧ (∀ IC IE : T, (¬(«conceivedThrough» IE IC) ∨ (∀ E : T, (¬(«ideaOf» IE E) ∨ (∀ C : T, (¬(«ideaOf» IC C) ∨ («conceivedThrough» E C))))))) ∧ (∀ I : T, (¬(«isIdea» I) ∨ (∀ J : T, (¬(«isIdea» J) ∨ (¬(«conceivedThrough» I J) ∨ («cause» J I)))))) ∧ (∀ I : T, (¬(«isIdea» I) ∨ (∀ J : T, (¬(«isIdea» J) ∨ (¬(«cause» J I) ∨ («conceivedThrough» I J)))))) ∧ (∀ I : T, ((«isIdea» I) ∨ (∀ X : T, ¬(«ideaOf» I X)))) ∧ ¬(∀ I X : T, (¬(«ideaOf» I X) ∨ (∀ Y : T, (¬(«cause» X Y) ∨ (∀ J : T, (¬(«ideaOf» J Y) ∨ («cause» I J))))))) :=
-  ⟨c0, c1, c2, c3, c4, c5, c6⟩
+theorem countermodel : ((((∀ C E : T, (¬(«cause» C E) ∨ («conceivedThrough» E C)))) ∧ (((∀ C E : T, (¬(«conceivedThrough» E C) ∨ («cause» C E)))) ∧ ((∀ IC IE : T, (¬(«conceivedThrough» IE IC) ∨ (∀ E : T, (¬(«ideaOf» IE E) ∨ (∀ C : T, (¬(«ideaOf» IC C) ∨ («conceivedThrough» E C)))))))))) ∧ ((((∀ I : T, (¬(«isIdea» I) ∨ (∀ J : T, (¬(«isIdea» J) ∨ (¬(«conceivedThrough» I J) ∨ («cause» J I))))))) ∧ ((∀ I : T, (¬(«isIdea» I) ∨ (∀ J : T, (¬(«isIdea» J) ∨ (¬(«cause» J I) ∨ («conceivedThrough» I J)))))))) ∧ (((∀ I : T, ((«isIdea» I) ∨ (∀ X : T, ¬(«ideaOf» I X))))) ∧ (¬(∀ I X : T, (¬(«ideaOf» I X) ∨ (∀ Y : T, (¬(«cause» X Y) ∨ (∀ J : T, (¬(«ideaOf» J Y) ∨ («cause» I J))))))))))) :=
+  ⟨⟨c0, ⟨c1, c2⟩⟩, ⟨⟨c3, c4⟩, ⟨c5, c6⟩⟩⟩
 
 end p7_needs_b1

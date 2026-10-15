@@ -2,7 +2,7 @@
 import glob, itertools, os, random, re, shutil, subprocess, pytest
 from functools import cache
 from concurrent.futures import ThreadPoolExecutor
-from cm import TOKENS, VARS, emit, model, problem
+from cm import TOKENS, VARS, emit, model, problem, uncomment
 
 pytestmark = pytest.mark.skipif(not shutil.which(os.getenv("VAMPIRE", "vampire")) or not shutil.which("lake"),
                                 reason="needs vampire and lake")
@@ -43,13 +43,13 @@ def holds(s, n, consts, tables, env={}):
     def term(k):
         if k[0] == "$":
             return lambda v: k == "$true"
-        k, args = k.strip("'"), []
+        quoted, k, args = k[0] == "'", k.strip("'"), []
         if peek("("):
             nxt()
             args.append(term(nxt()))
             while nxt() == ",":
                 args.append(term(nxt()))
-        if k[0].isupper():
+        if k[0].isupper() and not quoted:
             return lambda v: v[k]
         return lambda v: tables[k][tuple(a(v) for a in args)] if args else consts[k]
 
@@ -122,9 +122,23 @@ def test_a_theorem_has_no_counter_model(tmp_path):
 def test_rewriting_preserves_meaning(p):
     """Each miniscoped formula agrees with the original, on the model and on every one-entry mutation of it."""
     n, consts, tables = M(p)
-    raw = re.findall(r"(fof|cnf)\(\s*[\w']+\s*,\s*\w+\s*,(.*?)\)\s*\.(?=\s*(?:fof|cnf)\(|\s*$)", re.sub(r"%.*", "", open(p).read()), re.S)
+    raw = re.findall(r"(fof|cnf)\(\s*[\w']+\s*,\s*\w+\s*,(.*?)\)\s*\.(?=\s*(?:fof|cnf)\(|\s*$)", uncomment(open(p).read()), re.S)
     raw = [f"![{','.join(sorted(VARS(f)))}]: ({f})" if k == "cnf" and VARS(f) else f for k, f in raw]
     other = lambda v: not v if isinstance(v, bool) else v % n + 1
     models = [tables] + [{**tables, f: {**t, a: other(v)}} for f, t in tables.items() for a, v in t.items()]
     for f, (_, g) in zip(raw, problem(p)):
         assert all(holds(f, n, consts, m) == holds(g, n, consts, m) for m in models)
+
+
+def test_large_problems_split_into_modules(tmp_path):
+    """Above CM_CHUNK formulas, cm.py writes Base, chunk and Main modules aggregated as a tree; lake must accept them."""
+    for f in ("lean-toolchain",):
+        (tmp_path / f).write_text(open(f).read())
+    (tmp_path / "lakefile.toml").write_text('name = "t"\ndefaultTargets = ["nakamura_a12"]\n\n[[lean_lib]]\nname = "nakamura_a12"\nglobs = ["nakamura_a12.+"]\n')
+    env = {**os.environ, "CM_CHUNK": "2"}
+    assert subprocess.run(["python3", os.path.abspath("cm.py"), os.path.abspath("examples/nakamura_a12.p"), str(tmp_path)],
+                          env=env, capture_output=True, text=True).stdout.startswith("9 Lean modules")  # 13 formulas: 7 chunks, Base, Main
+    assert subprocess.run(["lake", "build"], cwd=tmp_path, capture_output=True).returncode == 0
+    (tmp_path / "ax.lean").write_text("import nakamura_a12.Main\n#print axioms nakamura_a12.countermodel\n")
+    out = subprocess.run(["lake", "env", "lean", "ax.lean"], cwd=tmp_path, capture_output=True, text=True).stdout
+    assert "sorryAx" not in out and "countermodel" in out

@@ -27,7 +27,7 @@ theorem c1 : («r» «a» «b») := by decide
 
 theorem c2 : ¬(«r» «b» «a») := by decide
 
-theorem countermodel : (∀ X Y : T, (¬(«r» X Y) ∨ (∀ Z : T, (¬(«r» Y Z) ∨ («r» X Z))))) ∧ («r» «a» «b») ∧ ¬(«r» «b» «a») :=
-  ⟨c0, c1, c2⟩
+theorem countermodel : (((∀ X Y : T, (¬(«r» X Y) ∨ (∀ Z : T, (¬(«r» Y Z) ∨ («r» X Z)))))) ∧ (((«r» «a» «b»)) ∧ (¬(«r» «b» «a»)))) :=
+  ⟨c0, ⟨c1, c2⟩⟩
 
 end transitive_cnf

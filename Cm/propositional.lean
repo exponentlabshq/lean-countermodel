@@ -31,7 +31,7 @@ theorem c2 : (∀ X : T, ((«wet» X) ↔ («rain» ∨ (X = «river»)))) := by
 
 theorem c3 : ¬«rain» := by decide
 
-theorem countermodel : («river» ≠ «town») ∧ («rain» ∨ «snow») ∧ (∀ X : T, ((«wet» X) ↔ («rain» ∨ (X = «river»)))) ∧ ¬«rain» :=
-  ⟨c0, c1, c2, c3⟩
+theorem countermodel : ((((«river» ≠ «town»)) ∧ ((«rain» ∨ «snow»))) ∧ (((∀ X : T, ((«wet» X) ↔ («rain» ∨ (X = «river»))))) ∧ (¬«rain»))) :=
+  ⟨⟨c0, c1⟩, ⟨c2, c3⟩⟩
 
 end propositional
