@@ -58,14 +58,14 @@ Your comment 3 called this preprocessing "trusted, untested". That was accurate,
 
 ## 2. The artifact, and the scope of fresh replay
 
-**Access.** Access did not fail on your side: the repository is private, so its URL returns 404 to anyone outside our organization. The immutable artifact is a `git archive` of the tag `review-2026-10-15-r3`. It is sent with this letter, with its commit and SHA-256 in the cover message, since a file cannot contain its own checksum. It contains:
+**Access.** Access did not fail on your side: the repository is private, so its URL returns 404 to anyone outside our organization. The evidence comes as a folder of individual files, with no archives, taken from one commit of the repository. `00_REVIEW_README.md` gives the full commit hash and what each file answers. `01_MANIFEST.json` maps every file to its repository path and SHA-256. The manifest's own SHA-256 is in the cover message, since a file cannot contain its own checksum. The folder holds:
 - the revised manuscript;
 - all sources, tests and toolchain files;
 - the 30 shipped certificates;
 - every raw log: results, superseded runs, timings and replay;
 - `bench/inputs.json`, which gives the SHA-256 of the TPTP release tarball and of every original problem, expanded problem and axiom file.
 
-The TPTP inputs themselves (42 MB of originals, 95 MB of axiom files) are not in the archive. `bench/inputs.py` rebuilds them from the public release, and a test checks them byte for byte against the manifest.
+The TPTP inputs themselves (42 MB of originals, 95 MB of axiom files) are not included. `bench/inputs.py` rebuilds them from the public release, and a test checks them byte for byte against the manifest.
 
 **Fresh replay, now for the benchmark certificates as well.** `bench/replay.py` takes every strictly certified benchmark certificate from the frozen run and does three things:
 - recompiles it as a module;

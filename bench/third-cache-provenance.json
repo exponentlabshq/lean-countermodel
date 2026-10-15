@@ -1,0 +1,813 @@
+{
+ "what": "Vampire cache provenance for the third sample: for each problem, the content-addressed cache key cm.py computes (SHA-256 of input bytes + flags + Vampire version), when that cache entry was written (file mtime), and the final verdict. Timeouts are never cached.",
+ "windows": {
+  "aborted attempt (acb343b), third sample": "from 15:27:29 (start of third sample, from run log) to 15:34:08",
+  "completed run (30ad4f3)": "15:34:08 to 15:46:09",
+  "date": "2026-10-15 EDT"
+ },
+ "vampire_version": "Vampire 5.1.0 (Release build, commit 7b2f410 on 2026-08-13 10:17:34 +0200)",
+ "flags": "-sa fmb -updr off -t 30",
+ "problems": [
+  {
+   "problem": "LAT133-1.p",
+   "cache_key": "4f922dfa0243a6994a99d6c69c358a9fb25b385ef4a582efc6c746455ab660d7",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SYO805+1.p",
+   "cache_key": "7a42488663bcc46ff00b47381bbdd5b98e28654d8e999b8f05f117d6ec1b24eb",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.2
+  },
+  {
+   "problem": "SYN821-1.p",
+   "cache_key": "286a9f1c362e7a7c87f4996abd84e151c402156b98c43055fde90c9ac9308979",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "no model (definite give-up)",
+   "final_verdict": "no model",
+   "cm_s": 0.5
+  },
+  {
+   "problem": "SWV516-1.030.p",
+   "cache_key": "a7c0e2a8132369e3ccb8f0888a538996f3fb9c38867b7cbc9b62ef6e63dbf5b5",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.7
+  },
+  {
+   "problem": "SYO744+1.p",
+   "cache_key": "891866333c9044d0d93d0e724406b017b1c422b184722f5bbb380746f03ce627",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.3
+  },
+  {
+   "problem": "NLP213+1.p",
+   "cache_key": "525cb8835ae3098921899bc767d5c52125cfe0c1f5fa2d1be14a0c01d4c27b43",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "lean rejected",
+   "cm_s": 0.2
+  },
+  {
+   "problem": "SWW865+1.p",
+   "cache_key": "c724b84cebc900d28c3cf6d714eb2095a4bfd9edd6c588bc85eb5d1457350215",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.2
+  },
+  {
+   "problem": "LCL677+1.010.p",
+   "cache_key": "6e2de3bf1b15ff19c0e48465bbee5c27e2764bf3255b979763b9976ebd51b895",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "KRS037+1.p",
+   "cache_key": "748cc6ec9f7abcf91209ee9295f9d5ffbc5a7a917f34dace8b9450ad5015b86e",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SYO584+1.p",
+   "cache_key": "1f673a5754f2d6a561eb6264bb43dd5a869db5d37bfb579d1ba9bbcd6638e971",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.2
+  },
+  {
+   "problem": "NLP061+1.p",
+   "cache_key": "a9e3c6fb2f383ae1f20a2ddf2b67f6af23e5e5bb6669eb512e869da25a1bbb90",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.3
+  },
+  {
+   "problem": "SYO603+1.p",
+   "cache_key": "2c1d36619f0f64c65188848e2c0f41a3596fc63516ea2ea52dc4f6222a683e87",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "no model (definite give-up)",
+   "final_verdict": "no model",
+   "cm_s": 0.5
+  },
+  {
+   "problem": "NLP152+1.p",
+   "cache_key": "a1ae221c55940c63ddbeec2bad5c0ca0fa978a8394a9a26b995913faca580b46",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "GRP133-2.004.p",
+   "cache_key": "13b3b41db985be91fbb34efc01719b09a5b8365c7dc56cca3892631e083bbb0e",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "LCL663+1.010.p",
+   "cache_key": "5d3d3effb8cd0da29b024c8cb466b843b2ad06ab216e97e6cb71ea7e38718142",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "lean rejected",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "GRP763+1.p",
+   "cache_key": "ecfc9f708987bcb1910689bbd0d4516abe7804fbe7f1effa9b9f37285ff6cf26",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.1
+  },
+  {
+   "problem": "ALG310-1.p",
+   "cache_key": "a8478cca18c28418cecf14d51494cfc4eb01da390630ef5d221934d123f7e075",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified (native)",
+   "cm_s": 0.2
+  },
+  {
+   "problem": "SYN434+1.p",
+   "cache_key": "f0183cf14d0030b8d3fead087927591e11d5d045b2baabcb38c5ecab465eb93d",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "PUZ133+3.p",
+   "cache_key": "6de7f06451f9fb970d80aab6dd806854eea07c9179e7eaa0c42b87d3f26cb283",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SYO816+1.p",
+   "cache_key": "38f430cd0a1e5cd0e30e8a6898665d941dba9ce8f55af4d4bbfb3e06766183dc",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.1
+  },
+  {
+   "problem": "SWV513-1.040.p",
+   "cache_key": "be9477746876b788a27578ef6b597909fd9ba805bed629e673eeac9bc09a6c07",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 31.0
+  },
+  {
+   "problem": "RNG007-5.p",
+   "cache_key": "d0d1f49f0c18c9a1eec499e7b55375001eb37e52b55762bd1ae5c4e44b2237f6",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.2
+  },
+  {
+   "problem": "SWV015+1.p",
+   "cache_key": "c7967ab32471440e536bb87b39253556ad01c39d980169c8b0dba75d50000981",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SYN422+1.p",
+   "cache_key": "a2b2debd9f41ce7f88db13aaff375c7173bba00fe8ef01404efde47437aee325",
+   "cache_written": "aborted attempt (acb343b)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "KRS290-1.p",
+   "cache_key": "7b26fff3ce34b0f9d571ff92f0e04af27e3270fafc656b7f1529edb77ca482b7",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "cm.py error",
+   "cm_s": null
+  },
+  {
+   "problem": "SWV953-1.p",
+   "cache_key": "49d435b27572ecd65c87544d8d85d12faba4db0faffa2598867459a2f6bf4ef7",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.1
+  },
+  {
+   "problem": "SWV542-1.004.p",
+   "cache_key": "9a46dfc175dd98696c37708c6df9c8379930fdf454ccaf8cbdc0b79028abebd3",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.1
+  },
+  {
+   "problem": "PRO013+3.p",
+   "cache_key": "d1952910394a86ff4ac37dc1bee1b7c2c0a9c087be9d6dd86daba46347461644",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "GRP760+1.p",
+   "cache_key": "14ee113a98e164d32d37bf5ca457898b7c9b7b14d5d8a90fbfff721a7ce9c35f",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.1
+  },
+  {
+   "problem": "SYN747-1.p",
+   "cache_key": "ae182a3c5a7d37b3658dc02b016a3f8321176b18c3f9ab7fc1f0ad205de5ed56",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "NLP063+1.p",
+   "cache_key": "62f4a5a7c797169b0a7767d3acfaa9c9fbfcdd4920eeaf871ff1074ab9a37c54",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "GEO078-5.p",
+   "cache_key": "9ecfca4f132ca14a538f7f0008d52b918f6e12798db58e65f3b85c99f7bf0332",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 1.0
+  },
+  {
+   "problem": "SYN449-1.p",
+   "cache_key": "262aff5a21996853ee55d7789626c61fc6aa13bd0ed1db48e834c4bb35571dbe",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "NLP044+1.p",
+   "cache_key": "5bb540bf6aed2bf498537395ed3a6f4237c853e92c68254b5ca0e1256a8ffeb0",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SYO785+1.p",
+   "cache_key": "b371463e221831fc8876c9b866eec325af9459859fc20295a57bba6a9b87d0ba",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.2
+  },
+  {
+   "problem": "SYN791-1.p",
+   "cache_key": "e1cdaf5a33fd639ac5e56719bb865cea2e221c4bc81f6244f480799ddec19164",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "NLP244-1.p",
+   "cache_key": "d3870caf54cfeebd7e483627b291d6b32d6ffd121af75f83c69d421b85ec1584",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "LCL407-2.p",
+   "cache_key": "ca9b2d48408aa8066b0bf6d5818cef09c6d83dbbab2e0f657588da8b37dbd768",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "LCL136-1.p",
+   "cache_key": "dde5779ea8817168d286b0601f2822e0f1717f2a5ccf33439f4d4a5e47b6abaa",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "NLP111-1.p",
+   "cache_key": "15f314a7ec4b53d236814114cf87b844d71cf153c5911a2400dea69adcb66efe",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SYN864-1.p",
+   "cache_key": "60d46ea15b13000562668d2976ae7680802e228c96980a9915b5c5b885fb6496",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "no model (definite give-up)",
+   "final_verdict": "no model",
+   "cm_s": 1.2
+  },
+  {
+   "problem": "SYO710+1.p",
+   "cache_key": "29bcb9bd11c6fc75e333603921e9351434a33ed9878ad1ab6190eef1dc4a46bd",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.5
+  },
+  {
+   "problem": "LCL413-1.p",
+   "cache_key": "9f9b8292f74ff4a6b1c793946137027dd0a3a1e5cfb7b40e33cc988787aca2f0",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "KRS016-1.p",
+   "cache_key": "d80ede8c779a860ee9adcaa3b828bc53d0284ee0fd102d359a59d6ae6f2cd6dc",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SWV497-1.030.p",
+   "cache_key": "6a93eea4967247ea748f1b6795bdc32b58b710fff14da262b9364ac7f981e30c",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.3
+  },
+  {
+   "problem": "SWW889+1.p",
+   "cache_key": "f50315e765ecf025cabd6003be41000e8613d059d7054d4e60b871f400ae35d9",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.9
+  },
+  {
+   "problem": "SYN441-1.p",
+   "cache_key": "7e24af8ac07e8d2f090ac8372111f7dea92ef7cff91e27e6cd3e96b11decaf22",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.3
+  },
+  {
+   "problem": "HWV070+1.p",
+   "cache_key": "6709b532839894701dca846d3cfcc62c049986d07705b53dd4e60ed88099829f",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "no model (definite give-up)",
+   "final_verdict": "no model",
+   "cm_s": 1.6
+  },
+  {
+   "problem": "NLP186+1.p",
+   "cache_key": "7c4cbd022668aee8bd307867c065b29651fb7d1223a75346d46d955cc646f01b",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified (native)",
+   "cm_s": 0.2
+  },
+  {
+   "problem": "LAT396-1.p",
+   "cache_key": "dea6bacdebc71dbd540eea5d07607a564201c1628759f19571226b09aebf07e0",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "LAT048-1.p",
+   "cache_key": "c007e22249c3c711cebdf830c9a8e375725737e9cd0f78c5629aa1bc1795b9b6",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "LCL649+1.020.p",
+   "cache_key": "123352de01d37a9415150101bc626ec7dbffe9b2a1cd65f86afc499c23b3c363",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "lean rejected",
+   "cm_s": 1.0
+  },
+  {
+   "problem": "NLP229-1.p",
+   "cache_key": "74f2d9646782e0cb9d2f038efb51a39c6439094dad47f35aceab4390452c7f76",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "PLA028+1.p",
+   "cache_key": "41984d0abb91c3ce9a6ea4b224ceecdfccf79a1d66501f3be94a2e14dbd0ba38",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.2
+  },
+  {
+   "problem": "KRS224+1.p",
+   "cache_key": "aa995921af34627ac982343846203330994a468c905ab79b7ec134ca7d01d903",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "unsupported input",
+   "cm_s": null
+  },
+  {
+   "problem": "SYN419+1.p",
+   "cache_key": "7ac8eacb944aec58041f313230bcf5c1860bab52e6f25c455c732ae9bddf1e14",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.3
+  },
+  {
+   "problem": "PRD002+1.p",
+   "cache_key": "2eb391c2638526885ca2e0ec10b59a55f5e621c3fad3b7f16a57de5e59484630",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.7
+  },
+  {
+   "problem": "GRP204-1.p",
+   "cache_key": "c7a9be30c4cbefaa691265bd3d49258379adeb69cf1e1c93eb5e23f675e0c06d",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 1.0
+  },
+  {
+   "problem": "GRP818+1.p",
+   "cache_key": "36b0425698cb689d9c3d5c36a6dbab007d4c16b2899138c916cfff076b9a5106",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.3
+  },
+  {
+   "problem": "NUM289-1.p",
+   "cache_key": "852448daf921a52adf113abbb19f3a5932c3a7e33ff277fe0394ad9cbd118ab9",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.3
+  },
+  {
+   "problem": "KLE178+1.p",
+   "cache_key": "f9a041eea544641266c95cb16c3d63d4a88fc7f477eb75e825918efc8f330c20",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "PUZ028-1.p",
+   "cache_key": "f8c8f022eed2ea10988e47d7e258b99229dd863d8f932b2338644102e7e26b61",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "GRP790+1.p",
+   "cache_key": "46f06e36b4beeae0a3eea68a418e36d39f81a3d5dc23c872f2ccd1ec3769a24a",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SYO753+1.p",
+   "cache_key": "5dab1ffad889fe41225fc04d100b09ad48c75656f5ac9de772063f763da9b156",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.1
+  },
+  {
+   "problem": "GRP814+1.p",
+   "cache_key": "cee7f865e740728f94efb0bdfef8f159dba0563d60625249672de787b1136e83",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SWB025+3.p",
+   "cache_key": "eadd8aa42f853c13281d8625ef2f3d9607af01e7890fdd4468daf38c4f66f893",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 7.9
+  },
+  {
+   "problem": "GRP810+1.p",
+   "cache_key": "454ed7322e732b4dbeb6e30176573c5104635a38ddb2cf202fa8b916b0a4e102",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "LAT109-1.p",
+   "cache_key": "be2db156abd8390094864879da47ce9b614cf1aabaca45e27fecfc4744512d16",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 2.4
+  },
+  {
+   "problem": "SWV507-1.050.p",
+   "cache_key": "0a729d8495f72e780c183e03b63c32d9c082176c556d4514103933c0b921c9cb",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.1
+  },
+  {
+   "problem": "SYN780-1.p",
+   "cache_key": "90dac9fefd0fe3d98336709c2c749b6e5186703c00c95d227dccd6f188e2eeb1",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "KRS249+1.p",
+   "cache_key": "74b666ddccdd8a011d01a7fc8889d5966eaa15a9eea84daf1f29b49ea70233f2",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "unsupported input",
+   "cm_s": null
+  },
+  {
+   "problem": "LCL913+1.p",
+   "cache_key": "2fa13491e0c2a0db37f484b683afae22ec0dca50523a6995c1bc71835419fa6c",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "NLP238-1.p",
+   "cache_key": "0ef04dd0e653d50d7bb7a20248a3a13fcfb6a2b268272213cca6343365cf2ca7",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "NLP104+1.p",
+   "cache_key": "9ecae83c6b1e0b5cc6e47fd751a27ca9d0bdf9a0a9c5a2d281279211c89407a9",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "NLP249+1.p",
+   "cache_key": "c1275bc18e725eba8d46415c1346c12ccf008bd70b9ac4614b311eee5ed05c34",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "NUM349+1.p",
+   "cache_key": "32bf29ce1e92fa786a55da40d00352c4250e1a8241ede455fa502a412476035a",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.3
+  },
+  {
+   "problem": "SWW465-1.p",
+   "cache_key": "fe68188292a6d78e9ed8f04208ff54c10937742d7cf97414565d53a23bfafa6d",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.2
+  },
+  {
+   "problem": "GRP792+1.p",
+   "cache_key": "544135e96669820e18bae1b48b5a65d965e3785021a8d66310f0cfc4b3431509",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.2
+  },
+  {
+   "problem": "LAT062-1.p",
+   "cache_key": "b77156cfa81bce707f344b2bed0dee68871b78fb72ec55950b2b1232fc1f0022",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 2.9
+  },
+  {
+   "problem": "SYN799-1.p",
+   "cache_key": "ce339db944ab2b7f9622f29d3be2d1f5d591c63bbbe0e890bc7bb94613913a58",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SWW467-1.p",
+   "cache_key": "c40d2a9490c5950a63ddb8ca80bf70e79abd38f2ec41b7060843b2ad7ba5058b",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.1
+  },
+  {
+   "problem": "NUM366+1.p",
+   "cache_key": "f28d8af964e187d19a04eb28ed77d2f0a1b95bae91a563e9fabefdcac1af5f13",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.3
+  },
+  {
+   "problem": "NLP016+1.p",
+   "cache_key": "018168b0b55608e315abf91e7d718c57c6605c5d66a47afa3d1c71ace76225ab",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified (native)",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SYN438+1.p",
+   "cache_key": "ebc8005f195bad412123b49022f31cd0565f89df6856ab544e638bf96f16b240",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "CSR175+1.p",
+   "cache_key": "8012f0820d730bce61e63c44cb44fd123b03699aaaf26221f1c86bc4b928e28c",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.2
+  },
+  {
+   "problem": "SWW921+1.p",
+   "cache_key": "a5a93743297085654d3ca727ece296d7f3c6cbf059d6e4ae291d8e57e03dd099",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 1.0
+  },
+  {
+   "problem": "SYN530-1.p",
+   "cache_key": "4c2fa18b3d29f1624f2137cb1464297f88fdb9fa4a36e357b1cadc0c60fe5ca5",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "GRP798+1.p",
+   "cache_key": "fbdeec3e02c1fcd4b6672b2345ce9e47949f2fa6466564512586fb524d4a3633",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SWV013-1.p",
+   "cache_key": "da5a6ac2947e855f83258e6595b6f55d260bc41a55691a3306d90668cb69e120",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SWW401-1.p",
+   "cache_key": "998a0ef52f67b2be9fee3df05a40f18462eb4c7aed60a987f9beffec13aa7a33",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "GRP025-2.p",
+   "cache_key": "a4f4df832d3481f7a6050c43a5ca0e7f42512f8168227d89153fff31c41da35c",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SWV534-1.004.p",
+   "cache_key": "5b390cb7ed094a9c1121a91ca6a518a5b7a1adb35260a16d18b3eccedc371636",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 31.0
+  },
+  {
+   "problem": "HWV105+1.p",
+   "cache_key": "66447a634b417a3b7fa81970fa825ddc04cf95db8cd971f1815e01dd2ee16224",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "unsupported input",
+   "cm_s": null
+  },
+  {
+   "problem": "SYN492+1.p",
+   "cache_key": "7efcda0bef2e85ac469df88bdb4fffe1843e5c2786dda814cf4133cb9b7517e7",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "SWV498-1.040.p",
+   "cache_key": "3a3c90e56bfe95ed2be3eda69d9b9c09bada51d0455380722d7585ccaec18b9b",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.3
+  },
+  {
+   "problem": "SWV499-1.040.p",
+   "cache_key": "a9a8880e3119d19ef2d3912888bd03a2f507286d9e9b71ba7347f0756be30f79",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 33.7
+  },
+  {
+   "problem": "SYO690-1.001.p",
+   "cache_key": "4b4925313dc0886e0d2d5907580aadfc5ab2bdd737b03a834cb979b8fc7921fb",
+   "cache_written": "not cached",
+   "cached_outcome": "timeout, or never reached Vampire",
+   "final_verdict": "no model",
+   "cm_s": 30.2
+  },
+  {
+   "problem": "SYO595-1.p",
+   "cache_key": "37bd62cfd8f94cdaa4c34a244745a61da085b8fee1c8da0ad43f08dd5aa0251f",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "cm.py error",
+   "cm_s": 2.0
+  },
+  {
+   "problem": "NLP243+1.p",
+   "cache_key": "1713d79c56eb40a7dfb1a62eb4ad8d08e64e06405eaef736730f04b9512bfcd6",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified (native)",
+   "cm_s": 0.1
+  },
+  {
+   "problem": "MGT040-1.p",
+   "cache_key": "d3b3d450f2e883a4b4f0258f34811485ece7c664511c2d28d774e28f4a437470",
+   "cache_written": "completed run (30ad4f3)",
+   "cached_outcome": "model",
+   "final_verdict": "certified",
+   "cm_s": 0.1
+  }
+ ],
+ "conclusion": "The aborted attempt processed list positions 0-23 with 2 workers, in order, and stopped at KRS290-1 (position 24). It cached 17 answers (15 models, 2 definite give-ups), all at positions 0-23; the completed run reused them. The other 7 problems at positions 0-23 have no cache entry, i.e. they timed out in the aborted attempt, and all 7 timed out again in the completed run (final verdict no model). Positions 25 and 26, which workers could have been running when the crash surfaced, timed out in the completed run; position 27 was solved in 0.1 s in the completed run, so it had not been started in the aborted one (a started run would have finished and cached it). Hence no third-sample model came from a retry after a timeout: each of the 67 models (and each definite give-up) is the answer of a single Vampire call with the 30 s limit. The record of what timed out in the aborted attempt is inferred from absent cache entries; timeouts were not logged."
+}
