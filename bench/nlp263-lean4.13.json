@@ -1,6 +1,32 @@
-{"problem": "NLP263+1.p", "lean": "4.13.0", "formulas": 976544, "constants": 383180, "model_size": 1,
- "modules": {"Base": 1, "Names": 39, "Chunk": 514, "Main": 1}, "chunk_size": 2000, "parallel_chunks": 3,
- "verdict": "certified", "axioms": [], "failed_modules": 0,
- "seconds": {"emit": 36, "base": 27, "chunks": 1096, "main_and_check": 82, "total_wall": 1241, "total_cpu": 3262},
- "peak_memory_bytes": 1643331584, "lean_source_mb": 178, "build_output_gb": 2.0,
- "machine": "8 GB laptop, 8 cores", "date": "2026-10-15"}
+{
+ "problem": "NLP263+1.p",
+ "lean": "4.13.0",
+ "formulas": 1026857,
+ "constants": 383180,
+ "model_size": 1,
+ "modules": {
+  "Base": 1,
+  "Names": 39,
+  "Chunk": 514,
+  "Main": 1
+ },
+ "chunk_size": 2000,
+ "parallel_chunks": 3,
+ "verdict": "certified",
+ "axioms": [],
+ "failed_modules": 0,
+ "seconds": {
+  "emit": 36,
+  "base": 27,
+  "chunks": 1096,
+  "main_and_check": 82,
+  "total_wall": 1241,
+  "total_cpu": 3262
+ },
+ "peak_memory_bytes": 1643331584,
+ "lean_source_mb": 178,
+ "build_output_gb": 2.0,
+ "machine": "8 GB laptop, 8 cores",
+ "date": "2026-10-15",
+ "note": "all formulas are ground facts (no variables); an earlier count of 976,544 came from a parser bug (% inside quoted names), since fixed"
+}

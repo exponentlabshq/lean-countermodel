@@ -165,4 +165,26 @@ structural recursions grows with the fuel, so the generator passes the true nest
 too little fuel decodes to `⊥`, which can never be certified. -/
 def decode (s w k depth : Nat) : List Fm := readFms s w depth k 0
 
+/-! ## Fact tables: ground literals as fixed-width records
+
+Most of a large problem is often ground facts `p(c₁, …, cₖ)` or `¬p(c₁, …, cₖ)`. A fact table stores fact `i` as
+`K + 2` fields of `w` bits: polarity (1 asserted, 0 denied), predicate, then `K` constant slots, of which the first
+`ar p` are used. `fact` reads one record straight into a formula, so checking needs no general decoding. -/
+
+/-- Fact `i` of a fact table, as a formula. -/
+def fact (s w K : Nat) (ar : Nat → Nat) (i : Nat) : Fm :=
+  let b := i * (K + 2)
+  let p := get s (b + 1) w
+  let a := (List.range (ar p)).map fun j => Tm.const (get s (b + 2 + j) w)
+  if get s b w == 1 then .atom p a else .not (.atom p a)
+
+/-- The `k` facts of a table. -/
+def decodeFacts (s w K : Nat) (ar : Nat → Nat) (k : Nat) : List Fm := (List.range k).map (fact s w K ar)
+
+theorem holds_facts (M : Model) (s w K : Nat) (ar : Nat → Nat) (k : Nat)
+    (h : (List.range k).all (fun i => (fact s w K ar i).check M []) = true) : Holds M (decodeFacts s w K ar k) := by
+  intro φ hφ
+  obtain ⟨i, hi, rfl⟩ := List.mem_map.1 hφ
+  exact (Fm.check_iff M _ []).1 (List.all_eq_true.1 h i hi)
+
 end CM

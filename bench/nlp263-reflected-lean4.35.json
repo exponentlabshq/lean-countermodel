@@ -1,0 +1,7 @@
+{"problem": "NLP263+1.p", "lean": "4.35.0", "method": "reflection (Checker.lean: Holds M (decodeFacts ...), decide +kernel)",
+ "formulas": 1026857, "facts": 1026857, "constants": 383180, "model_size": 1,
+ "modules": {"Base": 1, "Part": 251, "Main": 1}, "facts_per_block": 128, "blocks_per_part": 32, "parallel_parts": 4,
+ "verdict": "certified", "axioms": ["propext", "Quot.sound"], "failed_modules": 0,
+ "seconds": {"generate": 37, "base": 3, "parts": 286, "total_wall": 290, "total_cpu": 1052},
+ "peak_memory_bytes": 499417088, "lean_source_mb": 25, "build_output_mb": 65,
+ "machine": "8 GB laptop, 8 cores", "date": "2026-10-15"}
