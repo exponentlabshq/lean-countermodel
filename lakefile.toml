@@ -5,3 +5,7 @@ defaultTargets = ["Cm"]
 name = "Cm"
 globs = ["Cm.+"]
 
+
+[[lean_lib]]
+name = "CM"
+globs = ["CM.+"]

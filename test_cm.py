@@ -2,7 +2,7 @@
 import glob, itertools, os, random, re, shutil, subprocess, pytest
 from functools import cache
 from concurrent.futures import ThreadPoolExecutor
-from cm import TOKENS, VARS, emit, model, problem, uncomment
+from cm import TOKENS, VARS, emit, emit_reflect, model, problem, uncomment
 
 pytestmark = pytest.mark.skipif(not shutil.which(os.getenv("VAMPIRE", "vampire")) or not shutil.which("lake"),
                                 reason="needs vampire and lake")
@@ -61,9 +61,9 @@ def countermodel(path, n, consts, tables):
     return all(holds(f, n, consts, tables) != (r == "conjecture") for r, f in problem(path))
 
 
-def lean_accepts(path, m, tmp):
-    file = tmp / f"{os.path.basename(path)[:-2]}_{id(m)}.lean"
-    file.write_text(emit(path, *m))
+def lean_accepts(path, m, tmp, emitter=emit):
+    file = tmp / f"{os.path.basename(path)[:-2]}_{emitter.__name__}_{id(m)}.lean"
+    file.write_text(emitter(path, *m))
     return run("lake", "env", "lean", str(file)).returncode == 0
 
 
@@ -161,3 +161,29 @@ def test_vampire_cache_is_transparent(tmp_path):
     assert len(os.listdir(tmp_path)) == 1
     second = subprocess.run(["python3", "cm.py", "examples/group_comm.p"], env=env, capture_output=True, text=True).stdout
     assert first == second == open("Cm/group_comm.lean").read()
+
+
+@pytest.mark.parametrize("p", EXAMPLES)
+def test_reflected_certificate(p, tmp_path):
+    """The same model, certified through the verified evaluator (CM/Check.lean) instead of one decide per formula."""
+    assert run("lake", "build", "CM").returncode == 0
+    assert lean_accepts(p, M(p), tmp_path, emit_reflect)
+
+
+def test_reflected_mutants_agree_with_python(tmp_path):
+    """Corrupt one table entry at a time: the reflected certificate must accept exactly what Python accepts.
+    This checks cm.py's translation into Fm data, the part of the reflected path that is trusted."""
+    rnd, cases = random.Random(1), []
+    for p in EXAMPLES:
+        n, consts, tables = M(p)
+        for _ in range(2):
+            f = rnd.choice(sorted(tables))
+            args = rnd.choice(sorted(tables[f]))
+            v = tables[f][args]
+            new = not v if isinstance(v, bool) else rnd.choice([e for e in range(1, n + 1) if e != v])
+            cases.append((p, (n, consts, {**tables, f: {**tables[f], args: new}})))
+    assert run("lake", "build", "CM").returncode == 0
+    with ThreadPoolExecutor() as pool:
+        lean = list(pool.map(lambda c: lean_accepts(*c, tmp_path, emit_reflect), cases))
+    assert lean == [countermodel(p, *m) for p, m in cases]
+    assert not all(lean)
