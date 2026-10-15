@@ -443,6 +443,7 @@ def emit_reflect(path, n, consts, tables, block=4096, facts_per_block=128, per_p
 
 
 if __name__ == "__main__":  # cm.py [--reflect] problem.p [DIR]: one file to stdout, or Lean modules DIR/<name>/*.lean
+    sys.set_int_max_str_digits(0)  # bitmask tables can exceed Python's default 4,300-digit limit for printing
     reflect = sys.argv[1] == "--reflect"
     args = sys.argv[2:] if reflect else sys.argv[1:]
     out = (emit_reflect if reflect else emit)(args[0], *model(args[0]))

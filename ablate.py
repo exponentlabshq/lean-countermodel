@@ -103,7 +103,7 @@ def table(report):
     head = "| Without ↓ / target → | " + " | ".join(f"`{t}`" for t in ts) + " |\n|---|" + "---|" * len(ts) + "\n"
     full = "| *(nothing removed)* | " + " | ".join(cell[(None, t)] for t in ts) + " |\n"
     rows = "".join(f"| `{a}` | " + " | ".join(cell[(a, t)] for t in ts) + " |\n" for a in report["axioms"])
-    mins = "".join(f"\n- Minimal set for `{t}`: " + ", ".join(f"`{a}`" for a in m) for t, m in report["minimal"].items())
+    mins = "".join(f"\n- Subset-minimal sufficient set (greedy) for `{t}`: " + ", ".join(f"`{a}`" for a in m) for t, m in report["minimal"].items())
     return head + full + rows + mins + "\n"
 
 

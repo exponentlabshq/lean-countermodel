@@ -2,7 +2,7 @@
 Usage: python3 bench.py N [WORKERS]   -> fetch and run N more problems, append to bench/results.jsonl"""
 import html, json, os, queue, random, re, subprocess, sys, threading, time, urllib.request
 from concurrent.futures import ThreadPoolExecutor
-from cm import VARS, problem
+from cm import VARS, lean as translate, problem
 
 SEE, DIR = "https://tptp.org/cgi-bin/SeeTPTP?Category=", "bench"
 
@@ -40,7 +40,7 @@ def pick(n, seen):
 
 def run(f):
     p, t = f"{DIR}/problems/{f}", time.time()
-    cm = subprocess.run(["python3", "cm.py", p], capture_output=True, text=True,
+    cm = subprocess.run(["python3", "-X", "int_max_str_digits=0", "cm.py", p], capture_output=True, text=True,
                         env={"CM_CACHE": f"{DIR}/vampire-cache", **os.environ})  # Vampire's answers are reused across Lean versions
     r = {"problem": f, "lang": "cnf" if "-" in f else "fof", "cm_s": round(time.time() - t, 1)}
     if cm.returncode:
@@ -118,7 +118,9 @@ def fact_share(p):
 def run_hybrid(f, threshold=0.9):
     """Reflection for fact-heavy problems; one theorem per formula (shallow decide) for the rest. Inputs cm.py refuses
     (unsupported TPTP features) are recorded as such and stay in the denominator."""
-    try:
+    try:  # translate every formula first, so unsupported syntax is classified before Vampire runs, not after
+        for _, g in problem(f"{DIR}/problems/{f}"):
+            translate(g)
         share = fact_share(f"{DIR}/problems/{f}")
     except ValueError as e:
         return {"problem": f, "verdict": "unsupported input", "why": str(e)[:300], "method": "-"}

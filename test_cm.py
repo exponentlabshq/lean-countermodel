@@ -260,5 +260,7 @@ def test_benchmark_records_unsupported_input(tmp_path, monkeypatch):
     import bench
     monkeypatch.setattr(bench, "DIR", str(tmp_path))
     (tmp_path / "problems").mkdir()
-    (tmp_path / "problems" / "X.p").write_text("fof(a, axiom, (p <~> q)).\n")
-    assert bench.run_hybrid("X.p")["verdict"] == "unsupported input"
+    monkeypatch.setenv("VAMPIRE", str(tmp_path / "no-such-vampire"))  # must be classified before Vampire runs
+    for src in ("fof(a, axiom, (p <~> q)).\n", "fof(a, axiom, ![X]: (p(X) ~| q(X))).\n", "fof(a, axiom, p(\"s\")).\n"):
+        (tmp_path / "problems" / "X.p").write_text(src)
+        assert bench.run_hybrid("X.p")["verdict"] == "unsupported input", src
