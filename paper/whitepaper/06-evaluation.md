@@ -5,12 +5,14 @@ All measurements were taken on one 8 GB, 8-core laptop. Wall-clock times vary by
 ### 6.1 Case study A: a published Lean formalization (Spinoza's *Ethics*)
 
 **Question.** Nakamura [22] formalizes *Ethics* I in Lean 4 and proves two non-derivability results with hand-built counter-models:
+
 - **S-A12:** A12 does not follow from `StatedAxioms` together with `PSRSubstance`;
 - **S-A15:** A15 does not follow from `StatedAxioms` together with plenitude.
 
 Can the tool find these counter-models by itself?
 
 **Method.**
+
 1. **Read** his `Definitions.lean` and `Axioms.lean` at commit 6d4c046.
 2. **Transcribe** them into TPTP: primitives become predicates, `def`s become biconditionals, the 8 substantive `StatedAxioms` fields become axioms, the weaker principle is an axiom and the target is the conjecture.
 3. **Validate:** the transcription must reproduce his *positive* results first. Weak P5 follows from `StatedAxioms` + `PSRSubstance`, and A15 from `StatedAxioms` + A25 + A26.
@@ -25,6 +27,7 @@ Can the tool find these counter-models by itself?
 | S-A15 | 3 elements (`A15CounterModel`) | **2 elements**, 0.1 s | yes; axioms `[propext]` |
 
 **The models.**
+
 - **S-A12:** two substances that *share* one attribute and *differ* in another. The sufficient-reason principle holds, and A12 fails. This is the shape of the classic objection to *Ethics* I P5.
 - **S-A15:** two gods, one lacking an attribute of the other.
 
@@ -45,11 +48,13 @@ Can the tool find these counter-models by itself?
 Minimal sufficient sets: weak P5 needs {A22} alone; A15 needs {A25, A26}.
 
 **Findings:**
+
 1. **None of Spinoza's eight stated axioms is needed for any of these results.** In this register, the logical work is done entirely by the definitions and the added sufficient-reason principles. This is a precise form of the Bennett–Della Rocca question: whatever weak P5 and A15 establish, they owe it to the principle of sufficient reason.
 2. **A12 is irreducible even against the whole register.** Nakamura shows A12 does not follow from `StatedAxioms` + A22. A certified 2-element model shows it also fails with plenitude (A25) and God's uniqueness (A26) added.
 3. **The "needed" results confirm Nakamura's positive Lean proofs** (weak P5 from A22; A15 from A25 + A26) and show that each premise in them is necessary.
 
 **Caveats:**
+
 - This is the first-order layer of the register only, not its S5 modal layer.
 - "Not needed" rests on uncertified Vampire proofs.
 - As in §6.1, the counter-models let one object be both a substance and an attribute, which the register permits.
@@ -59,6 +64,7 @@ Minimal sufficient sets: weak P5 needs {A22} alone; A15 needs {A25, A26}.
 **Question.** Does the tool work on problems nobody chose for it? When it fails, is it ever *wrong*?
 
 **Method.**
+
 1. **Index:** from TPTP's ProblemAndSolutionStatistics, keep the 2,561 fof/cnf problems marked Satisfiable or CounterSatisfiable.
 2. **Sample** 100 problems, never hand-picked. The first 20 came from an earlier picker that chose a random domain, then checked a random problem's status. The last 80 were sampled uniformly from the index.
 3. **Search:** 30 s of Vampire per problem. Results are cached by content, and timeouts are never cached.
@@ -92,6 +98,7 @@ Problems were developed in Fibonacci batches (1, 1, 2, 3, 5, 8). Every bug found
 **72 of the 77 models (94%) are certified, 70 of them by the kernel alone.**
 
 Three verdicts changed between the versions:
+
 - **NLP263+1:** a `cm.py` error on 4.13, certified on 4.35 through the reflective checker (§6.3);
 - **HWV048-2:** a 16-element model that overflowed the stack on 4.13 now certifies in 2.7 s. This is consistent with Lean 4.33 bounding kernel recursion by `maxRecDepth`;
 - **NLP018-10:** needed `native_decide` on 4.13 and certifies kernel-only on 4.35.

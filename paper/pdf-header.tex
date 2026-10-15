@@ -1,0 +1,35 @@
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{STIX Two Text}
+\setmathfont{STIX Two Math}
+\setmonofont{Menlo}[Scale=0.82]
+\usepackage{newunicodechar}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,commandchars=\\\{\}}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
+\newfontfamily\symfallback{STIX Two Math}
+% Characters that STIX Two Text and Menlo lack: math symbols from STIX Two Math; modifier letters as real
+% super/subscripts. Each is inserted by code point (\symbol), so the mapping cannot recurse.
+\newunicodechar{ᵛ}{\textsuperscript{v}}
+\newunicodechar{ᵠ}{\textsuperscript{\ensuremath{\upphi}}}
+\newunicodechar{ᵦ}{\textsubscript{\ensuremath{\upbeta}}}
+\newunicodechar{‖}{{\symfallback\symbol{"2016}}}
+\newunicodechar{ₖ}{\textsubscript{k}}
+\newunicodechar{→}{{\symfallback\symbol{"2192}}}
+\newunicodechar{↓}{{\symfallback\symbol{"2193}}}
+\newunicodechar{↔}{{\symfallback\symbol{"2194}}}
+\newunicodechar{↦}{{\symfallback\symbol{"21A6}}}
+\newunicodechar{∀}{{\symfallback\symbol{"2200}}}
+\newunicodechar{∃}{{\symfallback\symbol{"2203}}}
+\newunicodechar{∉}{{\symfallback\symbol{"2209}}}
+\newunicodechar{∧}{{\symfallback\symbol{"2227}}}
+\newunicodechar{∨}{{\symfallback\symbol{"2228}}}
+\newunicodechar{≈}{{\symfallback\symbol{"2248}}}
+\newunicodechar{≤}{{\symfallback\symbol{"2264}}}
+\newunicodechar{≥}{{\symfallback\symbol{"2265}}}
+\newunicodechar{⊢}{{\symfallback\symbol{"22A2}}}
+\newunicodechar{⊤}{{\symfallback\symbol{"22A4}}}
+\newunicodechar{⊥}{{\symfallback\symbol{"22A5}}}
+\newunicodechar{⌈}{{\symfallback\symbol{"2308}}}
+\newunicodechar{⌉}{{\symfallback\symbol{"2309}}}

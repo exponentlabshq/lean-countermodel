@@ -1,6 +1,7 @@
 ## 1. Introduction
 
 Formal developments are full of *negative* claims:
+
 - this axiom is independent of those;
 - this hypothesis is needed;
 - this conjecture is false;

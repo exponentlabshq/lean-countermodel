@@ -20,6 +20,7 @@ We present `lean-countermodel`, which turns finite models found by the Vampire p
 The work is mostly about making the check finish. Naive certificates are hopeless at scale: one benchmark clause has about 10¹¹ cases, and a 10,000-formula file overflows Lean's kernel. We give a measured recipe of classic patterns, among them backtracking via miniscoping, greedy join ordering, bitsets, balanced trees, hierarchical aggregation, content-addressed caching, blocking and reflection. Each pattern is kept or rejected on measurement, and the negative results are reported. The central lesson for anyone generating large Lean certificates is that **the cost is elaborating statements, not evaluating them.**
 
 **Evaluation:**
+
 - **A uniform sample of TPTP.** On 100 problems drawn from the 2,561 TPTP problems with a finite-model status, Lean certifies **72 of the 77 models Vampire finds (94%), 70 of them with the kernel alone**, and none of the failures is a wrong model.
 - **A million-fact problem.** NLP263+1 has 1,026,857 facts and 383,180 constants. Its certificate takes 20.7 minutes as a shallow certificate and **4.8 minutes reflected**, on an 8 GB laptop.
 - **A published Lean formalization.** The tool reproduces, from axioms alone, both hand-built counter-models in Nakamura's Lean formalization of Spinoza's *Ethics*, with smaller models.

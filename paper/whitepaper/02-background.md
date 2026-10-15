@@ -11,6 +11,7 @@ TPTP [23] is the standard problem library for automated theorem proving. Its 26,
 ### 2.3 Lean 4's kernel and `decide`
 
 Lean's kernel checks proof terms. For a decidable proposition $P$:
+
 - **`decide`** evaluates the `Decidable P` instance in the elaborator, then has the kernel re-check it;
 - **`decide +kernel`** (Lean ≥ 4.15) asks the kernel alone to evaluate;
 - **`native_decide`** compiles the check to machine code. It is fast, but it adds the compiler, and the axiom `Lean.ofReduceBool`, to what must be trusted.

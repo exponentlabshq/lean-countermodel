@@ -78,8 +78,8 @@ def Fm.check (M : Model) : List Nat → Fm → Bool
 
 | Structure | Role | Encoding | Lookup / evaluation cost |
 |---|---|---|---|
-| `Tm` | term syntax | inductive; `var` is a de Bruijn index | `Tm.val`: O(\|t\|) model lookups; `.var i` is `env.getD i 0`, O(i) |
-| `Fm` | formula syntax | inductive, 11 constructors | `Fm.check`: O(\|φ\| · nᵠ) worst case for quantifier nesting depth q; lazy `&&`, `\|\|`, `allBelow`, `anyBelow` prune |
+| `Tm` | term syntax | inductive; `var` is a de Bruijn index | `Tm.val`: $O(\lvert t\rvert )$ model lookups; `.var i` is `env.getD i 0`, $O(i)$ |
+| `Fm` | formula syntax | inductive, 11 constructors | `Fm.check`: $O(\lvert \varphi\rvert  \cdot  n^{\varphi})$ worst case for quantifier nesting depth q; lazy `&&`, `\|\|`, `allBelow`, `anyBelow` prune |
 | `Model` | finite structure | `n` plus `const`, `fn`, `pred` as functions | cost of the function bodies (§4.2) |
 | `Fm.Sem` | meaning (specification) | `Prop`, never evaluated | — |
 | `allBelow` / `anyBelow` | bounded ∀ / ∃ | structural recursion on `n` | ≤ n calls of `f`; stops at the first `false` / `true` |
@@ -108,11 +108,11 @@ def M : Model where
 
 | Symbol kind | Python (`emit_reflect`) | Lean lookup | Cost in symbols |
 |---|---|---|---|
-| Predicate *p* | `masks[i]`: bit `idx(a)` set iff `p(a)` is true; propositional symbols are 0-ary predicates with mask 1 or 0; all masks packed into one Nat at width `mw` | `get (get MASKS p mw) (index n args) 1` | O(1): two `get`s, one `index` (O(arity)) |
-| Constant *c* | `cvals` packed `w` bits each, 4096 per block (`cblocks`) | `bsearch('c / 4096', cblocks)` selects the block; `get … (c % 4096) w` | O(log b) comparisons for b blocks, then one `get` |
-| Function *f* | `fn_tables[i]`: value `v-1` at field `idx(a)`, width `w` | `bsearch('f', fn_tables)`; `get … (index n args) w` | O(log F) comparisons for F functions, then one `get` |
+| Predicate *p* | `masks[i]`: bit `idx(a)` set iff `p(a)` is true; propositional symbols are 0-ary predicates with mask 1 or 0; all masks packed into one Nat at width `mw` | `get (get MASKS p mw) (index n args) 1` | $O(1)$: two `get`s, one `index` ($O(\text{arity})$) |
+| Constant *c* | `cvals` packed `w` bits each, 4096 per block (`cblocks`) | `bsearch('c / 4096', cblocks)` selects the block; `get … (c % 4096) w` | $O(\log b)$ comparisons for b blocks, then one `get` |
+| Function *f* | `fn_tables[i]`: value `v-1` at field `idx(a)`, width `w` | `bsearch('f', fn_tables)`; `get … (index n args) w` | $O(\log F)$ comparisons for F functions, then one `get` |
 
-`bsearch(var, xs)` writes `xs[var]` as a balanced tree of `if var < mid` comparisons. A `match` on literals would be a chain of O(n) comparisons. Each `get` is a shift of a packed Nat, and a shift costs time linear in the Nat's bit length. Blocking bounds that length (§5, pattern 13a).
+`bsearch(var, xs)` writes `xs[var]` as a balanced tree of `if var < mid` comparisons. A `match` on literals would be a chain of $O(n)$ comparisons. Each `get` is a shift of a packed Nat, and a shift costs time linear in the Nat's bit length. Blocking bounds that length (§5, pattern 13a).
 
 ### 4.3 Problem encodings
 
@@ -169,7 +169,7 @@ def fact (s w K : Nat) (ar : Nat → Nat) (i : Nat) : Fm :=
 def decodeFacts (s w K : Nat) (ar : Nat → Nat) (k : Nat) : List Fm := (List.range k).map (fact s w K ar)
 ```
 
-`fact` reads record `i` directly with O(K) `get`s. No general decoding and no fuel are needed.
+`fact` reads record `i` directly with $O(K)$ `get`s. No general decoding and no fuel are needed.
 
 Illustration: the facts of `transitive_cnf.p` (§3.9), with `r = 0`, `a = 0`, `b = 1`, `K = 2` and `fw = 1`:
 
