@@ -1,101 +1,145 @@
 # lean-countermodel
 
-Vampire finds finite counter-models; Lean checks them. One file: `cm.py`, about 4 KB.
+**Kernel-checked finite counter-models for Lean 4, found by Vampire.**
+
+> To show that some axioms do **not** imply a claim, you exhibit a world where the axioms hold and the claim fails.
+> Vampire finds such a world automatically. `cm.py` (8 KB of Python) writes it as Lean 4, and Lean's kernel checks it.
+> Vampire never has to be trusted: a wrong model fails the check.
 
 ```
-python3 cm.py examples/group_comm.p > Cm/group_comm.lean && lake build
+python3 cm.py examples/circle_of_fifths.p > Cm/circle_of_fifths.lean && lake build
 ```
 
-Input is a TPTP `fof` problem: axioms and one conjecture. Vampire's finite-model builder (`-sa fmb`) looks for a structure where the axioms hold and the conjecture fails. `cm.py` writes that structure as Lean 4:
-- a finite `inductive T`;
-- a table for each function and predicate;
-- one theorem, `countermodel : axioms ∧ ¬conjecture`, proved by `decide`.
+---
 
-The kernel checks it. If Vampire finds no model, `cm.py` exits non-zero.
+## 1. Results at a glance
 
-## Why
-
-Showing that axioms *don't* imply something takes a counter-model. Isabelle has Nitpick for this, and Mace4 exists for first-order logic, but Lean 4 had no equivalent for abstract axiom systems: tools that find a *new structure* rather than a value in a fixed type. Without one, Lean projects build each counter-model by hand. Nakamura's *Ethics* formalization (arXiv:2605.02331, §4.4) is an example.
-
-## Examples
-
-| Problem | Model | Before |
-|---|---|---|
-| `circle_of_fifths`: going up a fifth is not the same as going up a fourth | 12 elements: exactly x ↦ x+7 mod 12 | known answer |
-| `group_comm`: group axioms don't imply commutativity | 6 elements (S₃) | sanity check |
-| `nakamura_a12`: Spinoza's A12 doesn't follow from Nakamura's stated axioms + PSR | 2 elements | hand-built, 4 elements |
-| `nakamura_a15`: A15 doesn't follow from stated axioms + plenitude | 2 elements | hand-built, 3 elements |
-| `p14_bridge_weaker`: the P14 bridge H, with A14 and a unique god, doesn't give A15 | 2 elements | hand-built |
-| `p7_needs_a4c`, `p7_needs_b1c`, `p7_needs_b1`: Ethics II P7 needs each of these bridges | 2 elements each | hand-built |
-| `transitive_cnf`: clause form, miniscoped: a transitive relation need not be symmetric | small | — |
-| `guarded_definition`: the shape of SWB017, a guard implying an equivalence | small | — |
-| `single_formula`: the conjecture alone (regression for LCL643) | small | — |
-| `music_fifth_is_a_definition`: the circle-of-fifths axioms don't make f the fifth | 12 elements: f is the **fourth** | — |
-| `music_triad_needs_the_pattern`: a tonic, a fifth and some third don't make chord I major | 12 elements: a minor third | — |
-| `music_tonic_underdetermined`: one collection, read as C major and as a minor on t, doesn't force t = C | 12 elements: t = A, the relative minor | — |
-| `quantifier_scope`: TPTP's `! [X] : A => B` is (∀X A) → B (regression for SWW883+1) | small | — |
-| `propositional`: zero-arity predicates mixed with first-order ones (regression for TPTP NLP165-1) | 2 elements | — |
-
-Each takes about 0.1 s to find. `lake build` checks all sixteen, plus `Music/Harmony.lean`: Roman-numeral harmony derived in core Lean by `decide`, in about 2 s, and every theorem uses only the `propext` axiom. Generated files set `autoImplicit false`, so an unbound name is an error, and `maxHeartbeats 0`, so the build's wall clock is the only budget.
-
-## What you must trust
-
-- **Lean's kernel,** for "this structure satisfies this statement".
-- **`cm.py`'s translation of the formulas** (the `lean()` function, about 40 lines). Read the generated `countermodel` statement: it should match the `.p` file.
-- **Vampire is not trusted.** A bad model fails `decide`.
-
-The Spinoza examples restate Nakamura's definitions and axioms in TPTP, transcribed from spinoza-ethica-lean @ 6d4c046. The theorems are about that transcription, not instances of his Lean classes.
-
-## Testing
-
-`pytest test_cm.py`: 52 tests, about 4 s. Three judges have to agree:
-
-- **Lean's kernel** accepts every compiled counter-model, using only `propext`.
-- **A separate Python evaluator** checks each model by brute force, without going through `cm.py`'s translation to Lean: the axioms hold and the conjecture fails.
-- **Known answers.** The circle-of-fifths model must be exactly the 12-note cycle: up a fifth is x ↦ x+7 (mod 12), and up a fourth is its inverse.
-
-**Mutants.** Two table entries per example are corrupted, one at a time. Lean must accept exactly the mutants that Python says are still counter-models: of the 18, 17 break and 1 survives, and Lean agrees on all of them. A problem that is a theorem must be refused. A deliberately planted translation bug (→ compiled as ↔) fails 7 tests. **Every rewrite is checked:** every miniscoped or flattened formula is compared with its original on each example's model and all of that model's one-entry mutations. Planted bugs are caught: a scoping bug fails 4 tests, a dropped negation fails 18, a lost parenthesis fails 4, and a missing single-formula case fails 1.
-
-**The judges are not fully independent.** The evaluator reuses `cm.py`'s tokenizer and its left-to-right grouping of chained operators. TPTP requires parentheses wherever the grouping would be ambiguous, which makes this safe, but the two share that assumption.
-
-## Benchmark: 100 TPTP problems
-
-`python3 bench.py N [WORKERS]` samples N problems from `bench/eligible.tsv`, which lists the 2,561 fof and cnf problems that TPTP's ProblemAndSolutionStatistics marks Satisfiable or CounterSatisfiable. It downloads each problem, with its axiom files cached on disk, while the workers check earlier problems, and appends a row to `bench/results.jsonl`. Each problem gets 30 s of Vampire, then 60 s of `decide`; `native_decide` is tried only after a timeout. About 8 s per problem end to end, with 2 workers.
-
-| Result | Problems |
+| Claim | Evidence |
 |---|---|
-| **Certified, kernel only (`decide`)** | **64** |
-| Certified with `native_decide` | 3 |
-| Lean rejected | 6. Five are deeply nested modal-logic problems (LCL6xx); one is a 16-element model that overflows the stack. |
-| Vampire found no model | 27 |
+| **Works on independent problems** | 100 problems sampled from TPTP, the standard prover benchmark. Lean certifies **67 of the 73 models Vampire finds**, 64 of them with the kernel alone. **None of the 6 failures is a wrong model.** |
+| **Beats hand construction on a published Lean project** | It reproduces both of Nakamura's hand-built Spinoza counter-models [1] from his axioms alone, with **2-element** models against his 4 and 3 (§4.1) |
+| **Makes brute-force checking feasible** | It takes a clause needing ~10¹¹ cases down to 46,746 atom checks for the whole problem; the median is 3 s per problem (§3) |
+| **Readable by non-specialists** | Certified: the circle-of-fifths axioms cannot tell a fifth from a fourth, and a pitch collection does not fix its tonic (§4.2) |
+| **Small** | `cm.py` 8.3 KB · `bench.py` 5.0 KB · `test_cm.py` 5.5 KB, with 52 tests running in about 4 s |
 
-**67 of the 73 models Vampire found are certified.** 47 have more than one element; the largest has 10. The median time is 3 s per problem.
+## 2. The gap
 
-### Making `decide` fast: algorithm patterns, measured
-
-The bottleneck is checking, not finding: `decide` evaluates at roughly 1,000 cases per second. Each pattern was measured by counting the atoms a lazy evaluator touches, and kept only if it paid off.
-
-| Pattern | What it does here | Effect |
+| Capability | Isabelle and others | Lean 4 |
 |---|---|---|
-| **Backtracking with pruning** (miniscoping) | Each variable is quantified just before its first literal. `decide` evaluates `∨` and bounded `∀` lazily, so a false guard skips its subtree. Sound since ∀X (A ∨ B) ↔ A ∨ ∀X B when X is not in A. | NLP219's 13-variable clause went from about 10¹¹ cases to 46,746 atom checks for the whole problem; the problem itself went from impossible to certified |
-| **Greedy join order** | The literal introducing the fewest new variables comes next | Part of the above; SWB017 starts from its most selective guard, `rest(S3, nil)` |
-| **Recursive flattening** | `∀V (A → ∀W (B → C))` becomes one clause, `¬A ∨ ¬B ∨ C`, so guards hidden inside nested quantifiers become visible to the ordering. A quantifier is pulled out only if its variables are fresh. | SWB017: 368,112 → 5,932 atom checks, and from `native_decide` to kernel-only in 2–12 s. PLA025: 91,921 → 31,675. |
-| **Bitmask lookup instead of a linear scan** | Each predicate is one natural number, read as `(MASK >>> index) % 2 = 1`, which the kernel computes natively | NLP165: 10.9 s → about 1 s |
-| **Divide and conquer** | One theorem per formula, combined with `⟨c0, c1, …⟩`, so each `decide` starts with fresh caches | PLA025: 47 s → 14 s, with peak memory 805 MB → 420 MB |
-| ~~Cost-based query planner~~ (rejected) | Order literals by expected pruning, using the model's table densities | Mixed: PLA025 got 24% fewer checks, but NLP219 got 14% more. Not worth the extra code or tying the rewrite to the data. |
+| Import proofs from automated provers | Sledgehammer | Lean-auto, LeanHammer, Duper; Vampire proof reconstruction [2] |
+| Find concrete counterexamples (values of fixed types) | Quickcheck | `plausible` [8], Lean Disprove [7] |
+| **Find a new finite structure that refutes a claim from abstract axioms** | **Nitpick** [4]; Mace4 [11] for first-order logic | **None found.** Projects build these by hand ([1] §4.4) or with one-off scripts [10]. |
 
-All timings are wall-clock on an 8 GB laptop and vary by about 2× with load. The atom counts are exact.
+We found no Lean 4 tool in the last row. This project is a prototype of one. It is the converse of [2]: Bodingbauer et al. bring Vampire's *proofs* into Lean; we bring its *models*.
 
-**Bugs the batches found** (now fixed, each covered by an example or the harness):
-- deep formulas exhausting instance search;
-- `.e1` shorthand making long tables elaborate very slowly;
-- zero-arity predicates being dropped;
-- clauses too wide for brute force;
-- a lost parenthesis after flattening;
-- a single-formula problem producing `⟨c0⟩`.
+## 3. Method
 
-**Not supported yet:** purely propositional or trivially decided problems. For these, Vampire answers without its finite-model builder and prints a different model format.
+### 3.1 Find, compile, certify
 
-## Requirements
+| Step | What happens | Trusted? |
+|---|---|---|
+| **Find** | `vampire -sa fmb` [3] searches for a finite model of `axioms ∧ ¬conjecture` (TPTP fof or cnf [6]) | No |
+| **Rewrite** | Each formula is reshaped so checking can prune (§3.2) | **Yes**, but tested against the original (§5) |
+| **Compile** | The model becomes `inductive T \| e1 \| … \| en`, a table per function, a bitmask per predicate, and one theorem per formula | **Yes**: the translation into Lean |
+| **Certify** | Each theorem is proved by `decide`, and `countermodel : axioms ∧ ¬conjecture` combines them. Lean's kernel [5] checks it. | **Yes**: the kernel. Only the `propext` axiom is used. |
 
-Lean 4.13 (via elan) and Vampire 5.1, either on `PATH` or with `VAMPIRE` set.
+**The principle:** let an untrusted search do the finding, and make the trusted checker's job small enough to finish.
+
+### 3.2 Making `decide` scale: five patterns, measured
+
+`decide` checks about 1,000 cases per second, and a clause with *v* variables over *n* elements has *nᵛ* cases. We measured each change by counting the atoms a lazy evaluator touches, and kept it only if it paid off.
+
+| Pattern | Applied as | Measured effect |
+|---|---|---|
+| **Backtracking with pruning** | Miniscoping [9]: each variable is quantified just before its first literal, using ∀X (A ∨ B) ↔ A ∨ ∀X B when X is not in A. Lazy `∨` and `∀` then skip whole subtrees. | NLP219: ~10¹¹ cases → **46,746** atom checks; from impossible to certified |
+| **Greedy join order** | The literal introducing the fewest new variables comes next | SWB017 starts from its most selective guard |
+| **Recursive flattening** | `∀V (A → ∀W (B → C))` becomes one clause, `¬A ∨ ¬B ∨ C`, with fresh variables only | SWB017: 368,112 → **5,932** checks, and from `native_decide` to the kernel alone |
+| **Bitmask instead of a linear scan** | A predicate is one natural number, read as `(MASK >>> i) % 2 = 1`; the kernel does natural-number arithmetic natively | NLP165: 10.9 s → **~1 s** |
+| **Divide and conquer** | One theorem per formula, so caches are fresh for each | PLA025: 47 s → **14 s**; peak memory 805 → 420 MB |
+| ~~Cost-based planner~~ | Order literals by the model's table densities | Mixed (−24%, +14%); **rejected** |
+
+### 3.3 Working method
+
+- **Fibonacci batches** (1, 1, 2, 3, 5, 8): fix what breaks before scaling up.
+- **Measure before optimizing:** the benchmark pipeline went from about 174 s to about 8 s per problem once we measured and found the bottleneck was *choosing* problems, not checking them.
+- **Independent judges, and planted bugs** (§5).
+
+## 4. Case studies
+
+### 4.1 Spinoza's *Ethics*: Nakamura's Lean formalization [1]
+
+Nakamura formalizes *Ethics* I in Lean 4 and proves two non-derivability results using counter-models built **by hand**. We transcribed his definitions and `StatedAxioms` (spinoza-ethica-lean @ 6d4c046) into TPTP and let the tool find counter-models.
+
+| Claim | His model (by hand) | Ours (automatic) |
+|---|---|---|
+| **S-A12:** A12 does not follow from `StatedAxioms` + `PSRSubstance` | 4 elements | **2 elements**, 0.1 s |
+| **S-A15:** A15 does not follow from `StatedAxioms` + plenitude | 3 elements | **2 elements**, 0.1 s |
+| The P14 bridge H, with A14 and a unique god, does not give A15 | — | 2 elements |
+| *Ethics* II P7 needs each of its bridges (the converse of I A4 and two idea–thing bridges) | — | 2 elements each |
+
+The theorems here are about the TPTP transcription. Separately, we compiled the S-A12 and S-A15 models into instances of his own `EthicaWorld` and `StatedAxioms` classes and checked them against his unmodified library.
+
+### 4.2 Tonal harmony: the circle of fifths
+
+`Music/Harmony.lean` (2.4 KB, core Lean, no Mathlib) **derives**, rather than states:
+- the circle of fifths: twelve fifths visit every pitch class, then return;
+- a fourth inverts a fifth yet differs from it;
+- the Roman-numeral qualities **I ii iii IV V vi vii°, in all 12 major keys**.
+
+Each theorem uses at most `propext`.
+
+Lean alone cannot show what each result *depends on*. The counter-models can:
+
+| Question | Counter-model | Reading |
+|---|---|---|
+| Is "fifth up = fourth up"? (a known-answer test) | exactly the 12-note cycle: f(x) = x+7, g(x) = x+5 | No; the model is the expected one |
+| Do the circle-of-fifths axioms (a 12-cycle compatible with transposition) make f the fifth? | 12 elements, **f = s⁵** | No: the circle of **fourths** satisfies them. "Fifth" is a definition. |
+| Do a tonic, a fifth and some third make chord I major? | a scale with a minor third | No: the quality comes from the offset 4 in the pattern |
+| Does one collection, read as C major and as a minor on *t*, force *t* = C? | **t = A** | No: the relative minor. Pitch classes do not fix the tonic. |
+
+### 4.3 Other examples
+
+`group_comm` (group axioms don't imply commutativity: S₃, 6 elements), plus regression examples for each bug the benchmark found (§5).
+
+## 5. Why trust it
+
+| Check | What it guarantees |
+|---|---|
+| Lean's kernel | The model satisfies the *stated* formulas |
+| A separate Python evaluator | The same verdict by brute force, independently of the translation into Lean |
+| Mutants (corrupt one table entry at a time) | Lean accepts exactly the mutants the evaluator accepts |
+| Rewrite equivalence | Each rewritten formula agrees with its original on every model and mutant |
+| Planted bugs | Each is caught: → compiled as ↔ (7 tests fail), scoping (4), a dropped negation (18), a lost parenthesis (4), the single-formula case (1) |
+
+**A lesson from a real bug.** An early version of the flattening read TPTP's `! [X] : A => B` as ∀X (A → B), but TPTP means (∀X A) → B. On one problem this made a formula false, and Lean rejected it. On **three others the altered formula happened to hold, so Lean certified a different statement.** We fixed it, added a regression test, and reran all 73 problems that had a model. **The rewrite is part of what must be trusted**: a kernel certifies only what it is given.
+
+## 6. Limits
+
+- Purely propositional or trivially decided problems: Vampire answers them without its model builder, in a format `cm.py` does not parse yet.
+- Deeply nested formulas (modal-logic encodings) still exceed Lean's limits.
+- Untyped first-order logic only.
+- **The front end inside Lean is missing:** a command that exports the current goal, so users never write TPTP.
+
+## 7. Reproduce
+
+| | |
+|---|---|
+| Requirements | Lean 4.13 (elan) and Vampire 5.1 (on `PATH`, or set `VAMPIRE`) |
+| Examples | `lake build`; check axioms with `lake env lean Axioms.lean` |
+| Tests | `pytest test_cm.py`: 52 tests, about 4 s |
+| Benchmark | `python3 bench.py N [WORKERS]` samples from `bench/eligible.tsv` (the 2,561 eligible TPTP problems); results go to `bench/results.jsonl` |
+| Paper | `paper/paper.md` |
+
+## References
+
+1. Y. Nakamura. *Bennett's Conjecture in Lean 4.* arXiv:2605.02331, 2026. Code: [github.com/Nakammura/spinoza-ethica-lean](https://github.com/Nakammura/spinoza-ethica-lean).
+2. J. Bodingbauer, M. Hajdu, L. Kovács, A. Polaczek, M. Rawson. *Lean on Vampire Proofs.* ITP 2026, arXiv:2603.26342. Code: [github.com/vprover/vamplean](https://github.com/vprover/vamplean).
+3. L. Kovács, A. Voronkov. *First-Order Theorem Proving and Vampire.* CAV 2013. [vprover.github.io](https://vprover.github.io).
+4. J. C. Blanchette, T. Nipkow. *Nitpick: A Counterexample Generator for Higher-Order Logic Based on a Relational Model Finder.* ITP 2010.
+5. L. de Moura, S. Ullrich. *The Lean 4 Theorem Prover and Programming Language.* CADE 2021.
+6. G. Sutcliffe. *The TPTP Problem Library and Associated Infrastructure.* Journal of Automated Reasoning 59(4), 2017. [tptp.org](https://tptp.org).
+7. Ondras, C. Freer. *Lean Disprove.* ICML 2026 AI-for-Math workshop. [github.com/cameronfreer/lean4-skills](https://github.com/cameronfreer/lean4-skills).
+8. *plausible*: property testing for Lean 4. [github.com/leanprover-community/plausible](https://github.com/leanprover-community/plausible).
+9. A. Nonnengart, C. Weidenbach. *Computing Small Clause Normal Forms.* Handbook of Automated Reasoning, 2001 (miniscoping).
+10. *finite-magma-independence*: Z3 models checked by `decide` in Lean, built by hand. [github.com/stefanopalmieri/finite-magma-independence](https://github.com/stefanopalmieri/finite-magma-independence).
+11. W. McCune. *Mace4 Reference Manual and Guide.* Argonne National Laboratory, ANL/MCS-TM-264, 2003.
