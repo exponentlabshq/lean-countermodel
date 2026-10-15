@@ -1,0 +1,10 @@
+name = "cm"
+defaultTargets = ["Cm", "Music"]
+
+[[lean_lib]]
+name = "Cm"
+globs = ["Cm.+"]
+
+[[lean_lib]]
+name = "Music"
+globs = ["Music.+"]

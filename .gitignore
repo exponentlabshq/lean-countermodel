@@ -1,0 +1,10 @@
+# build output
+.lake/
+__pycache__/
+.pytest_cache/
+# regenerable benchmark data: re-fetched from TPTP and recompiled by bench.py
+bench/problems/
+bench/axioms/
+bench/lean/
+bench/*.log
+bench/results-before-*.jsonl
