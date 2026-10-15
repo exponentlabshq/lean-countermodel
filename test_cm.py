@@ -165,8 +165,8 @@ def test_vampire_cache_is_transparent(tmp_path):
 
 @pytest.mark.parametrize("p", EXAMPLES)
 def test_reflected_certificate(p, tmp_path):
-    """The same model, certified through the verified evaluator (CM/Check.lean) instead of one decide per formula."""
-    assert run("lake", "build", "CM").returncode == 0
+    """The same model, certified through the verified evaluator (Checker.lean) instead of one decide per formula."""
+    assert run("lake", "build", "Checker").returncode == 0
     assert lean_accepts(p, M(p), tmp_path, emit_reflect)
 
 
@@ -182,7 +182,7 @@ def test_reflected_mutants_agree_with_python(tmp_path):
             v = tables[f][args]
             new = not v if isinstance(v, bool) else rnd.choice([e for e in range(1, n + 1) if e != v])
             cases.append((p, (n, consts, {**tables, f: {**tables[f], args: new}})))
-    assert run("lake", "build", "CM").returncode == 0
+    assert run("lake", "build", "Checker").returncode == 0
     with ThreadPoolExecutor() as pool:
         lean = list(pool.map(lambda c: lean_accepts(*c, tmp_path, emit_reflect), cases))
     assert lean == [countermodel(p, *m) for p, m in cases]

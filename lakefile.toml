@@ -1,5 +1,5 @@
 name = "cm"
-defaultTargets = ["Cm"]
+defaultTargets = ["Cm", "Checker"]
 
 [[lean_lib]]
 name = "Cm"
@@ -7,5 +7,4 @@ globs = ["Cm.+"]
 
 
 [[lean_lib]]
-name = "CM"
-globs = ["CM.+"]
+name = "Checker"
