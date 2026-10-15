@@ -4,7 +4,11 @@
 set -e
 cd "$(dirname "$0")"
 {
-  echo "commit $(git rev-parse --short HEAD)$(git diff --quiet HEAD -- . ':!bench' || echo ' (+uncommitted changes)')"
+  if git rev-parse --git-dir >/dev/null 2>&1; then
+    echo "commit $(git rev-parse --short HEAD)$(git diff --quiet HEAD -- . ':!bench' || echo ' (+uncommitted changes)')"
+  else
+    echo "commit: not a git checkout (e.g. restored from the review package; see 01_MANIFEST.json)"
+  fi
   lake env lean --version
   lake build 2>&1 | tail -1
   for lib in Cm Refl; do
