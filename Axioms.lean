@@ -9,6 +9,7 @@ import Cm.p7_needs_b1
 import Cm.p7_needs_b1c
 import Cm.propositional
 import Cm.quantifier_scope
+import Cm.quoted_capture
 import Cm.quoted_names
 import Cm.single_formula
 import Cm.transitive_cnf
@@ -23,6 +24,7 @@ import Cm.transitive_cnf
 #print axioms p7_needs_b1c.countermodel
 #print axioms propositional.countermodel
 #print axioms quantifier_scope.countermodel
+#print axioms quoted_capture.countermodel
 #print axioms quoted_names.countermodel
 #print axioms single_formula.countermodel
 #print axioms transitive_cnf.countermodel

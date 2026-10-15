@@ -17,19 +17,19 @@ instance (p : T → Prop) [DecidablePred p] : Decidable (∀ x, p x) :=
 instance (p : T → Prop) [DecidablePred p] : Decidable (∃ x, p x) :=
   decidable_of_iff (∃ x ∈ T.all, p x) ⟨fun ⟨x, _, h⟩ => ⟨x, h⟩, fun ⟨x, h⟩ => ⟨x, T.mem x, h⟩⟩
 
-abbrev «50% off» : T := T.e1
-abbrev «don\'t» : T := T.e1
-abbrev «Alps» : T := T.e1
-abbrev «Switzerland» : T := T.e1
+abbrev «'50% off'» : T := T.e1
+abbrev «'don\'t'» : T := T.e1
+abbrev «'Alps'» : T := T.e1
+abbrev «'Switzerland'» : T := T.e1
 abbrev «on_sale» (x0 : T) : Prop := (1 >>> (1 * x0.idx)) % 2 = 1
 abbrev «said» (x0 : T) : Prop := (3 >>> (1 * x0.idx)) % 2 = 1
 abbrev «in» (x0 x1 : T) : Prop := (15 >>> (1 * x0.idx + 2 * x1.idx)) % 2 = 1
 
-theorem c0 : (((«on_sale» «50% off») ∧ («said» «don\'t»)) ∧ («in» «Alps» «Switzerland»)) := by decide
+theorem c0 : (((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»)) := by decide
 
 theorem c1 : ¬(∀ X : T, («on_sale» X)) := by decide
 
-theorem countermodel : (((((«on_sale» «50% off») ∧ («said» «don\'t»)) ∧ («in» «Alps» «Switzerland»))) ∧ (¬(∀ X : T, («on_sale» X)))) :=
+theorem countermodel : (((((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»))) ∧ (¬(∀ X : T, («on_sale» X)))) :=
   ⟨c0, c1⟩
 
 end quoted_names

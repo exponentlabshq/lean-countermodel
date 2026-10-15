@@ -40,7 +40,8 @@ def pick(n, seen):
 
 def run(f):
     p, t = f"{DIR}/problems/{f}", time.time()
-    cm = subprocess.run(["python3", "cm.py", p], capture_output=True, text=True)
+    cm = subprocess.run(["python3", "cm.py", p], capture_output=True, text=True,
+                        env={"CM_CACHE": f"{DIR}/vampire-cache", **os.environ})  # Vampire's answers are reused across Lean versions
     r = {"problem": f, "lang": "cnf" if "-" in f else "fof", "cm_s": round(time.time() - t, 1)}
     if cm.returncode:
         return {**r, "verdict": "no model" if "no finite" in cm.stderr else "cm.py error", "why": cm.stderr.strip()[-300:]}

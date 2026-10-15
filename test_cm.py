@@ -137,8 +137,27 @@ def test_large_problems_split_into_modules(tmp_path):
     (tmp_path / "lakefile.toml").write_text('name = "t"\ndefaultTargets = ["nakamura_a12"]\n\n[[lean_lib]]\nname = "nakamura_a12"\nglobs = ["nakamura_a12.+"]\n')
     env = {**os.environ, "CM_CHUNK": "2"}
     assert subprocess.run(["python3", os.path.abspath("cm.py"), os.path.abspath("examples/nakamura_a12.p"), str(tmp_path)],
-                          env=env, capture_output=True, text=True).stdout.startswith("9 Lean modules")  # 13 formulas: 7 chunks, Base, Main
+                          env=env, capture_output=True, text=True).stdout.startswith("9 Lean modules")  # 13 formulas, no constants: 7 chunks, Base, Main
     assert subprocess.run(["lake", "build"], cwd=tmp_path, capture_output=True).returncode == 0
     (tmp_path / "ax.lean").write_text("import nakamura_a12.Main\n#print axioms nakamura_a12.countermodel\n")
     out = subprocess.run(["lake", "env", "lean", "ax.lean"], cwd=tmp_path, capture_output=True, text=True).stdout
     assert "sorryAx" not in out and "countermodel" in out
+
+
+def test_constants_split_into_name_modules(tmp_path):
+    """Constants go in their own modules (Names*), so no file passes Lean's ~20,000-declaration limit."""
+    (tmp_path / "lean-toolchain").write_text(open("lean-toolchain").read())
+    (tmp_path / "lakefile.toml").write_text('name = "t"\ndefaultTargets = ["quoted_capture"]\n\n[[lean_lib]]\nname = "quoted_capture"\nglobs = ["quoted_capture.+"]\n')
+    out = subprocess.run(["python3", os.path.abspath("cm.py"), os.path.abspath("examples/quoted_capture.p"), str(tmp_path)],
+                         env={**os.environ, "CM_CHUNK": "1"}, capture_output=True, text=True).stdout
+    assert (tmp_path / "quoted_capture" / "Names0.lean").exists() and "Lean modules" in out
+    assert subprocess.run(["lake", "build"], cwd=tmp_path, capture_output=True).returncode == 0
+
+
+def test_vampire_cache_is_transparent(tmp_path):
+    """With CM_CACHE set, the second run reads Vampire's answer from the cache and emits the same Lean."""
+    env = {**os.environ, "CM_CACHE": str(tmp_path)}
+    first = subprocess.run(["python3", "cm.py", "examples/group_comm.p"], env=env, capture_output=True, text=True).stdout
+    assert len(os.listdir(tmp_path)) == 1
+    second = subprocess.run(["python3", "cm.py", "examples/group_comm.p"], env=env, capture_output=True, text=True).stdout
+    assert first == second == open("Cm/group_comm.lean").read()

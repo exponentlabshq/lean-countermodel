@@ -1,12 +1,18 @@
 """TPTP problem -> Vampire finite model -> Lean 4 counter-model, checked by `decide`.
 Usage: python3 cm.py problem.p > Problem.lean   (Vampire on PATH, or set VAMPIRE)"""
-import itertools, os, re, subprocess, sys
+import hashlib, itertools, os, re, subprocess, sys
 from functools import cache
 
 OPS = {"&": "∧", "|": "∨", "=>": "→", "<=>": "↔"}
 QUOTED = r"'(?:[^'\\]|\\.)*'"  # a quoted name; it may contain `%` and escaped quotes
 TOKENS = rf"<=>|=>|!=|{QUOTED}|[\w$]+|\S"
 NAME = rf"(?:{QUOTED}|\w+)"  # a symbol in Vampire's model output, possibly quoted
+
+
+def sym(k):
+    """A TPTP symbol as a Lean name: «abc» if TPTP needs no quotes, «'X'» if it does. Quoted names keep their
+    quotes, so a constant 'X' or 'T' can never become the variable X or the type T."""
+    return f"«{k}»" if re.fullmatch(r"[a-z]\w*", k) else f"«'{k}'»"
 
 
 def lean(s):
@@ -39,8 +45,7 @@ def lean(s):
     def term(k):
         if k[0] == "$":
             return k[1:].capitalize()  # $true, $false
-        quoted, k = k[0] == "'", k.strip("'")
-        k = f"«{k}»" if quoted or k[0].islower() else k  # a constant, quoted: it may be a Lean keyword or capitalized
+        k = sym(k.strip("'")) if k[0] == "'" or k[0].islower() else k  # a symbol; a variable otherwise
         if not peek("("):
             return k
         nxt()
@@ -124,11 +129,26 @@ def problem(path):
     return out
 
 
+def vampire(path):
+    """Vampire's output, cached in $CM_CACHE (if set) under a hash of the problem, the flags and Vampire's version:
+    a Lean upgrade then reruns only Lean."""
+    # `-updr off`: otherwise Vampire may settle the problem by deleting unused predicates, without printing a model
+    cmd = [os.getenv("VAMPIRE", "vampire"), "-sa", "fmb", "-updr", "off", "-t", "30"]
+    if cache := os.getenv("CM_CACHE"):
+        version = subprocess.run([cmd[0], "--version"], capture_output=True, text=True).stdout
+        key = hashlib.sha256(open(path, "rb").read() + " ".join(cmd[1:]).encode() + version.encode()).hexdigest()
+        if os.path.exists(hit := os.path.join(cache, key)):
+            return open(hit).read()
+    out = subprocess.run(cmd + [path], capture_output=True, text=True).stdout
+    if cache and "Time limit" not in out:  # a timeout depends on the machine's load, not the problem
+        os.makedirs(cache, exist_ok=True)
+        open(hit, "w").write(out)
+    return out
+
+
 def model(path):
     """Vampire's finite model as (size, {constant: element}, {symbol: {args: element or bool}})."""
-    # `-updr off`: otherwise Vampire may settle the problem by deleting unused predicates, without printing a model
-    out = subprocess.run([os.getenv("VAMPIRE", "vampire"), "-sa", "fmb", "-updr", "off", "-t", "30", path],
-                         capture_output=True, text=True).stdout
+    out = vampire(path)
     if "FiniteModel" not in out:
         sys.exit(f"{path}: no finite counter-model found")
     m, el = out[out.index("FiniteModel"):], lambda s: int(re.search(r"\d+$", s)[0])
@@ -168,16 +188,17 @@ def emit(path, n, consts, tables):
         out.append(f"instance (p : T → Prop) [DecidablePred p] : Decidable ({q} x, p x) :=\n"
                    f"  decidable_of_iff ({q} x ∈ T.all, p x) {w}")
     out.append("")
-    out += [f"abbrev «{c}» : Prop := {v}" if isinstance(v, bool) else f"abbrev «{c}» : T := {e(v)}" for c, v in consts.items()]
+    names = [f"abbrev {sym(c)} : Prop := {v}" if isinstance(v, bool) else f"abbrev {sym(c)} : T := {e(v)}" for c, v in consts.items()]
+    out += names if len(parts) <= CHUNK else []  # modular output puts the constants in their own modules
     for f, tbl in tables.items():
         k = len(next(iter(tbl)))
         xs, row = [f"x{j}" for j in range(k)], lambda a: ", ".join(map(e, a))
         if isinstance(next(iter(tbl.values())), bool):  # predicate: a bitmask over tuples; the kernel does Nat arithmetic natively
             mask = sum(1 << sum((x - 1) * n ** j for j, x in enumerate(a)) for a, v in tbl.items() if v)
             at = " + ".join(f"{n ** j} * {x}.idx" for j, x in enumerate(xs))
-            out.append(f"abbrev «{f}» ({' '.join(xs)} : T) : Prop := ({mask} >>> ({at})) % 2 = 1")
+            out.append(f"abbrev {sym(f)} ({' '.join(xs)} : T) : Prop := ({mask} >>> ({at})) % 2 = 1")
         else:  # function: a pattern-matching table
-            out.append(f"def «{f}» : {' → '.join(['T'] * (k + 1))}\n  " + " ".join(f"| {row(a)} => {e(v)}" for a, v in tbl.items()))
+            out.append(f"def {sym(f)} : {' → '.join(['T'] * (k + 1))}\n  " + " ".join(f"| {row(a)} => {e(v)}" for a, v in tbl.items()))
     if len(parts) <= CHUNK:  # one file: one theorem per formula, so each `decide` starts with fresh caches
         out += [f"\ntheorem c{i} : {f} := by decide" for i, f in enumerate(parts)]
         proof = tree([f"c{i}" for i in range(len(parts))], "⟨{}, {}⟩")
@@ -187,14 +208,19 @@ def emit(path, n, consts, tables):
     # and lake checks the chunks in parallel.
     opts = "\n".join(l for l in out[:5] if l.startswith("set_option"))
     files = {"Base": "\n".join(out) + f"\n\nend {ns}\n"}
+    # Lean 4.13 fails ("deep recursion") on files with more than about 20,000 declarations, so constants go in
+    # modules of CHUNK * 5 (10,000 by default).
+    for k in range(0, len(names), CHUNK * 5):
+        files[f"Names{k // (CHUNK * 5)}"] = f"import {ns}.Base\nnamespace {ns}\n\n" + "\n".join(names[k:k + CHUNK * 5]) + f"\n\nend {ns}\n"
+    imports = "".join(f"import {ns}.{f}\n" for f in files)
     for j in range(0, len(parts), CHUNK):
         ks = range(j, min(j + CHUNK, len(parts)))
         body = "\n".join(f"def P{i} : Prop := {parts[i]}\ntheorem c{i} : P{i} := by unfold P{i}; decide" for i in ks)
         c = j // CHUNK
-        files[f"Chunk{c}"] = (f"import {ns}.Base\n{opts}\nnamespace {ns}\n\n{body}\n\n"
+        files[f"Chunk{c}"] = (f"{imports}{opts}\nnamespace {ns}\n\n{body}\n\n"
                               f"def C{c} : Prop := {tree([f'P{i}' for i in ks], '({} ∧ {})')}\n"
                               f"theorem chunk{c} : C{c} := by unfold C{c}; exact {tree([f'c{i}' for i in ks], '⟨{}, {}⟩')}\n\nend {ns}\n")
-    m = len(files) - 1
+    m = sum(f.startswith("Chunk") for f in files)
     files["Main"] = ("".join(f"import {ns}.Chunk{c}\n" for c in range(m)) + f"namespace {ns}\n\n"
                      f"/-- Every formula holds in the model: C_j is the conjunction of chunk j's formulas P_i. -/\n"
                      f"theorem countermodel : {tree([f'C{c}' for c in range(m)], '({} ∧ {})')} :=\n"

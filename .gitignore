@@ -8,3 +8,4 @@ bench/axioms/
 bench/lean/
 bench/*.log
 bench/results-before-*.jsonl
+bench/vampire-cache/
