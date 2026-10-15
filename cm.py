@@ -284,10 +284,17 @@ def szs(out):
     return m[1] if (m := re.search(r"SZS status (\w+)", out)) else None
 
 
+def termination(out):
+    """Vampire's termination reason ("Time limit", "Memory limit", "Refutation not found", ...), or None. Vampire 5.1
+    reports a timeout this way, with exit status 1 and no SZS status line."""
+    return m[1].strip() if (m := re.search(r"Termination reason: ([^\n]+)", out)) else None
+
+
 def vampire(path):
     """Vampire's output, cached in $CM_CACHE (if set) under a hash of the problem, the flags and Vampire's version:
-    a Lean upgrade then reruns only Lean. An answer without an SZS status is an operational failure: it raises
-    RuntimeError and is never cached. Timeouts and other run-dependent statuses are not cached either."""
+    a Lean upgrade then reruns only Lean. An answer with neither an SZS status nor a termination reason is an
+    operational failure: it raises RuntimeError and is never cached. Timeouts, memory limits and other run-dependent
+    outcomes are documented search outcomes, but they are not cached either."""
     # `-updr off`: otherwise Vampire may settle the problem by deleting unused predicates, without printing a model
     cmd = [os.getenv("VAMPIRE", "vampire"), "-sa", "fmb", "-updr", "off", "-t", "30"]
     hit = None
@@ -297,10 +304,12 @@ def vampire(path):
         if os.path.exists(hit := os.path.join(cache, key)):
             return open(hit).read()
     run = subprocess.run(cmd + [path], capture_output=True, text=True)
-    status = szs(run.stdout)
-    if status is None:
-        raise RuntimeError(f"vampire failed on {path}: exit {run.returncode}, no SZS status; stderr: {run.stderr.strip()[-300:]}")
-    if hit and status not in UNCACHED:
+    status, reason = szs(run.stdout), termination(run.stdout)
+    if status is None and reason is None:
+        raise RuntimeError(f"vampire failed on {path}: exit {run.returncode}, no SZS status or termination reason; "
+                           f"stderr: {run.stderr.strip()[-300:]}")
+    run_dependent = status in UNCACHED or (reason or "").split()[0:2] in (["Time", "limit"], ["Memory", "limit"]) or "Time limit" in run.stdout
+    if hit and not run_dependent:
         os.makedirs(cache, exist_ok=True)
         open(hit, "w").write(run.stdout)
     return run.stdout
@@ -310,7 +319,7 @@ def model(path):
     """Vampire's finite model as (size, {constant: element}, {symbol: {args: element or bool}})."""
     out = vampire(path)
     if "FiniteModel" not in out:
-        sys.exit(f"{path}: no finite counter-model found (SZS status {szs(out)})")
+        sys.exit(f"{path}: no finite counter-model found (SZS status {szs(out)}, termination reason {termination(out)})")
     m, el = out[out.index("FiniteModel"):], lambda s: int(re.search(r"\d+$", s)[0])
     tables = {}
     for neg, f, args, val in re.findall(rf"(~?)({NAME})\(('fmb[^)]*)\)(?: = '(fmb[^']*)')?", m):

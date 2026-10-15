@@ -54,7 +54,10 @@ def holds(s, n, consts, tables, env={}):
             return lambda v: v[k]
         return lambda v: tables[k][tuple(a(v) for a in args)] if args else consts[k]
 
-    return form()(env)
+    f = form()
+    if t:  # the whole formula must be consumed: trailing tokens are an error, never ignored
+        raise ValueError(f"unparsed tokens after a formula: {t[::-1][:5]}")
+    return f(env)
 
 
 # The oracle's own reader of source records. It shares no code with cm.statements: a separate lexer and a token-level
@@ -476,4 +479,33 @@ def test_a_failing_finder_is_not_a_search_outcome(tmp_path):
     env = {**os.environ, "VAMPIRE": str(fake), "CM_CACHE": str(tmp_path / "cache")}
     out = subprocess.run(["python3", "cm.py", str(p)], env=env, capture_output=True, text=True)
     assert out.returncode != 0 and "vampire failed" in out.stderr and "no finite" not in out.stderr
+    assert not (tmp_path / "cache").exists() or not os.listdir(tmp_path / "cache")
+
+
+def test_benchmark_reports_a_failing_finder_as_finder_error(tmp_path, monkeypatch):
+    """The benchmark's classification of the same failure: 'finder error', neither 'no model' nor a crash."""
+    import bench
+    monkeypatch.setattr(bench, "DIR", str(tmp_path))
+    (tmp_path / "problems").mkdir()
+    (fake := tmp_path / "vampire").write_text("#!/bin/sh\necho 'segmentation fault' >&2\nexit 3\n")
+    fake.chmod(0o755)
+    monkeypatch.setenv("VAMPIRE", str(fake))
+    (tmp_path / "problems" / "X.p").write_text("fof(a, axiom, p(a)).\nfof(b, axiom, ~q(a)).\n")
+    r = bench.run_hybrid("X.p")
+    assert r["verdict"] == "finder error" and "vampire failed" in r["why"], r
+
+
+def test_a_timeout_is_a_search_outcome_not_a_failure(tmp_path, monkeypatch):
+    """Vampire 5.1 reports a timeout as 'Termination reason: Time limit', exit 1, no SZS status (observed on
+    SWV495-1.040): the benchmark records 'no model', and the timeout is not cached."""
+    import bench
+    monkeypatch.setattr(bench, "DIR", str(tmp_path))
+    (tmp_path / "problems").mkdir()
+    (fake := tmp_path / "vampire").write_text("#!/bin/sh\nprintf '%% Termination reason: Time limit\\n%% Time elapsed: 30.0 s\\n'\nexit 1\n")
+    fake.chmod(0o755)
+    monkeypatch.setenv("VAMPIRE", str(fake))
+    monkeypatch.setenv("CM_CACHE", str(tmp_path / "cache"))
+    (tmp_path / "problems" / "X.p").write_text("fof(a, axiom, p(a)).\nfof(b, axiom, ~q(a)).\n")
+    r = bench.run_hybrid("X.p")
+    assert r["verdict"] == "no model" and "Time limit" in r["why"], r
     assert not (tmp_path / "cache").exists() or not os.listdir(tmp_path / "cache")
