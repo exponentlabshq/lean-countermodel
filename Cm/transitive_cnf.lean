@@ -21,13 +21,13 @@ abbrev «a» : T := T.e1
 abbrev «b» : T := T.e2
 abbrev «r» (x0 x1 : T) : Prop := (4 >>> (1 * x0.idx + 2 * x1.idx)) % 2 = 1
 
-theorem c0 : (∀ X Y : T, (¬(«r» X Y) ∨ (∀ Z : T, (¬(«r» Y Z) ∨ («r» X Z))))) := by decide
+theorem c0 : (∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z'))))) := by decide
 
 theorem c1 : («r» «a» «b») := by decide
 
 theorem c2 : ¬(«r» «b» «a») := by decide
 
-theorem countermodel : (((∀ X Y : T, (¬(«r» X Y) ∨ (∀ Z : T, (¬(«r» Y Z) ∨ («r» X Z)))))) ∧ (((«r» «a» «b»)) ∧ (¬(«r» «b» «a»)))) :=
+theorem countermodel : (((∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z')))))) ∧ (((«r» «a» «b»)) ∧ (¬(«r» «b» «a»)))) :=
   ⟨c0, ⟨c1, c2⟩⟩
 
 end transitive_cnf

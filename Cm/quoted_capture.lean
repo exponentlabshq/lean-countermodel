@@ -24,9 +24,9 @@ abbrev «p» (x0 : T) : Prop := (3 >>> (1 * x0.idx)) % 2 = 1
 
 theorem c0 : (((«p» «'X'») ∧ («p» «'T'»)) ∧ ¬(«p» «c»)) := by decide
 
-theorem c1 : ¬(∀ X : T, (¬(«p» X) ∨ (X = «'X'»))) := by decide
+theorem c1 : ¬(∀ X' : T, (¬(«p» X') ∨ (X' = «'X'»))) := by decide
 
-theorem countermodel : (((((«p» «'X'») ∧ («p» «'T'»)) ∧ ¬(«p» «c»))) ∧ (¬(∀ X : T, (¬(«p» X) ∨ (X = «'X'»))))) :=
+theorem countermodel : (((((«p» «'X'») ∧ («p» «'T'»)) ∧ ¬(«p» «c»))) ∧ (¬(∀ X' : T, (¬(«p» X') ∨ (X' = «'X'»))))) :=
   ⟨c0, c1⟩
 
 end quoted_capture

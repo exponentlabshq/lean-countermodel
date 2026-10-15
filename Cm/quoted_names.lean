@@ -27,9 +27,9 @@ abbrev «in» (x0 x1 : T) : Prop := (15 >>> (1 * x0.idx + 2 * x1.idx)) % 2 = 1
 
 theorem c0 : (((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»)) := by decide
 
-theorem c1 : ¬(∀ X : T, («on_sale» X)) := by decide
+theorem c1 : ¬(∀ X' : T, («on_sale» X')) := by decide
 
-theorem countermodel : (((((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»))) ∧ (¬(∀ X : T, («on_sale» X)))) :=
+theorem countermodel : (((((«on_sale» «'50% off'») ∧ («said» «'don\'t'»)) ∧ («in» «'Alps'» «'Switzerland'»))) ∧ (¬(∀ X' : T, («on_sale» X')))) :=
   ⟨c0, c1⟩
 
 end quoted_names

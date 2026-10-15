@@ -41,7 +41,7 @@ def lean(s):
             return f"¬{unit()}"
         if k in "!?":  # ![X,Y]: body
             nxt()
-            vs = [v for v in iter(nxt, "]") if v != ","]
+            vs = [v + "'" for v in iter(nxt, "]") if v != ","]  # X -> X': no TPTP variable can then capture T, True, …
             nxt()
             return f"({'∀' if k == '!' else '∃'} {' '.join(vs)} : T, {unit()})"
         if k == "(":
@@ -55,7 +55,7 @@ def lean(s):
         unsupported(k)
         if k[0] == "$":
             return k[1:].capitalize()  # $true, $false
-        k = sym(k.strip("'")) if k[0] == "'" or k[0].islower() else k  # a symbol; a variable otherwise
+        k = sym(k.strip("'")) if k[0] == "'" or k[0].islower() else k + "'"  # a symbol; a variable otherwise (primed)
         if not peek("("):
             return k
         nxt()

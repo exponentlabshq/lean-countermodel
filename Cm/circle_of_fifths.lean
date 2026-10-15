@@ -23,17 +23,17 @@ def «f» : T → T
 def «g» : T → T
   | T.e1 => T.e10 | T.e2 => T.e5 | T.e3 => T.e1 | T.e4 => T.e3 | T.e5 => T.e4 | T.e6 => T.e2 | T.e7 => T.e6 | T.e8 => T.e12 | T.e9 => T.e7 | T.e10 => T.e8 | T.e11 => T.e9 | T.e12 => T.e11
 
-theorem c0 : (∀ X : T, ((«f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» X)))))))))))) = X)) := by decide
+theorem c0 : (∀ X' : T, ((«f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» X')))))))))))) = X')) := by decide
 
 theorem c1 : ((«f» («f» («f» («f» «c»)))) ≠ «c») := by decide
 
 theorem c2 : ((«f» («f» («f» («f» («f» («f» «c»)))))) ≠ «c») := by decide
 
-theorem c3 : (∀ X : T, ((«g» («f» X)) = X)) := by decide
+theorem c3 : (∀ X' : T, ((«g» («f» X')) = X')) := by decide
 
-theorem c4 : ¬(∀ X : T, ((«f» X) = («g» X))) := by decide
+theorem c4 : ¬(∀ X' : T, ((«f» X') = («g» X'))) := by decide
 
-theorem countermodel : ((((∀ X : T, ((«f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» X)))))))))))) = X))) ∧ (((«f» («f» («f» («f» «c»)))) ≠ «c»))) ∧ ((((«f» («f» («f» («f» («f» («f» «c»)))))) ≠ «c»)) ∧ (((∀ X : T, ((«g» («f» X)) = X))) ∧ (¬(∀ X : T, ((«f» X) = («g» X))))))) :=
+theorem countermodel : ((((∀ X' : T, ((«f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» («f» X')))))))))))) = X'))) ∧ (((«f» («f» («f» («f» «c»)))) ≠ «c»))) ∧ ((((«f» («f» («f» («f» («f» («f» «c»)))))) ≠ «c»)) ∧ (((∀ X' : T, ((«g» («f» X')) = X'))) ∧ (¬(∀ X' : T, ((«f» X') = («g» X'))))))) :=
   ⟨⟨c0, c1⟩, ⟨c2, ⟨c3, c4⟩⟩⟩
 
 end circle_of_fifths

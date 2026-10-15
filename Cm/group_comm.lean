@@ -23,15 +23,15 @@ def «mul» : T → T → T
 def «inv» : T → T
   | T.e1 => T.e1 | T.e2 => T.e2 | T.e3 => T.e6 | T.e4 => T.e4 | T.e5 => T.e5 | T.e6 => T.e3
 
-theorem c0 : (∀ X Y Z : T, ((«mul» («mul» X Y) Z) = («mul» X («mul» Y Z)))) := by decide
+theorem c0 : (∀ X' Y' Z' : T, ((«mul» («mul» X' Y') Z') = («mul» X' («mul» Y' Z')))) := by decide
 
-theorem c1 : (∀ X : T, ((«mul» «e» X) = X)) := by decide
+theorem c1 : (∀ X' : T, ((«mul» «e» X') = X')) := by decide
 
-theorem c2 : (∀ X : T, ((«mul» («inv» X) X) = «e»)) := by decide
+theorem c2 : (∀ X' : T, ((«mul» («inv» X') X') = «e»)) := by decide
 
-theorem c3 : ¬(∀ X Y : T, ((«mul» X Y) = («mul» Y X))) := by decide
+theorem c3 : ¬(∀ X' Y' : T, ((«mul» X' Y') = («mul» Y' X'))) := by decide
 
-theorem countermodel : ((((∀ X Y Z : T, ((«mul» («mul» X Y) Z) = («mul» X («mul» Y Z))))) ∧ ((∀ X : T, ((«mul» «e» X) = X)))) ∧ (((∀ X : T, ((«mul» («inv» X) X) = «e»))) ∧ (¬(∀ X Y : T, ((«mul» X Y) = («mul» Y X)))))) :=
+theorem countermodel : ((((∀ X' Y' Z' : T, ((«mul» («mul» X' Y') Z') = («mul» X' («mul» Y' Z'))))) ∧ ((∀ X' : T, ((«mul» «e» X') = X')))) ∧ (((∀ X' : T, ((«mul» («inv» X') X') = «e»))) ∧ (¬(∀ X' Y' : T, ((«mul» X' Y') = («mul» Y' X')))))) :=
   ⟨⟨c0, c1⟩, ⟨c2, c3⟩⟩
 
 end group_comm

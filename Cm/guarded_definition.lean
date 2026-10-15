@@ -22,13 +22,13 @@ abbrev «list» (x0 : T) : Prop := (1 >>> (1 * x0.idx)) % 2 = 1
 abbrev «member» (x0 x1 : T) : Prop := (0 >>> (1 * x0.idx + 1 * x1.idx)) % 2 = 1
 abbrev «good» (x0 : T) : Prop := (0 >>> (1 * x0.idx)) % 2 = 1
 
-theorem c0 : (∀ S : T, (¬(«list» S) ∨ (∀ Z : T, ((«member» Z S) ↔ («good» Z))))) := by decide
+theorem c0 : (∀ S' : T, (¬(«list» S') ∨ (∀ Z' : T, ((«member» Z' S') ↔ («good» Z'))))) := by decide
 
 theorem c1 : («list» «l1») := by decide
 
-theorem c2 : ¬(∀ Z : T, («good» Z)) := by decide
+theorem c2 : ¬(∀ Z' : T, («good» Z')) := by decide
 
-theorem countermodel : (((∀ S : T, (¬(«list» S) ∨ (∀ Z : T, ((«member» Z S) ↔ («good» Z)))))) ∧ (((«list» «l1»)) ∧ (¬(∀ Z : T, («good» Z))))) :=
+theorem countermodel : (((∀ S' : T, (¬(«list» S') ∨ (∀ Z' : T, ((«member» Z' S') ↔ («good» Z')))))) ∧ (((«list» «l1»)) ∧ (¬(∀ Z' : T, («good» Z'))))) :=
   ⟨c0, ⟨c1, c2⟩⟩
 
 end guarded_definition

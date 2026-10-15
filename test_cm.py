@@ -225,7 +225,7 @@ def test_quoted_and_plain_names_are_the_same_symbol():
     """TPTP: 'cat' and cat are one symbol; 'X' is a constant, never the variable X."""
     from cm import lean
     assert lean("p('cat')") == lean("p(cat)")
-    assert lean("![X]: p('X', X)") == "(∀ X : T, («p» «'X'» X))"
+    assert lean("![X]: p('X', X)") == "(∀ X' : T, («p» «'X'» X'))"
 
 
 @pytest.mark.parametrize("formula", ["(p <~> q)", "(p <= q)", "(p ~| q)", "(p ~& q)", "$distinct(a,b)", "p(3)", 'p("s")'])
@@ -264,3 +264,13 @@ def test_benchmark_records_unsupported_input(tmp_path, monkeypatch):
     for src in ("fof(a, axiom, (p <~> q)).\n", "fof(a, axiom, ![X]: (p(X) ~| q(X))).\n", "fof(a, axiom, p(\"s\")).\n"):
         (tmp_path / "problems" / "X.p").write_text(src)
         assert bench.run_hybrid("X.p")["verdict"] == "unsupported input", src
+
+
+@pytest.mark.parametrize("v", ["T", "True", "False", "Nat", "Decidable"])
+def test_variables_cannot_capture_lean_names(v, tmp_path):
+    """A TPTP variable named like the domain type or a Lean constant must not shadow it (GEG001+1 uses `T`)."""
+    p = tmp_path / f"v_{v}.p"
+    p.write_text(f"fof(a, axiom, ![{v}]: ?[Y]: (r({v}, Y) & $true)).\nfof(b, axiom, ~r(c, c)).\n")
+    out = tmp_path / "Out.lean"
+    out.write_text(run("python3", "cm.py", str(p)).stdout)
+    assert run("lake", "env", "lean", str(out)).returncode == 0
