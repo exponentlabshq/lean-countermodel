@@ -5,8 +5,15 @@ from functools import cache
 
 OPS = {"&": "∧", "|": "∨", "=>": "→", "<=>": "↔"}
 QUOTED = r"'(?:[^'\\]|\\.)*'"  # a quoted name; it may contain `%` and escaped quotes
-TOKENS = rf"<=>|=>|!=|{QUOTED}|[\w$]+|\S"
+TOKENS = rf"<~>|<=>|=>|<=|~\||~&|!=|{QUOTED}|\"(?:[^\"\\\\]|\\\\.)*\"|[\w$]+|\S"
+UNSUPPORTED = {"<~>", "<=", "~|", "~&"}  # connectives cm.py does not translate: rejected, never misread
 NAME = rf"(?:{QUOTED}|\w+)"  # a symbol in Vampire's model output, possibly quoted
+
+
+def unsupported(k):
+    """Reject a token outside the supported syntax, rather than translate it wrongly."""
+    if k in UNSUPPORTED or k[0] in "\"0123456789" or (k[0] == "$" and k not in ("$true", "$false")):
+        raise ValueError(f"unsupported TPTP syntax: {k!r} (see README: supported features)")
 
 
 def sym(k):
@@ -24,6 +31,8 @@ def lean(s):
         a = unit()
         while peek(*OPS):
             a = f"({a} {OPS[nxt()]} {unit()})"
+        if peek(*UNSUPPORTED):
+            unsupported(nxt())
         return a
 
     def unit():
@@ -43,6 +52,7 @@ def lean(s):
         return f"({a} {'=' if nxt() == '=' else '≠'} {term(nxt())})" if peek("=", "!=") else a
 
     def term(k):
+        unsupported(k)
         if k[0] == "$":
             return k[1:].capitalize()  # $true, $false
         k = sym(k.strip("'")) if k[0] == "'" or k[0].islower() else k  # a symbol; a variable otherwise
@@ -54,7 +64,10 @@ def lean(s):
             args.append(term(nxt()))
         return f"({k} {' '.join(args)})"
 
-    return form()
+    out = form()
+    if t:  # every token must be consumed: trailing input means the formula was misread
+        raise ValueError(f"unparsed TPTP input after a formula: {' '.join(t[::-1][:6])!r}")
+    return out
 
 
 VARS = cache(lambda f: frozenset(re.findall(r"\b[A-Z]\w*", re.sub(QUOTED, "", f))))  # memoized; quoted names are never variables
@@ -121,6 +134,8 @@ def miniscope(scope, lits, bound=frozenset()):
 def problem(path):
     """[(role, formula)] from a TPTP file: cnf clauses closed by ∀, and those plus ∀-implications in fof miniscoped."""
     src = uncomment(open(path).read())
+    if m := re.search(r"\b(tff|thf|tcf|tpi|include)\s*\(", src):  # never certify a silently shortened problem
+        raise ValueError(f"unsupported TPTP: {m[1]}(...) in {path}; cm.py reads self-contained fof/cnf only")
     out = []
     for k, r, f in re.findall(r"(fof|cnf)\(\s*[\w']+\s*,\s*(\w+)\s*,(.*?)\)\s*\.(?=\s*(?:fof|cnf)\(|\s*$)", src, re.S):
         scope, lits = literals(f, k == "cnf")
@@ -241,6 +256,8 @@ def tokens(s, ids):
         a = unit(env)
         while peek(*OPCODE):
             a = [OPCODE[nxt()], *a, *unit(env)]
+        if peek(*UNSUPPORTED):
+            unsupported(nxt())
         return a
 
     def unit(env):
@@ -257,6 +274,7 @@ def tokens(s, ids):
             a = form(env)
             nxt()
             return a
+        unsupported(k)
         if k in ("$true", "$false"):
             return [2 if k == "$true" else 3]
         args = args_of(env)
@@ -276,6 +294,7 @@ def tokens(s, ids):
         return args
 
     def head(k, args, env):
+        unsupported(k)
         if k[0] != "'" and k[0].isupper():
             return [0, env.index(k)]
         name = k.strip("'")
@@ -284,7 +303,10 @@ def tokens(s, ids):
     def term(k, env):
         return head(k, args_of(env), env)
 
-    return form([])
+    out = form([])
+    if t:
+        raise ValueError(f"unparsed TPTP input after a formula: {' '.join(t[::-1][:6])!r}")
+    return out
 
 
 def nesting(toks):

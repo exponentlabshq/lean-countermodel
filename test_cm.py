@@ -220,3 +220,22 @@ def test_quoted_and_plain_names_are_the_same_symbol():
     from cm import lean
     assert lean("p('cat')") == lean("p(cat)")
     assert lean("![X]: p('X', X)") == "(∀ X : T, («p» «'X'» X))"
+
+
+@pytest.mark.parametrize("formula", ["(p <~> q)", "(p <= q)", "(p ~| q)", "(p ~& q)", "$distinct(a,b)", "p(3)", 'p("s")'])
+def test_unsupported_syntax_is_rejected_not_misread(formula):
+    """TPTP features outside the supported core must raise, in both translators, never translate to a different formula."""
+    from cm import lean, tokens
+    with pytest.raises(ValueError):
+        lean(formula)
+    with pytest.raises(ValueError):
+        tokens(formula, {"pred": {"p": 0, "q": 1}, "fn": {}, "const": {"a": 0, "b": 1}})
+
+
+@pytest.mark.parametrize("stmt", ["tff(t, type, a: $i).", "include('Axioms/X.ax')."])
+def test_typed_statements_and_includes_are_rejected(tmp_path, stmt):
+    """A problem cm.py cannot read completely is refused, rather than certified as a silently shortened problem."""
+    p = tmp_path / "t.p"
+    p.write_text(stmt + "\nfof(a, axiom, p(c)).\nfof(c, conjecture, q(c)).\n")
+    with pytest.raises(ValueError):
+        problem(str(p))
