@@ -1,6 +1,6 @@
 ## 4. The Verified Checker: Data Structures and Trust
 
-`Checker.lean` (namespace `CM`, 214 lines) is the evaluator behind the reflected path (§3.6). It defines first-order syntax as data, a Tarski semantics `Fm.Sem`, a Boolean evaluator `Fm.check`, one equivalence theorem `Fm.check_iff`, and decoders from packed natural numbers to formulas. A reflected certificate is one kernel evaluation of `check` per block, not one elaborated proposition per formula.
+`Checker.lean` (namespace `CM`, 430 lines) is the evaluator behind the reflected path (§3.6). It defines first-order syntax as data; a bounded semantics `Fm.Sem` and a Boolean evaluator `Fm.check`, proved equivalent by `Fm.check_iff`; decoders from packed natural numbers to formulas; ordinary first-order structures with satisfaction `Fm.Sat`; the validity and well-formedness checks `Model.valid` and `Fm.wf`; the bridge `sem_iff_sat`; and the certificate layer `Good` and `countermodel_of_good` (§4.4). A reflected certificate is one kernel evaluation of `check` per block, not one elaborated proposition per formula.
 
 ### 4.1 Data structures
 
@@ -140,7 +140,7 @@ The decoder is mutually recursive and fueled:
 Fuel bounds the recursion depth, and each call consumes one unit. Kernel cost grows with the fuel, so `emit_reflect` passes `depth = max(map(nesting, fs)) + 2`, where `nesting` is the token count of a single formula. That is an upper bound on the nesting depth, not the block's token count (§5, pattern 13b: >9 min → 12 s). What the decoder does with bad data is precise, and narrower than "malformed data decodes to ⊥":
 
 - **Detected failures:** if the fuel runs out, `readFm` returns `none`, and `readFms` emits `.fls`, which can never be certified.
-- **Not detected by the decoder:** `get` reads zeros past the end of the data, and the formula count is supplied by the generator. So truncation, extra tokens and wrong counts can decode to *some* formula list. They do not pass silently: that list is the statement Lean certifies, so the error would be in the trusted translation.
+- **Not detected by the decoder:** `get` reads zeros past the end of the data, and the formula count is supplied by the generator. So truncation, extra tokens and wrong counts can decode to *some* formula list. Such errors may be accepted as a different decoded formula list. The kernel proof remains about that list, not necessarily the intended source problem; detecting the mismatch is the responsibility of the trusted translation and its tests (§4.6).
 - **Caught by `Fm.wf`:** out-of-scope variables, out-of-range constants and wrong function arities (§4.4).
 
 `tests/Boundary.lean` records these cases as kernel-checked facts.
@@ -280,11 +280,11 @@ Reflection wins on ground facts and loses badly on nested quantifiers. *Hypothes
 
 ### 4.6 Independent checks of the reflected path (`test_cm.py`)
 
-The reflected path trusts the encoder, not the evaluator. Two tests target it, both against `holds`, a brute-force evaluator of the original TPTP text that shares only `TOKENS` with `cm.py`.
+The reflected path trusts the encoder, not the evaluator. Two tests target it, both against `holds`, a brute-force evaluator of the original TPTP text. It shares the lexer, the `%`-comment stripper and the variable collector with `cm.py`, but no parser, rewriter or translator (§3.10).
 
 | Test | Check |
 |---|---|
 | `test_reflected_certificate` | `lake build Checker` succeeds, and for every `examples/*.p` the `emit_reflect` output is accepted by `lake env lean`. |
-| `test_reflected_mutants_agree_with_python` | Two random one-entry corruptions per example (seed 1): a predicate entry is flipped, or a function entry is changed to a different element. The list of reflected Lean verdicts must equal `[countermodel(p, *m) …]`. Lean accepts **exactly** the mutants that Python accepts, and `not all(lean)` ensures that some mutant is rejected. |
+| `test_reflected_mutants_agree_with_python` | Two random one-entry corruptions per example (seed 1): a predicate entry is flipped, or a function entry is changed to a different element. The list of reflected Lean verdicts must equal `[countermodel(p, *m) …]`, where `countermodel` evaluates `raw(p)`, the formulas as written in the source, and never `problem(p)`, the production rewriter. Call chain: `countermodel(p, n, consts, tables)` → `raw(p)` (regex over `uncomment(open(p).read())`) → `holds(f, n, consts, tables)` for each formula. Lean accepts **exactly** the mutants that Python accepts, and `not all(lean)` ensures that some mutant is rejected. |
 
 A wrong translation in `tokens` or `as_fact` would certify a formula other than the TPTP one. The mutant test exposes this whenever a corrupted model separates the two formulas, which is why its docstring calls it a check on "the part of the reflected path that is trusted".

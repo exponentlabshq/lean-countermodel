@@ -70,15 +70,16 @@ if __name__ == "__main__":
             f"#print axioms {re.sub(r'[^A-Za-z0-9_]', '_', c['problem'][:-2])}.countermodel\n" for c in good))
         ok, out, s = compile_(agg)
         axioms = dict(re.findall(r"'([\w.]+)\.countermodel' depends on axioms: \[([^\]]*)\]", out))
+        axioms |= {ns: "" for ns in re.findall(r"'([\w.]+)\.countermodel' does not depend on any axioms", out)}  # none at all
         print(f"== axioms {name}\n{out}", file=log, flush=True)
         fok, fout, fs = sh(["lake", "env", "leanchecker", "--fresh", agg], timeout=4 * 3600)
         print(f"== leanchecker --fresh {agg}: {'ok' if fok else 'FAILED'} in {fs} s\n{fout}", file=log, flush=True)
         for c in recs:
             ns = re.sub(r"[^A-Za-z0-9_]", "_", c["problem"][:-2])
-            c.update(commit=commit, axioms=axioms.get(ns, "").replace(" ", "").split(",") if ns in axioms else None,
+            c.update(commit=commit, axioms=[a for a in axioms[ns].replace(" ", "").split(",") if a] if ns in axioms else None,
                      fresh=fok and c["compiled"], fresh_module=agg, fresh_s=fs)
         open(f"{OUT}/replay-{name}.jsonl", "w").write("".join(json.dumps(c) + "\n" for c in recs))
-        bad = [c["problem"] for c in recs if not c["fresh"] or not c["axioms"]
+        bad = [c["problem"] for c in recs if not c["fresh"] or c["axioms"] is None
                or any(a not in ("propext", "Quot.sound", "Classical.choice") for a in c["axioms"])]
         print(name, f"{len(recs)} strict certificates; aggregate compiled in {s} s; leanchecker --fresh "
               f"{'ok' if fok else 'FAILED'} in {fs} s; outside standard axioms or not replayed: {bad}", flush=True)

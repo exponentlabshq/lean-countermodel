@@ -97,7 +97,9 @@ Each variable is bound immediately before the first literal that uses it, via �
 | Predicate `p` of arity *k* | `abbrev «p» (x0 … x(k-1) : T) : Prop := (MASK >>> (1 * x0.idx + n * x1.idx + …)) % 2 = 1` |
 | Function `f` | `def «f» : T → … → T` by a pattern-matching table |
 | Formula *i* (from `lean(f)`) | `theorem c<i> : <φᵢ> := by decide`; a conjecture is emitted as `¬φ` |
-| Whole claim | `theorem countermodel : <tree of ∧> := <tree of ⟨_, _⟩>` |
+| Whole claim | `theorem countermodel : Nonempty T ∧ <tree of ∧> := ⟨⟨T.e1⟩, <tree of ⟨_, _⟩>⟩` |
+
+**Nonemptiness.** A Lean inductive type with no constructors is empty, and `∀ x : T, False` holds over it, although no first-order structure satisfies it. So the domain's nonemptiness is part of the certified statement: `Nonempty T`, proved by `⟨T.e1⟩` and checked by the kernel like every other conjunct. `emit` also refuses a model of size 0 before writing anything (`test_shallow_certificate_proves_a_nonempty_domain`).
 
 `tree(xs, pair)` builds balanced conjunctions and anonymous-constructor proofs: depth log₂ *m* instead of *m*, since a chain of 10,000 `∧` overflows the kernel. One theorem per formula gives each `decide` fresh caches.
 
@@ -110,7 +112,7 @@ Every generated file starts with `set_option autoImplicit false`: an unbound nam
 | `Base` | options, `T`, instances, predicate and function tables |
 | `Names<k>` | constant `abbrev`s, `CM_CHUNK × 5` (10,000 by default) per module |
 | `Chunk<j>` | `def P<i> : Prop := φᵢ`, `theorem c<i> : P<i> := by unfold P<i>; decide`, `def C<j>` (balanced ∧ of its `P<i>`), `theorem chunk<j> : C<j>` |
-| `Main` | `theorem countermodel : <tree of C<j>>` |
+| `Main` | `theorem countermodel : Nonempty T ∧ <tree of C<j>>` |
 
 Constants live in separate `Names` modules because Lean 4.13 fails with "deep recursion" on files with more than about 20,000 declarations (comment in `emit`). No module restates the whole problem, and `lake` checks chunks in parallel.
 
@@ -133,12 +135,13 @@ The kernel checks every `decide` (shallow) or `decide +kernel` (reflected) proof
 
 | Stage | Code | Trusted? | Why / how it is checked |
 |---|---|---|---|
+| Input preprocessing (benchmark only) | `bench.expand`, `bench/inputs.py` | **Yes** | Inlines plain `include('Axioms/…')` directives so `cm.py` reads one self-contained file. Includes inside comments or quoted names are left alone; selective, nested, unresolved and non-`Axioms/` includes are refused (`test_include_expansion`). Every benchmark input is rebuilt from the official TPTP v9.3.1 release, and its original and expanded SHA-256s are checked against `bench/inputs.json` (`test_benchmark_inputs_match_their_sources`). |
 | Find | Vampire | **No** | A wrong model makes `decide` fail. Mutation tests confirm that Lean rejects broken models. |
 | Cache | `vampire()`, `$CM_CACHE` | **No** | It returns Vampire's output for an identical problem, flag set and version; the output is untrusted anyway. |
-| Model parse | `model()` | **No**, for reflected certificates | A misparse that leaves the domain is caught: `Model.valid` (non-empty domain, functions closed) and `Fm.wf` (constants in range, bound variables, checked arities) are kernel-checked parts of every reflected certificate. A misparse that stays in the domain yields a different structure. Lean then certifies that structure if, and only if, it satisfies the formulas. For shallow certificates the model is a Lean inductive type and is valid by construction. |
+| Model parse | `model()` | **No**, for reflected certificates | A misparse that leaves the domain is caught: `Model.valid` (non-empty domain, functions closed) and `Fm.wf` (constants in range, bound variables, checked arities) are kernel-checked parts of every reflected certificate. A misparse that stays in the domain yields a different structure. Lean then certifies that structure if, and only if, it satisfies the formulas. For shallow certificates, constants and function values are constructors of `T`, so they lie in the domain by construction, and nonemptiness is a kernel-checked conjunct of the statement (`Nonempty T`, §3.5). |
 | Rewrite | `problem`, `clause`, `literals`, `miniscope` | **Yes** | A non-equivalent rewrite changes what is certified. Tested by `test_rewriting_preserves_meaning` and regression examples. |
 | Translation (shallow) | `lean()`, `sym()`, `emit()` | **Yes** | The Lean statement must mean the TPTP formula. Tested by the independent evaluator and by mutant agreement; the statement is readable in the `.lean` file. |
-| Translation (reflected) | `tokens()`, `as_fact()`, symbol numbering | **Yes** | The `Fm` data must mean the TPTP formula. Tested by `test_reflected_mutants_agree_with_python` against an evaluator of the *original* formulas; `#eval problem` is a diagnostic that prints the decoded data (with numeric symbol ids), not a fidelity proof. The certified formulas. |
+| Translation (reflected) | `tokens()`, `as_fact()`, symbol numbering | **Yes** | The `Fm` data must mean the TPTP formula. Tested by `test_reflected_mutants_agree_with_python` against an evaluator of the *original* formulas; `#eval problem` is a diagnostic that prints the decoded data (with numeric symbol ids), not a fidelity proof. |
 | Evaluator and semantics | `Checker.lean` (`Fm.check`, `decode`, `fact`, `Model.valid`, `Fm.wf`) | **No** (proved) | `check_iff` (evaluator = bounded semantics) and `sem_iff_sat` (bounded semantics = ordinary satisfaction, for valid models and well-formed formulas) are kernel-checked theorems; `countermodel_of_good` combines them. |
 | Certify | Lean kernel | **Yes** | Axioms: `propext` (shallow); `propext`, `Quot.sound` (reflected, per `bench/nlp263-reflected-lean4.35.json`). |
 
@@ -172,9 +175,9 @@ theorem c0 : (∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') 
 theorem c1 : («r» «a» «b») := by decide
 theorem c2 : ¬(«r» «b» «a») := by decide
 
-theorem countermodel : (((∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z')))))) ∧
+theorem countermodel : Nonempty T ∧ (((∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z')))))) ∧
     (((«r» «a» «b»)) ∧ (¬(«r» «b» «a»)))) :=
-  ⟨c0, ⟨c1, c2⟩⟩
+  ⟨⟨T.e1⟩, ⟨c0, ⟨c1, c2⟩⟩⟩
 ```
 
 TPTP variables are emitted primed (`X` becomes `X'`). A TPTP variable cannot contain `'`, so no variable can shadow the domain type `T` or a Lean constant such as `True`.
@@ -193,12 +196,13 @@ Reading the first stream: `9 9` is ∀∀, `6` is ∨, `4 0 0 2 (0 1) (0 0)` is 
 
 ### 3.10 Independent checks (`test_cm.py`)
 
-The trusted Python stages are tested against an evaluator that shares only the lexer (`TOKENS`) with `cm.py`. Tests that need Vampire and `lake` are skipped when either is missing.
+The trusted Python stages are tested against an evaluator that shares three small helpers with `cm.py`: the lexer (`TOKENS`), the `%`-comment stripper (`uncomment`) and the variable collector (`VARS`); it shares no parser, rewriter or translator. Each test declares the tools it needs: without Vampire, the 18 tests that need no model still run (rejection, preprocessing, nonemptiness, input integrity and the kernel boundary cases); with Vampire 5.1 and Lean 4.35, all 106 run.
 
 | Test | What it checks |
 |---|---|
 | `holds(s, n, consts, tables, env)` | Not a test: a brute-force evaluator of the **original** TPTP text. It parses with its own recursive descent and evaluates `!`/`?` with `itertools.product` over `1 … n`. It never sees `lean()`, `tokens()` or `Checker.lean`. |
-| `countermodel(path, …)` | Python's verdict: every formula of `problem(path)` holds, except the conjecture, which fails. |
+| `raw(path)` | The formulas as written in the source file: a separate regex over the (include-expanded) text, with `%` comments removed and each `cnf` clause closed by `![VARS]`. It never calls `problem()`, so none of `cm.py`'s rewriting reaches the oracle. |
+| `countermodel(path, …)` | Python's verdict on `raw(path)`: every original formula holds under `holds`, except the conjecture, which fails. Both mutant tests compare Lean against this verdict. |
 | `test_compiles_to_committed_file`, `test_reflects_to_committed_file` | `cm.py` output equals the committed `Cm/<name>.lean` (shallow) and `Refl/<name>.lean` (reflected), for each of the 15 `examples/*.p`. |
 | `test_kernel_accepts_with_propext_only` | `lake build` succeeds and every line of `#print axioms` (via `Axioms.lean`) ends with `[propext]`. |
 | `test_python_agrees_it_is_a_countermodel` | `holds` confirms Vampire's model for every example. |
@@ -215,8 +219,12 @@ The trusted Python stages are tested against an evaluator that shares only the l
 | `test_unsupported_syntax_is_rejected_not_misread` (7 cases), `test_typed_statements_and_includes_are_rejected` (2), `test_a_symbol_at_two_arities_is_rejected` | Fail-closed parsing: `<~>`, `<=`, `~\|`, `~&`, `$distinct`, numbers, strings, `tff`, `include` and mixed arities raise an error in both translators. |
 | `test_benchmark_records_unsupported_input` | The harness classifies such inputs as *unsupported input* **before** Vampire runs (the test supplies a Vampire binary that does not exist). |
 | `test_variables_cannot_capture_lean_names` (5 cases) | Variables named `T`, `True`, `False`, `Nat`, `Decidable` compile; `T` and `True` failed on the translator before the fix. |
+| `test_include_expansion` | `bench.expand` inlines a plain include (with or without TPTP's optional spaces); leaves includes in `%` and `/* */` comments and inside quoted names untouched; leaves a selective include in place, which `problem()` then refuses; and raises on unresolved, nested and non-`Axioms/` includes. |
+| `test_block_comments_are_rejected` | A `/* … */` comment, which `cm.py` does not strip, is refused rather than read as formulas; `'/*'` inside a quoted name is just a name. |
+| `test_shallow_certificate_proves_a_nonempty_domain` | `emit` refuses a 0-element model, and every committed shallow certificate states `Nonempty T ∧ …`. |
+| `test_benchmark_inputs_match_their_sources` | Every benchmark input equals `bench.expand` applied to its TPTP original, byte for byte, and originals, expansions and axiom files match the SHA-256s in `bench/inputs.json`. Skipped if the inputs have not been rebuilt (`bench/inputs.py`). |
 | `test_ablation_finds_what_a_conclusion_needs` | `ablate.py` labels a needed axiom with a certified counter-model, and never labels an underivable target as needing anything. |
 
-The suite has **102 test cases**: 5 tests parametrized over the 15 examples (75), 14 rejection and capture cases, and 13 single tests. Separately, `recheck.sh` rebuilds all 30 shipped certificates, prints their axioms and replays `Checker`, `AllShallow` and `AllReflected` through the kernel from scratch with `leanchecker --fresh` (Lean 4.35); its output is `bench/recheck.log`.
+The suite has **106 test cases**: 5 tests parametrized over the 15 examples (75), 14 rejection and capture cases, and 17 single tests. Separately, `recheck.sh` rebuilds all 30 shipped certificates, prints their axioms and replays `Checker`, `AllShallow` and `AllReflected` through the kernel from scratch with `leanchecker --fresh` (Lean 4.35); its output is `bench/recheck.log`. The benchmark certificates are replayed the same way by `bench/replay.py` (§6.2).
 
 **Planted bugs.** The suite was validated by introducing known bugs into `cm.py` and confirming failures (README §5): `=>` compiled as `↔` (7 tests fail), a scoping bug (4), a dropped negation (18), a lost parenthesis (4), and the single-formula case (1). The planted variants are not in the repository; the counts are those recorded in the README, measured against the suite at that time.

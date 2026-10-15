@@ -59,14 +59,14 @@ Can the tool find these counter-models by itself?
 - "Not needed" rests on uncertified Vampire proofs.
 - As in §6.1, the counter-models let one object be both a substance and an attribute, which the register permits.
 
-### 6.2 Case study B: a uniform sample of TPTP
+### 6.2 Case study B: three samples of TPTP
 
 **Question.** Does the tool work on problems nobody chose for it? When it fails, is it ever *wrong*?
 
 **Method.**
 
 1. **Index:** from TPTP's ProblemAndSolutionStatistics, keep the 2,561 fof/cnf problems marked Satisfiable or CounterSatisfiable.
-2. **Sample** 100 problems, never hand-picked, but **not a uniform sample overall**. The first 20 came from an earlier picker that chose a random *domain*, then a problem in it, which favors problems from small domains. The last 80 were drawn uniformly from the index. The set was also our **development set**: bugs found on it became fixes and regression tests, and it was rerun after each fix. So results on it measure performance on development-exposed problems. §6.2.1 reports a separate held-out set.
+2. **Sample** 100 problems, never hand-picked, but **not a uniform sample overall**. The first 20 came from an earlier picker that chose a random *domain*, then a problem in it, which favors problems from small domains. The last 80 were drawn uniformly from the index. The set was also our **development set**: bugs found on it became fixes and regression tests, and it was rerun after each fix. So results on it measure performance on development-exposed problems. §6.2.1 reports two further uniform samples.
 3. **Search:** 30 s of Vampire per problem. Results are cached by content, and timeouts are never cached.
 4. **Certify** with hybrid dispatch: reflected when at least 90% of formulas are ground facts, shallow otherwise. Lean gets 60 s per file.
 
@@ -82,62 +82,81 @@ Problems were developed in Fibonacci batches (1, 1, 2, 3, 5, 8). Every bug found
 | Vampire found no model within 30 s | 23 |
 | `cm.py` error (NLP263, before the quoted-name fixes) | 1 |
 
-**Results.** The first two columns are development history. The **final** column is the frozen implementation (commit `51481a4`: validated reflected certificates, fail-closed parsing, primed variables), run from a separate git worktree on an idle machine with the same 30 s Vampire limit and cache; it is the result this paper reports.
+**Inputs.** Every benchmark input is rebuilt from the official TPTP v9.3.1 release (`bench/inputs.py`; tarball SHA-256 in `bench/inputs.json`), with includes expanded by the tested `bench.expand` (§3.8). The rebuild found a defect in the earlier scraped inputs: two of them, `RNG025-9` (development) and `BOO008-3` (second sample), contain an include that the TPTP file comments out (`% include('Axioms/…').`), and the old expander had inlined it, adding the axiom file's clauses to the problem (40 against 25 and 43 against 21 `cnf` lines). Both had been reported as *no model*. On their correct inputs Vampire finds models of 3 and 2 elements, and both are now certified. The defect produced two wrong *no model* verdicts and no certificate.
 
-| Outcome | Lean 4.13 (shallow) | Lean 4.35 (hybrid, before review) | **Final, frozen `51481a4`** |
+**Results.** The first two columns are development history. The **final** column is the frozen implementation (commit `acb343b`: validated reflected certificates, fail-closed parsing, primed variables, `Nonempty T` in shallow statements, inputs from the TPTP release), run from a separate git worktree on an otherwise idle machine with the same 30 s Vampire limit; it is the result this paper reports.
+
+| Outcome | Lean 4.13 (shallow) | Lean 4.35 (hybrid, before review) | **Final, frozen `acb343b`** |
 |---|---|---|---|
-| Models found by Vampire | 77 | 77 | 77 |
-| **Certified, strict kernel only** | 67 | 70 | **70** |
+| Models found by Vampire | 77 | 77 | 78 |
+| **Certified, strict kernel only** | 67 | 70 | **71** |
 | Certified with `native_decide` | 3 | 2 | 2 |
 | Lean rejected | 6 | 5 | 5 |
-| Vampire found no model | 23 | 23 | 20 |
+| Vampire found no model | 23 | 23 | 19 |
 | Unsupported input (rejected by the parser) | — | — | 3 |
 | `cm.py` error | 1 | 0 | 0 |
 | Method | shallow ×100 | shallow ×98, reflected ×2 | shallow ×95, reflected ×2, none ×3 |
 | Median end-to-end per problem | 3 s | 0.65 s (Vampire answers cached) | |
 
-**Strict kernel certification: 70 of the 77 models Vampire found (90.9%).** Two more were certified with `native_decide`, which enlarges the trusted base: 72 of 77 (93.5%) including those. Over all 100 problems, the full pipeline succeeds strictly on 70 (70%). These answer different questions, so all three are reported.
+**Strict kernel certification: 71 of the 78 models Vampire found (91.0%).** Two more were certified with `native_decide`, which enlarges the trusted base: 73 of 78 (93.6%) including those. Over all 100 problems, the full pipeline succeeds strictly on 71 (71%). These answer different questions, so all three are reported.
 
 | Development subset | Problems | Models found | Strict kernel | + native | Rejected | No model |
 |---|---|---|---|---|---|---|
 | First 20 (domain-first picker) | 20 | 17 | 17 (100% of models) | 0 | 0 | 2 (+1 unsupported) |
-| Last 80 (uniform from the index) | 80 | 60 | 53 (88.3%) | 2 | 5 | 18 (+2 unsupported) |
-| All 100 | 100 | 77 | 70 (90.9%) | 2 | 5 | 20 (+3 unsupported) |
+| Last 80 (uniform from the index) | 80 | 61 | 54 (88.5%) | 2 | 5 | 17 (+2 unsupported) |
+| All 100 | 100 | 78 | 71 (91.0%) | 2 | 5 | 19 (+3 unsupported) |
 
-The uniformly drawn 80 certify 88.3% strictly, against 17 of 17 for the domain-first 20. That is a descriptive breakdown, not evidence that the picker caused the difference; the established problem is the non-uniform design itself.
+The uniformly drawn 80 certify 88.5% strictly, against 17 of 17 for the domain-first 20. That is a descriptive breakdown, not evidence that the picker caused the difference; the established problem is the non-uniform design itself.
 
-Three verdicts changed between the versions:
+Four verdicts changed between the versions:
 
 - **NLP263+1:** a `cm.py` error on 4.13, certified on 4.35 through the reflective checker (§6.3);
 - **HWV048-2:** a 16-element model that overflowed the stack on 4.13 now certifies in 2.7 s. This is consistent with Lean 4.33 bounding kernel recursion by `maxRecDepth`;
-- **NLP018-10:** needed `native_decide` on 4.13 and certifies kernel-only on 4.35.
+- **NLP018-10:** needed `native_decide` on 4.13 and certifies kernel-only on 4.35;
+- **RNG025-9:** *no model* on the altered input, certified on the release input (above).
 
-**The failures, each explained.** On Lean 4.35, **all 5 rejections are one family:** deeply nested modal-logic encodings (LCL647, LCL659, LCL673, LCL683, LCL685). They fail in Lean's *typeclass instance search* for `Decidable`, within seconds, because the formulas are nested too deeply. None is a wrong model. The reflective checker needs no instance search, so it is the natural route for these (§8). The final run's 5 rejections are the same five problems.
+**The failures, each explained.** On Lean 4.35, **all 5 rejections are one family:** deeply nested modal-logic encodings (LCL647, LCL659, LCL673, LCL683, LCL685). They fail in Lean's *typeclass instance search* for `Decidable`, within seconds, because the formulas are nested too deeply. The reflective checker needs no instance search, so it is the natural route for these (§8).
 
-Of the 23 problems that were "no model" before review (20 in the final run; the other 3 are now classified as unsupported input), 11 are rated 1.00 in TPTP: no prover solves them in TPTP's reference evaluations. Three more are very large problems on which Vampire gives up, and the rest time out at 30 s. **Four earlier "no model" results turned out to be our own gap.** Vampire had answered them by deleting unused predicates without printing a model. The flag `-updr off` recovered three of them, and the fourth (NLP263) became case study C.
+Of the 19 problems with no model in the final run, 10 are rated 1.00 in TPTP: no prover solves them in TPTP's reference evaluations. *No model* means only that none was found within 30 s; it is not a semantic result. **Four earlier "no model" results turned out to be our own gap.** Vampire had answered them by deleting unused predicates without printing a model. The flag `-updr off` recovered three of them, and the fourth (NLP263) became case study C.
 
-#### 6.2.1 Held-out evaluation with a frozen implementation
+#### 6.2.1 The second and third samples
 
-To measure generalization rather than development fit, we drew a **new sample of 100 problems uniformly without replacement** from the 2,461 eligible problems not in the development set, with seed 20261015 (`bench/heldout-sample.json` records the seed, the method and the problem list). The sample was drawn before any held-out result was seen. Each problem got 30 s of Vampire, then hybrid dispatch, from the frozen commit `51481a4` in a separate git worktree, with no code changes during the run.
+**Second sample: initially held out, then used for debugging.** We drew 100 problems uniformly without replacement from the 2,461 eligible problems not in the development set, with seed 20261015 (`bench/heldout-sample.json`), before any result on them was seen. We then used it: earlier runs on it exposed a crash on `include` (`1a55aef`), two harness defects and a load-induced timeout (`a23fe9c`), and the variable-capture defect in `GEG001+1` (`62d43d6`); the input rebuild then changed `BOO008-3`. Each was fixed before the final run. These are general defects, not tuning to particular problems, but the sample's results did inform the implementation, so **we report the second sample as a descriptive validation sample, not as an untouched test of generalization.** Superseded logs are kept in `bench/superseded-*.jsonl`.
 
-**Version history, kept rather than hidden.** Three earlier attempts at this run are superseded and not reported. A partial run overlapped with a parser change and was discarded. A run frozen at `1a55aef` crashed on the `include` in `SYN000+2`. A run frozen at `a23fe9c` exposed two harness defects (misclassification of unsupported input as *no model*; a Python integer-printing limit) and a timeout caused by our own concurrent jobs. A run at `62d43d6` exposed the variable-capture defect in `GEG001+1` (§8.2). Its verdicts are otherwise identical to the final run, problem for problem. Superseded logs are kept in `bench/superseded-*.jsonl`.
+**Third sample: drawn and frozen before any result.** We drew 100 further problems uniformly without replacement, seed 20261016, from the 2,357 eligible problems in neither earlier set nor among four exploratory problems used during development (`bench/third-sample.json`). The list was committed together with the frozen code (`900818d`) before any result on it existed. Two launches did not complete, and both are recorded:
 
-| Outcome | Held-out (100) | Development (100), same commit |
-|---|---|---|
-| Unsupported input (rejected by the parser) | 4 | 3 |
-| Vampire found no model within 30 s | 35 | 20 |
-| **Models found** | **61** | **77** |
-| **Certified, strict kernel only** | **54** | **70** |
-| Certified with `native_decide` | 2 | 2 |
-| Lean rejected (resource limits) | 5 | 5 |
-| **Strict, of models found** | **88.5%** | **90.9%** |
-| Strict or native, of models found | 91.8% | 93.5% |
-| **Full pipeline, strict, of all sampled problems** | **54%** | **70%** |
-| Full pipeline, strict, of supported inputs | 54 of 96 (56.3%) | 70 of 97 (72.2%) |
+1. At `900818d`, the run stopped on its first development certificate because a fresh worktree lacked an output directory; `acb343b` creates it. No third-sample problem had been reached.
+2. At `acb343b`, the development and second samples completed, and the third stopped when `KRS290-1`, whose formulas nest deeper than Python's recursion limit, raised an exception the harness did not catch. No third-sample verdict was written. Before it stopped, the run had already run Vampire on the third-sample problems it reached, and may have compiled certificates for some; the Vampire answers stayed in the content-addressed cache, and we did not inspect them or any intermediate result. To locate the crash, we reran only the translator's pre-check on the third sample; it showed that `KRS290-1` was the only problem raising the exception (`bench/superseded-acb343b-third-attempt1.txt`).
 
-**Reading.** Conditional on Vampire finding a model, strict certification generalizes: 88.5% held-out against 90.9% on the development set. The pipeline as a whole does not reach the development figure: Vampire found a model for 61 held-out problems against 77, so full-pipeline success is 54% against 70%. The difference lies in the finder's yield within 30 s, not in certification. *No model* means only that none was found within the limit; it is not a semantic result.
+The one change made after that, `30ad4f3`, is in the harness: any translator exception is now recorded as a *cm.py error* instead of stopping the run. `cm.py`, `Checker.lean`, the dispatch rule, the time limits and the inputs did not change, so `KRS290-1` is reported as a failure, not repaired. The third sample was then run in full at `30ad4f3` and is reported as recorded. It is therefore not strictly untouched: one piece of information from it, that a problem crashes the pre-check, led to a harness change. We judge that change neutral for the reported rates, since it turns a crash of the whole run into one recorded failure and changes no verdict that the earlier code could produce.
 
-**Held-out failures.** None is an invalid certificate. Three fail in instance search on deeply nested formulas, the same family as all five development failures: `LCL649+1.015`, `LCL681+1.010`, and `GEG001+1` (an existential over several hundred variables). Two exceed the 60 s Lean limit (`NLP055-1`, `HWV076+1`). The two native-assisted problems are `NLP179+1` and `SWB022+3`. The unsupported inputs are three uses of `<~>` (`KRS182+1`, `KRS199+1`, `KRS210+1`) and one `include` (`SYN000+2`).
+| Outcome | Development (100), `acb343b` | Second sample (100), `acb343b` | **Third sample (100), `30ad4f3`** |
+|---|---|---|---|
+| Unsupported input (rejected by the parser) | 3 | 4 | 3 |
+| Translator crash (*cm.py error*) | 0 | 0 | 2 |
+| Vampire found no model within 30 s | 19 | 34 | 29 |
+| **Models found** | **78** | **62** | **67** |
+| **Certified, strict kernel only** | **71** | **55** | **59** |
+| Certified with `native_decide` | 2 | 2 | 4 |
+| Lean rejected (time or instance-search limits) | 5 | 5 | 3 |
+| Model found, certificate not written | 0 | 0 | 1 |
+| **Strict, of models found** | **91.0%** | **88.7%** | **88.1%** |
+| Strict or native, of models found | 93.6% | 91.9% | 94.0% |
+| **Full pipeline, strict, of all sampled problems** | **71%** | **55%** | **59%** |
+| Full pipeline, strict, of supported inputs | 71 of 97 (73.2%) | 55 of 96 (57.3%) | 59 of 97 (60.8%) |
+
+**Reading.** On the third sample, the frozen implementation strictly certified 59 of the 67 models Vampire found (88.1%), against 91.0% on the development set and 88.7% on the second sample. The conditional rates are similar; three samples of this size do not establish that they are equal. Full-pipeline success differs more (71%, 55%, 59%), and that difference coincides mainly with how many problems Vampire found a model for within 30 s (78, 62, 67), not with certification. These are descriptive results on uniform samples of the eligible problems, not a guarantee for any particular problem class.
+
+**Failures, each listed.**
+
+- **Lean rejected.** Second sample: `LCL649+1.015`, `LCL681+1.010` and `GEG001+1` fail in instance search on deeply nested formulas, the development family; `NLP055-1` and `HWV076+1` exceed the 60 s Lean limit. Third sample: `LCL663+1.010` and `LCL649+1.020` fail in instance search; `NLP213+1` exceeds 60 s.
+- **Native-assisted.** Second: `NLP179+1`, `SWB022+3`. Third: `ALG310-1`, `NLP016+1`, `NLP186+1`, `NLP243+1`.
+- **Unsupported input.** Second: `<~>` in `KRS182+1`, `KRS199+1`, `KRS210+1`, and a selective include in `SYN000+2`. Third: `<~>` in `KRS224+1`, `KRS249+1`, `HWV105+1`.
+- **Translator crashes (third sample, new failure classes).** `KRS290-1`: formula nesting exceeds Python's recursion limit in `cm.py`'s recursive-descent translator. `SYO595-1`: Vampire found a model, but the problem has more than 2,000 formulas, so `cm.py` emits a multi-module certificate, and the benchmark's shallow path calls it without the output directory that requires; it crashes before writing the certificate. Both are limitations of the implementation as frozen, reported rather than fixed (§8.2).
+
+No uncertified model is a certificate of the wrong statement: in each case Lean or the harness produced no certificate at all. That is an observation about these runs, not a theorem; the source fidelity of the certificates that were produced rests on the trusted translation and its tests (§3.10, §8.2).
+
+**Fresh replay of the benchmark certificates.** `bench/replay.py` recompiled every strictly certified benchmark certificate from the frozen runs as a Lean module, printed `#print axioms` for each `countermodel`, and replayed one aggregate module per sample from scratch with `leanchecker --fresh`, imports included (Lean 4.35, on the same laptop). **All 185 replayed:** development 71 in 896 s, including the million-fact NLP263+1 certificate; second sample 55 in 67 s; third sample 59 in 191 s (`bench/replay.log`, `bench/replay-{dev,second,third}.jsonl`). Axioms: `propext` for 182, `propext` and `Quot.sound` for the two reflected certificates (NLP263+1 and AGT042+1), and none at all for `SYN092-1.003`; the replay script's summary line flagged that last one only because its parser did not recognize Lean's "does not depend on any axioms" message, which the log records (parser fixed afterwards). Native-assisted certificates are not replayed: replay cannot validate their compiled-code axioms, so they stay a separate, weaker category. `leanchecker --fresh` replays through Lean's own kernel; it is not an independent kernel implementation.
 
 ### 6.3 Case study C: one million facts (NLP263+1)
 
@@ -149,12 +168,14 @@ The first measurements (Lean 4.13 shallow against Lean 4.35 reflected, single ru
 
 `bench/perf.py` at commit `62d43d6`. Lean 4.35.0; Vampire 5.1.0 answers from the cache; Apple M2, 8 cores, 8 GB, macOS 14.4. Each run is a clean build of the generated certificate with **4 parallel Lean workers for both methods**; the checker library is prebuilt and not timed. Shallow and reflected runs alternate, three repetitions each, on an otherwise idle machine (a macOS update service was active in the background). The reflected timings include the validity and well-formedness checks of §4.4.
 
+**Version.** The timings were taken at `62d43d6`. Regenerated with the final code (`30ad4f3`) from the same cached Vampire model, all 253 reflected modules of NLP263+1 are byte-identical, and 554 of the 555 shallow modules; the exception is the shallow `Main.lean`, whose statement gained the `Nonempty T` conjunct (§3.5), a change we have not re-timed (`bench/perf-equivalence.json`). The rebuilt input differs from the timed one only by trailing blank lines.
+
 | NLP263+1 (1,026,857 facts) | Shallow: median (range) | **Reflected: median (range)** | Ratio of medians |
 |---|---|---|---|
 | Wall time | 14.1 min (12.6–17.2) | **5.2 min (5.2–5.8)** | 2.7× |
 | CPU time | 52.5 min (52.3–55.3) | **20.3 min (20.2–21.0)** | 2.6× |
 | Peak memory, largest single process | 1.42 GB (1.28–1.48) | **0.50 GB (0.49–0.51)** | 2.8× |
-| Peak memory, all concurrent Lean processes | 2.67 GB (2.67–2.69) | **1.86 GB (1.85–1.87)** | 1.4× |
+| Sampled maximum memory, all concurrent Lean processes | 2.67 GB (2.67–2.69) | **1.86 GB (1.85–1.87)** | 1.4× |
 | Axioms | none | `propext`, `Quot.sound` | |
 
 | 10,000-fact slice of NLP263+1 | Shallow: median (range) | **Reflected: median (range)** | Ratio of medians |
@@ -162,11 +183,11 @@ The first measurements (Lean 4.13 shallow against Lean 4.35 reflected, single ru
 | Wall time | 10.9 s (9.8–11.4) | **4.4 s (4.1–4.7)** | 2.5× |
 | CPU time | 31.1 s (31.0–32.0) | **9.8 s (9.5–10.0)** | 3.2× |
 | Peak memory, largest single process | 0.90 GB (0.82–0.96) | **0.46 GB (0.46–0.46)** | 2.0× |
-| Peak memory, all concurrent Lean processes | 2.02 GB (1.94–2.12) | **1.33 GB (1.32–1.34)** | 1.5× |
+| Sampled maximum memory, all concurrent Lean processes | 2.02 GB (1.94–2.12) | **1.33 GB (1.32–1.34)** | 1.5× |
 
-**What this supports.** Under matched conditions, reflection certifies this ground-fact workload about **2.5–3× faster** and with about 3× less memory per process, but only about 1.4× less memory in aggregate. That is roughly half the speedup the uncontrolled comparison suggested. CPU time varies by under 6% across repetitions; shallow wall time varies by 37% (12.6–17.2 min), most likely from memory pressure on an 8 GB machine, since CPU time stays flat. Both problems have one-element models, so these are **throughput stress tests**, not evidence about larger domains or quantifier depth, where reflection is slower (§4.5, §8).
+**What this supports.** Under matched conditions, reflection certifies this ground-fact workload about **2.5–3× faster**. Its largest single process uses about 2.8× less memory on the full problem (1.42/0.50 GB) and about 2.0× less on the slice (0.90/0.46 GB); summed over concurrent Lean processes, the sampled maximum is only about 1.4–1.5× lower. The speedup is roughly half what the uncontrolled comparison suggested. CPU time varies by under 6% across repetitions, while shallow wall time varies by 37% (12.6–17.2 min). Memory pressure on an 8 GB machine and the background update service are plausible explanations for that spread; we did not record the system measurements that would establish either. Both problems have one-element models, so these are **throughput stress tests**, not evidence about larger domains or quantifier depth, where reflection is slower (§4.5, §8).
 
-*Definitions* (also stored in each record of `bench/perf.jsonl`). Wall time runs from invoking `cm.py` to the end of the final `#print axioms` check; model search is excluded (cached). CPU time is user plus system time over all child processes. Peak memory is reported two ways: the largest single process's maximum resident set size (`/usr/bin/time -l`), and the largest sum of resident set sizes of concurrently running Lean processes, sampled every 0.2 s. A fresh kernel replay (`leanchecker --fresh`) is timed separately (§3.10), not included.
+*Definitions* (also stored in each record of `bench/perf.jsonl`). Wall time runs from invoking `cm.py` to the end of the final `#print axioms` check; model search is excluded (cached). CPU time is user plus system time over all child processes. Memory is reported two ways: the largest single process's maximum resident set size (`/usr/bin/time -l`, an exact peak per process), and the largest sum of resident set sizes of concurrently running Lean processes, sampled every 0.2 s (a sampled maximum, which can miss a shorter peak). A fresh kernel replay (`leanchecker --fresh`) is timed separately (§3.10), not included.
 
 **How this problem forced the scaling recipe.** It crashed `cm.py`, because of `%` inside a quoted gloss. It then crashed Lean's kernel twice, on a 10,000-long conjunction and on a file with more than about 20,600 declarations. And it exposed a variable-capture hazard, through a constant named `'T'`. Each failure became one of the patterns in §5.
 
@@ -174,7 +195,7 @@ The first measurements (Lean 4.13 shallow against Lean 4.35 reflected, single ru
 
 | | Evidence |
 |---|---|
-| Generality | Strict certification of 70 of 77 models (development) and 54 of 61 (held-out, frozen code); no failure is a wrong model |
+| Generality | Strict certification of 71 of 78 models (development), 55 of 62 (second sample, used for debugging) and 59 of 67 (third sample, drawn and frozen before any result); uncertified models produced no certificate, and two inputs crashed the translator (§6.2.1) |
 | Scale | 1,026,857 facts certified in a median 5.2 min reflected, against 14.1 min shallow, under matched conditions (§6.3.1) |
 | Usefulness on real formal work | Automatic, smaller counter-models for a published Lean formalization |
-| Trust | Strict certificates use kernel checks and standard axioms only (2 more native-assisted, reported separately); reflected certificates prove ordinary first-order satisfaction (§4.4); four real bugs in trusted layers caught by independent checks, and two more found during the review: silent misreading of unsupported syntax, and variable capture, which failed closed |
+| Trust | Strict certificates use kernel checks and standard axioms only (2 more native-assisted, reported separately); reflected certificates prove ordinary first-order satisfaction (§4.4); four real bugs in trusted layers caught by independent checks, and three more found during the review: silent misreading of unsupported syntax; variable capture, which failed closed; and include expansion inside comments, which changed two inputs and produced two wrong *no model* verdicts |

@@ -3,10 +3,11 @@ stopped before writing any result: an uncaught RecursionError in bench.run_hybri
 (found afterwards by re-running only that pre-check on the third sample). No third-sample verdict was recorded or seen.
 Fix (next commit): bench.run_hybrid records any translator exception as 'cm.py error'. cm.py is unchanged.
 
+Run log (stack frames inside cm.py omitted):
 Thu Oct 15 14:59:40 EDT 2026
 Build completed successfully (38 jobs).
 final-dev commit acb343b Counter({'certified': 71, 'no model': 19, 'lean rejected': 5, 'unsupported input': 3, 'certified (native)': 2}) in 872 s
+final-second commit acb343b Counter({'certified': 55, 'no model': 34, 'lean rejected': 5, 'unsupported input': 4, 'certified (native)': 2}) in 797 s
 Traceback (most recent call last):
+  File "/Users/michaeljagdeo/Downloads/talentOS-2026/repos/lcm-frozen/bench.py", line 154, in run_hybrid
 RecursionError: maximum recursion depth exceeded
-
-[exited with code 1]

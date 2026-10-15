@@ -1,0 +1,379 @@
+dev LCL643+1.005.p compiled 0.3
+dev NLP219-1.p compiled 11.1
+dev SWB017+3.p compiled 0.9
+dev HAL007+1.p compiled 0.5
+dev GRP126-4.005.p compiled 0.6
+dev PLA025+1.p compiled 2.7
+dev PHI032+1.p compiled 0.3
+dev MED004+1.p compiled 0.3
+dev PLA026+1.p compiled 0.7
+dev PHI016+1.p compiled 0.3
+dev KRS006-1.p compiled 0.3
+dev ROB029-1.p compiled 0.3
+dev SYN807-1.p compiled 0.6
+dev PHI030+1.p compiled 0.6
+dev LDA030-1.p compiled 3.9
+dev NLP165-1.p compiled 2.5
+dev NUM448+1.p compiled 0.4
+dev LCL183-1.p compiled 0.4
+dev KRS009-1.p compiled 0.3
+dev NLP226-10.p compiled 1.8
+dev SYO609+1.p compiled 0.3
+dev LCL645+1.015.p compiled 1.3
+dev SWB016-10.p compiled 0.3
+dev KRS173+1.p compiled 0.2
+dev LAT024-1.p compiled 0.2
+dev SYN779-1.p compiled 0.3
+dev LCL661+1.015.p compiled 0.4
+dev LAT051-1.p compiled 0.6
+dev SWV920-1.p compiled 0.5
+dev NLP018-10.p compiled 27.2
+dev GRP133-1.004.p compiled 3.1
+dev COL071-1.p compiled 0.4
+dev NLP137-1.p compiled 0.4
+dev NLP232+1.p compiled 5.3
+dev AGT042+1.p compiled 2.7
+dev HWV048-2.p compiled 4.3
+dev NLP060-1.p compiled 0.9
+dev NLP108+1.p compiled 0.6
+dev SYN424+1.p compiled 1.0
+dev PHI040+1.p compiled 0.4
+dev SYN903-1.p compiled 1.9
+dev NLP106+1.p compiled 0.4
+dev SYN773-1.p compiled 0.3
+dev SWB014+4.p compiled 0.3
+dev SYN092-1.003.p compiled 0.5
+dev ROB012-2.p compiled 0.4
+dev NUM288-1.p compiled 0.3
+dev LCL645+1.010.p compiled 0.7
+dev SYN493-1.p compiled 0.3
+dev SYN342-10.p compiled 0.3
+dev SYN529-1.p compiled 0.6
+dev NLP162-1.p compiled 0.4
+dev LDA032-1.p compiled 1.5
+dev SYN307-1.p compiled 0.2
+dev NLP225+1.p compiled 0.7
+dev SYN803-1.p compiled 0.3
+dev SYN324+1.p compiled 0.3
+dev RNG025-9.p compiled 0.4
+dev LAT112-1.p compiled 15.5
+dev NLP184-1.p compiled 5.1
+dev LCL179-1.p compiled 0.3
+dev SWB013+4.p compiled 0.3
+dev SWW883+1.p compiled 0.3
+dev REL053-1.p compiled 0.2
+dev NLP042-10.p compiled 1.5
+dev LCL661+1.020.p compiled 0.5
+dev NLP263+1.p compiled 307.4
+dev LCL681+1.001.p compiled 0.3
+dev PLA029-1.p compiled 0.3
+dev PRO007+3.p compiled 1.2
+dev SWB023+3.p compiled 0.9
+== axioms dev
+'LCL643_1_005.countermodel' depends on axioms: [propext]
+'NLP219_1.countermodel' depends on axioms: [propext]
+'SWB017_3.countermodel' depends on axioms: [propext]
+'HAL007_1.countermodel' depends on axioms: [propext]
+'GRP126_4_005.countermodel' depends on axioms: [propext]
+'PLA025_1.countermodel' depends on axioms: [propext]
+'PHI032_1.countermodel' depends on axioms: [propext]
+'MED004_1.countermodel' depends on axioms: [propext]
+'PLA026_1.countermodel' depends on axioms: [propext]
+'PHI016_1.countermodel' depends on axioms: [propext]
+'KRS006_1.countermodel' depends on axioms: [propext]
+'ROB029_1.countermodel' depends on axioms: [propext]
+'SYN807_1.countermodel' depends on axioms: [propext]
+'PHI030_1.countermodel' depends on axioms: [propext]
+'LDA030_1.countermodel' depends on axioms: [propext]
+'NLP165_1.countermodel' depends on axioms: [propext]
+'NUM448_1.countermodel' depends on axioms: [propext]
+'LCL183_1.countermodel' depends on axioms: [propext]
+'KRS009_1.countermodel' depends on axioms: [propext]
+'NLP226_10.countermodel' depends on axioms: [propext]
+'SYO609_1.countermodel' depends on axioms: [propext]
+'LCL645_1_015.countermodel' depends on axioms: [propext]
+'SWB016_10.countermodel' depends on axioms: [propext]
+'KRS173_1.countermodel' depends on axioms: [propext]
+'LAT024_1.countermodel' depends on axioms: [propext]
+'SYN779_1.countermodel' depends on axioms: [propext]
+'LCL661_1_015.countermodel' depends on axioms: [propext]
+'LAT051_1.countermodel' depends on axioms: [propext]
+'SWV920_1.countermodel' depends on axioms: [propext]
+'NLP018_10.countermodel' depends on axioms: [propext]
+'GRP133_1_004.countermodel' depends on axioms: [propext]
+'COL071_1.countermodel' depends on axioms: [propext]
+'NLP137_1.countermodel' depends on axioms: [propext]
+'NLP232_1.countermodel' depends on axioms: [propext]
+'AGT042_1.countermodel' depends on axioms: [propext, Quot.sound]
+'HWV048_2.countermodel' depends on axioms: [propext]
+'NLP060_1.countermodel' depends on axioms: [propext]
+'NLP108_1.countermodel' depends on axioms: [propext]
+'SYN424_1.countermodel' depends on axioms: [propext]
+'PHI040_1.countermodel' depends on axioms: [propext]
+'SYN903_1.countermodel' depends on axioms: [propext]
+'NLP106_1.countermodel' depends on axioms: [propext]
+'SYN773_1.countermodel' depends on axioms: [propext]
+'SWB014_4.countermodel' depends on axioms: [propext]
+'SYN092_1_003.countermodel' does not depend on any axioms
+'ROB012_2.countermodel' depends on axioms: [propext]
+'NUM288_1.countermodel' depends on axioms: [propext]
+'LCL645_1_010.countermodel' depends on axioms: [propext]
+'SYN493_1.countermodel' depends on axioms: [propext]
+'SYN342_10.countermodel' depends on axioms: [propext]
+'SYN529_1.countermodel' depends on axioms: [propext]
+'NLP162_1.countermodel' depends on axioms: [propext]
+'LDA032_1.countermodel' depends on axioms: [propext]
+'SYN307_1.countermodel' depends on axioms: [propext]
+'NLP225_1.countermodel' depends on axioms: [propext]
+'SYN803_1.countermodel' depends on axioms: [propext]
+'SYN324_1.countermodel' depends on axioms: [propext]
+'RNG025_9.countermodel' depends on axioms: [propext]
+'LAT112_1.countermodel' depends on axioms: [propext]
+'NLP184_1.countermodel' depends on axioms: [propext]
+'LCL179_1.countermodel' depends on axioms: [propext]
+'SWB013_4.countermodel' depends on axioms: [propext]
+'SWW883_1.countermodel' depends on axioms: [propext]
+'REL053_1.countermodel' depends on axioms: [propext]
+'NLP042_10.countermodel' depends on axioms: [propext]
+'LCL661_1_020.countermodel' depends on axioms: [propext]
+'NLP263_1.countermodel' depends on axioms: [propext, Quot.sound]
+'LCL681_1_001.countermodel' depends on axioms: [propext]
+'PLA029_1.countermodel' depends on axioms: [propext]
+'PRO007_3.countermodel' depends on axioms: [propext]
+'SWB023_3.countermodel' depends on axioms: [propext]
+== leanchecker --fresh Replay_dev: ok in 895.9 s
+
+second LDA031-1.p compiled 2.6
+second SYN322+1.p compiled 0.3
+second BOO008-3.p compiled 0.3
+second GEO661+1.p compiled 0.3
+second LCL914+1.p compiled 0.3
+second SYN754-1.p compiled 0.6
+second SWB011+4.p compiled 0.3
+second SWB007+3.p compiled 0.8
+second NLP040-1.p compiled 0.4
+second SYN456+1.p compiled 0.4
+second GRP135-1.005.p compiled 0.5
+second NLP043-1.p compiled 0.4
+second LCL673+1.005.p compiled 0.4
+second GRP398-1.p compiled 0.3
+second NLP125-1.p compiled 1.1
+second NLP124+1.p compiled 0.6
+second SWB004+4.p compiled 0.4
+second LCL667+1.001.p compiled 0.3
+second GRP027-1.p compiled 0.4
+second SYN446-1.p compiled 0.5
+second GRP134-1.005.p compiled 0.4
+second GRP800+1.p compiled 1.0
+second LCL883+1.p compiled 0.4
+second SYN795-1.p compiled 0.4
+second GEO224+1.p compiled 0.3
+second MGT037-2.p compiled 0.3
+second SWW938+1.p compiled 0.3
+second CAT020-2.p compiled 0.2
+second SWW902+1.p compiled 0.3
+second NLP126-10.p compiled 0.5
+second RNG132-1.p compiled 0.3
+second LAT102-1.p compiled 1.1
+second LAT100-1.p compiled 0.9
+second KLE181+1.p compiled 0.2
+second NLP199-1.p compiled 0.4
+second SYN536-1.p compiled 0.3
+second PHI021+1.p compiled 0.3
+second SWV017+1.p compiled 0.3
+second SWW415-1.p compiled 0.4
+second SWW882+1.p compiled 0.3
+second BOO030-1.p compiled 0.2
+second MGT040-2.p compiled 0.4
+second NLP192-1.p compiled 0.8
+second LAT106-1.p compiled 3.4
+second NLP065+1.p compiled 0.3
+second SWW942+1.p compiled 0.3
+second SYN526+1.p compiled 0.4
+second SWB009-10.p compiled 0.4
+second NLP115+1.p compiled 0.3
+second NLP066+1.p compiled 0.3
+second LCL685+1.001.p compiled 0.3
+second SYO640-10.p compiled 0.3
+second LCL886+1.p compiled 0.3
+second PHI027+1.p compiled 0.4
+second GRP123-4.004.p compiled 0.7
+== axioms second
+'LDA031_1.countermodel' depends on axioms: [propext]
+'SYN322_1.countermodel' depends on axioms: [propext]
+'BOO008_3.countermodel' depends on axioms: [propext]
+'GEO661_1.countermodel' depends on axioms: [propext]
+'LCL914_1.countermodel' depends on axioms: [propext]
+'SYN754_1.countermodel' depends on axioms: [propext]
+'SWB011_4.countermodel' depends on axioms: [propext]
+'SWB007_3.countermodel' depends on axioms: [propext]
+'NLP040_1.countermodel' depends on axioms: [propext]
+'SYN456_1.countermodel' depends on axioms: [propext]
+'GRP135_1_005.countermodel' depends on axioms: [propext]
+'NLP043_1.countermodel' depends on axioms: [propext]
+'LCL673_1_005.countermodel' depends on axioms: [propext]
+'GRP398_1.countermodel' depends on axioms: [propext]
+'NLP125_1.countermodel' depends on axioms: [propext]
+'NLP124_1.countermodel' depends on axioms: [propext]
+'SWB004_4.countermodel' depends on axioms: [propext]
+'LCL667_1_001.countermodel' depends on axioms: [propext]
+'GRP027_1.countermodel' depends on axioms: [propext]
+'SYN446_1.countermodel' depends on axioms: [propext]
+'GRP134_1_005.countermodel' depends on axioms: [propext]
+'GRP800_1.countermodel' depends on axioms: [propext]
+'LCL883_1.countermodel' depends on axioms: [propext]
+'SYN795_1.countermodel' depends on axioms: [propext]
+'GEO224_1.countermodel' depends on axioms: [propext]
+'MGT037_2.countermodel' depends on axioms: [propext]
+'SWW938_1.countermodel' depends on axioms: [propext]
+'CAT020_2.countermodel' depends on axioms: [propext]
+'SWW902_1.countermodel' depends on axioms: [propext]
+'NLP126_10.countermodel' depends on axioms: [propext]
+'RNG132_1.countermodel' depends on axioms: [propext]
+'LAT102_1.countermodel' depends on axioms: [propext]
+'LAT100_1.countermodel' depends on axioms: [propext]
+'KLE181_1.countermodel' depends on axioms: [propext]
+'NLP199_1.countermodel' depends on axioms: [propext]
+'SYN536_1.countermodel' depends on axioms: [propext]
+'PHI021_1.countermodel' depends on axioms: [propext]
+'SWV017_1.countermodel' depends on axioms: [propext]
+'SWW415_1.countermodel' depends on axioms: [propext]
+'SWW882_1.countermodel' depends on axioms: [propext]
+'BOO030_1.countermodel' depends on axioms: [propext]
+'MGT040_2.countermodel' depends on axioms: [propext]
+'NLP192_1.countermodel' depends on axioms: [propext]
+'LAT106_1.countermodel' depends on axioms: [propext]
+'NLP065_1.countermodel' depends on axioms: [propext]
+'SWW942_1.countermodel' depends on axioms: [propext]
+'SYN526_1.countermodel' depends on axioms: [propext]
+'SWB009_10.countermodel' depends on axioms: [propext]
+'NLP115_1.countermodel' depends on axioms: [propext]
+'NLP066_1.countermodel' depends on axioms: [propext]
+'LCL685_1_001.countermodel' depends on axioms: [propext]
+'SYO640_10.countermodel' depends on axioms: [propext]
+'LCL886_1.countermodel' depends on axioms: [propext]
+'PHI027_1.countermodel' depends on axioms: [propext]
+'GRP123_4_004.countermodel' depends on axioms: [propext]
+== leanchecker --fresh Replay_second: ok in 67.2 s
+
+third LAT133-1.p compiled 2.9
+third SWW865+1.p compiled 0.4
+third LCL677+1.010.p compiled 0.7
+third KRS037+1.p compiled 0.3
+third NLP061+1.p compiled 0.7
+third NLP152+1.p compiled 0.9
+third GRP133-2.004.p compiled 0.4
+third SYN434+1.p compiled 0.5
+third PUZ133+3.p compiled 0.7
+third RNG007-5.p compiled 0.5
+third SWV015+1.p compiled 0.4
+third SYN422+1.p compiled 1.1
+third PRO013+3.p compiled 1.1
+third SYN747-1.p compiled 0.5
+third NLP063+1.p compiled 0.4
+third GEO078-5.p compiled 1.8
+third SYN449-1.p compiled 0.8
+third NLP044+1.p compiled 0.9
+third SYN791-1.p compiled 1.0
+third NLP244-1.p compiled 0.8
+third LCL407-2.p compiled 0.4
+third LCL136-1.p compiled 0.8
+third NLP111-1.p compiled 0.7
+third LCL413-1.p compiled 0.6
+third KRS016-1.p compiled 0.8
+third SWW889+1.p compiled 0.4
+third SYN441-1.p compiled 1.9
+third LAT396-1.p compiled 0.3
+third LAT048-1.p compiled 0.8
+third NLP229-1.p compiled 0.8
+third PLA028+1.p compiled 0.5
+third SYN419+1.p compiled 5.5
+third PRD002+1.p compiled 5.0
+third GRP204-1.p compiled 0.8
+third GRP818+1.p compiled 2.1
+third KLE178+1.p compiled 4.4
+third PUZ028-1.p compiled 1.0
+third GRP790+1.p compiled 1.5
+third GRP814+1.p compiled 1.9
+third SWB025+3.p compiled 1.6
+third GRP810+1.p compiled 1.7
+third LAT109-1.p compiled 7.8
+third SYN780-1.p compiled 12.9
+third LCL913+1.p compiled 3.9
+third NLP238-1.p compiled 0.8
+third NLP104+1.p compiled 0.8
+third NLP249+1.p compiled 800.3
+third GRP792+1.p compiled 39.1
+third LAT062-1.p compiled 55.4
+third SYN799-1.p compiled 11.0
+third SYN438+1.p compiled 4.4
+third SWW921+1.p compiled 3.1
+third SYN530-1.p compiled 0.6
+third GRP798+1.p compiled 1.6
+third SWV013-1.p compiled 0.4
+third SWW401-1.p compiled 0.5
+third GRP025-2.p compiled 1.1
+third SYN492+1.p compiled 0.5
+third MGT040-1.p compiled 0.5
+== axioms third
+'LAT133_1.countermodel' depends on axioms: [propext]
+'SWW865_1.countermodel' depends on axioms: [propext]
+'LCL677_1_010.countermodel' depends on axioms: [propext]
+'KRS037_1.countermodel' depends on axioms: [propext]
+'NLP061_1.countermodel' depends on axioms: [propext]
+'NLP152_1.countermodel' depends on axioms: [propext]
+'GRP133_2_004.countermodel' depends on axioms: [propext]
+'SYN434_1.countermodel' depends on axioms: [propext]
+'PUZ133_3.countermodel' depends on axioms: [propext]
+'RNG007_5.countermodel' depends on axioms: [propext]
+'SWV015_1.countermodel' depends on axioms: [propext]
+'SYN422_1.countermodel' depends on axioms: [propext]
+'PRO013_3.countermodel' depends on axioms: [propext]
+'SYN747_1.countermodel' depends on axioms: [propext]
+'NLP063_1.countermodel' depends on axioms: [propext]
+'GEO078_5.countermodel' depends on axioms: [propext]
+'SYN449_1.countermodel' depends on axioms: [propext]
+'NLP044_1.countermodel' depends on axioms: [propext]
+'SYN791_1.countermodel' depends on axioms: [propext]
+'NLP244_1.countermodel' depends on axioms: [propext]
+'LCL407_2.countermodel' depends on axioms: [propext]
+'LCL136_1.countermodel' depends on axioms: [propext]
+'NLP111_1.countermodel' depends on axioms: [propext]
+'LCL413_1.countermodel' depends on axioms: [propext]
+'KRS016_1.countermodel' depends on axioms: [propext]
+'SWW889_1.countermodel' depends on axioms: [propext]
+'SYN441_1.countermodel' depends on axioms: [propext]
+'LAT396_1.countermodel' depends on axioms: [propext]
+'LAT048_1.countermodel' depends on axioms: [propext]
+'NLP229_1.countermodel' depends on axioms: [propext]
+'PLA028_1.countermodel' depends on axioms: [propext]
+'SYN419_1.countermodel' depends on axioms: [propext]
+'PRD002_1.countermodel' depends on axioms: [propext]
+'GRP204_1.countermodel' depends on axioms: [propext]
+'GRP818_1.countermodel' depends on axioms: [propext]
+'KLE178_1.countermodel' depends on axioms: [propext]
+'PUZ028_1.countermodel' depends on axioms: [propext]
+'GRP790_1.countermodel' depends on axioms: [propext]
+'GRP814_1.countermodel' depends on axioms: [propext]
+'SWB025_3.countermodel' depends on axioms: [propext]
+'GRP810_1.countermodel' depends on axioms: [propext]
+'LAT109_1.countermodel' depends on axioms: [propext]
+'SYN780_1.countermodel' depends on axioms: [propext]
+'LCL913_1.countermodel' depends on axioms: [propext]
+'NLP238_1.countermodel' depends on axioms: [propext]
+'NLP104_1.countermodel' depends on axioms: [propext]
+'NLP249_1.countermodel' depends on axioms: [propext]
+'GRP792_1.countermodel' depends on axioms: [propext]
+'LAT062_1.countermodel' depends on axioms: [propext]
+'SYN799_1.countermodel' depends on axioms: [propext]
+'SYN438_1.countermodel' depends on axioms: [propext]
+'SWW921_1.countermodel' depends on axioms: [propext]
+'SYN530_1.countermodel' depends on axioms: [propext]
+'GRP798_1.countermodel' depends on axioms: [propext]
+'SWV013_1.countermodel' depends on axioms: [propext]
+'SWW401_1.countermodel' depends on axioms: [propext]
+'GRP025_2.countermodel' depends on axioms: [propext]
+'SYN492_1.countermodel' depends on axioms: [propext]
+'MGT040_1.countermodel' depends on axioms: [propext]
+== leanchecker --fresh Replay_third: ok in 190.5 s
+
