@@ -69,24 +69,11 @@ Vampire is not trusted: a wrong model fails `decide`. Generated files set `autoI
 
 **A published Lean project.** We transcribed Nakamura's definitions and `StatedAxioms` from spinoza-ethica-lean @ 6d4c046. Vampire then found counter-models for both of his published non-derivability claims (S-A12, S-A15) with **2 elements each**; his hand-built ones have 4 and 3. We also compiled these models into instances of his `EthicaWorld` and `StatedAxioms` classes and kernel-checked them against his unmodified library.
 
-**A case study: tonal harmony.** `Music/Harmony.lean` derives conventional harmony from a generative core in core Lean, with no Mathlib, by `decide`. The core is pitch classes as `Fin 12`, the major scale as an interval pattern, and triads stacked on alternate degrees. It proves:
-- the circle of fifths: twelve fifths visit all twelve pitch classes, then return;
-- a fourth inverts a fifth but is a different operation;
-- the Roman-numeral qualities I ii iii IV V vi vii°, **derived, in all twelve keys**, rather than stated.
-
-Lean alone cannot show what each result *depends on*. The counter-models can:
-
-| Question | Counter-model found | Reading |
-|---|---|---|
-| Do the circle-of-fifths axioms (a 12-cycle compatible with transposition) make f the fifth? | 12 elements, with f = s⁵ | No: the circle of **fourths** satisfies them too. "Fifth" is the definition f = s⁷. |
-| Do a tonic, a fifth and some third make chord I major? | 12 elements: the scale has a minor third, not a major third | No: the quality comes from the specific offset 4 in the pattern |
-| Does a collection read as C major and as a minor on t force t = C? | 12 elements, with t = s⁹(C) | No: t is A, the relative minor; the pitch classes alone don't fix the tonic |
-
 **A known answer.** For "a fifth up equals a fourth up", given twelve fifths returning home and no early closure, the model found has exactly 12 elements, with f(x) = x + 7 (mod 12) and g(x) = x + 5.
 
 # 5. How we checked the checker
 
-`pytest`: 52 tests, about 4 s.
+`pytest`: 43 tests, about 4 s.
 - **An independent evaluator.** A separate Python evaluator checks every model by brute force, without using the Lean translation.
 - **Mutants.** One table entry at a time is corrupted. Lean must accept exactly the mutants the evaluator accepts.
 - **The rewrites.** Every rewritten formula is compared with its original, on each example's model and all of that model's one-entry mutations.

@@ -1,10 +1,7 @@
 name = "cm"
-defaultTargets = ["Cm", "Music"]
+defaultTargets = ["Cm"]
 
 [[lean_lib]]
 name = "Cm"
 globs = ["Cm.+"]
 
-[[lean_lib]]
-name = "Music"
-globs = ["Music.+"]

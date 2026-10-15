@@ -7,7 +7,7 @@
 > Vampire never has to be trusted: a wrong model fails the check.
 
 ```
-python3 cm.py examples/circle_of_fifths.p > Cm/circle_of_fifths.lean && lake build
+python3 cm.py examples/group_comm.p > Cm/group_comm.lean && lake build
 ```
 
 ---
@@ -16,11 +16,10 @@ python3 cm.py examples/circle_of_fifths.p > Cm/circle_of_fifths.lean && lake bui
 
 | Claim | Evidence |
 |---|---|
-| **Works on independent problems** | 100 problems sampled from TPTP, the standard prover benchmark. Lean certifies **67 of the 73 models Vampire finds**, 64 of them with the kernel alone. **None of the 6 failures is a wrong model.** |
+| **Works on independent problems** | 100 problems sampled from TPTP, the standard prover benchmark. Lean certifies **67 of the 73 models Vampire finds**, 64 of them with the kernel alone. **None of the 6 failures is a wrong model** (§4.2). |
 | **Beats hand construction on a published Lean project** | It reproduces both of Nakamura's hand-built Spinoza counter-models [1] from his axioms alone, with **2-element** models against his 4 and 3, checked against his own library (§4.1) |
 | **Makes brute-force checking feasible** | It takes a clause needing ~10¹¹ cases down to 46,746 atom checks for the whole problem; the median is 3 s per problem (§3) |
-| **Readable by non-specialists** | Certified: the circle-of-fifths axioms cannot tell a fifth from a fourth, and a pitch collection does not fix its tonic (§4.2) |
-| **Small** | `cm.py` 8.3 KB · `bench.py` 5.0 KB · `test_cm.py` 5.5 KB, with 52 tests running in about 4 s |
+| **Small** | `cm.py` 8.3 KB · `bench.py` 5.0 KB · `test_cm.py` 5.5 KB, with 43 tests running in about 4 s |
 
 ## 2. The gap
 
@@ -109,27 +108,64 @@ He proves both with counter-models he built **by hand** ([1] §4.4), with 4 and 
 | `p14_bridge_weaker` | The P14 bridge H ("every substance shares an attribute with God"), with A14 and a unique god, does not give A15 |
 | `p7_needs_a4c`, `p7_needs_b1c`, `p7_needs_b1` | *Ethics* II P7 (the order of ideas is the order of things) needs each of its bridges: the converse of I A4, and two idea–thing bridges |
 
-### 4.2 Tonal harmony: the circle of fifths
+### 4.2 The TPTP library: 100 problems nobody chose for us
 
-`Music/Harmony.lean` (2.4 KB, core Lean, no Mathlib) **derives**, rather than states:
-- the circle of fifths: twelve fifths visit every pitch class, then return;
-- a fourth inverts a fifth yet differs from it;
-- the Roman-numeral qualities **I ii iii IV V vi vii°, in all 12 major keys**.
+**The question.** The Spinoza study shows the tool works on problems *we* encoded. Does it work on problems we didn't write, from the field's standard benchmark? And when it fails, is it ever wrong, or only out of reach?
 
-Each theorem uses at most `propext`.
+**How we got the result.**
 
-Lean alone cannot show what each result *depends on*. The counter-models can:
-
-| Question | Counter-model | Reading |
+| Step | What we did | Check |
 |---|---|---|
-| Is "fifth up = fourth up"? (a known-answer test) | exactly the 12-note cycle: f(x) = x+7, g(x) = x+5 | No; the model is the expected one |
-| Do the circle-of-fifths axioms (a 12-cycle compatible with transposition) make f the fifth? | 12 elements, **f = s⁵** | No: the circle of **fourths** satisfies them. "Fifth" is a definition. |
-| Do a tonic, a fifth and some third make chord I major? | a scale with a minor third | No: the quality comes from the offset 4 in the pattern |
-| Does one collection, read as C major and as a minor on *t*, force *t* = C? | **t = A** | No: the relative minor. Pitch classes do not fix the tonic. |
+| 1. Index | Read TPTP's ProblemAndSolutionStatistics [6], which gives the status of each of TPTP's 26,990 problems. Kept the **2,561** in untyped first-order form (fof or cnf) whose status says a model exists: CNF Satisfiable 1,305, FOF CounterSatisfiable 888, FOF Satisfiable 368. That list is `bench/eligible.tsv`, 65 KB. | Status comes from TPTP, not from us |
+| 2. Sample | 100 problems, never hand-picked. The first 20 came from an earlier picker (a random domain, then a random problem whose status was checked); the last 80 were sampled uniformly from the index. | Seeded random; listed in `bench/results.jsonl` |
+| 3. Fetch | Each problem was downloaded with its axiom files inlined, so each is self-contained. Shared axiom files were cached. | — |
+| 4. Search | `vampire -sa fmb`, 30 s limit | Records "no model" when Vampire gives up or times out |
+| 5. Compile | `cm.py`: rewrite (§3.2), then one theorem per formula | — |
+| 6. Certify | `decide` (kernel only), 60 s. `native_decide` (which also trusts Lean's compiler) is tried only if `decide` timed out. | Lean's verdict on each problem |
+| 7. Iterate | Fibonacci batches (1, 1, 2, 3, 5, 8), fixing what broke between batches; then a pipelined run of the rest, with 2 workers | Every bug found became a regression example |
+| 8. Rerun | After the scope bug (§5), **all 73 problems with a model were rerun** with the fixed compiler. Every number below comes from the same, final `cm.py`. | — |
+
+**What the problems are.** 100 problems from 29 domains, 53 in clause form and 47 in fof, including:
+- natural-language semantics (NLP, 17);
+- modal and propositional logic encodings (LCL, 13);
+- syntactic test problems (SYN, 13);
+- semantic-web reasoning (SWB, 5);
+- software verification (SWV, 5);
+- planning, philosophy, lattices, groups, rings and more.
+
+**Results.**
+
+| Outcome | Problems | Meaning |
+|---|---|---|
+| **Certified, kernel only** | **64** | Lean's kernel proves `axioms ∧ ¬conjecture` in the model; only `propext` is used |
+| Certified with `native_decide` | 3 | Correct, but this also trusts Lean's compiler; the checks are too heavy for `decide` within 60 s |
+| Lean rejected | 6 | Beyond Lean's limits, not wrong (below) |
+| Vampire found no model | 27 | Outside what the tool can see: Vampire gives up or times out |
+
+**67 of the 73 models found are certified.** Model sizes:
+
+| Elements | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 |
+|---|---|---|---|---|---|---|---|---|---|
+| Certified models | 20 | 20 | 5 | 4 | 6 | 5 | 4 | 1 | 2 |
+
+Lean's median checking time is 0.7 s; the median end to end is 3 s per problem.
+
+**The failures, every one explained.**
+
+| | Problems | Cause | Wrong? |
+|---|---|---|---|
+| Lean rejected | 5 modal-logic encodings (LCL6xx), with nesting up to depth 20 | Instance search or evaluation exceeds Lean's limits | No |
+| | 1 hardware model (HWV048, 16 elements) | Stack overflow | No |
+| No model | 27, concentrated in SWV, SYO and NLP | Vampire's limit within 30 s, not ours | — |
+
+**Caveats.**
+- **A sample, not the library.** 100 of 2,561, and the first 20 were picked by a different method.
+- **Many models are tiny.** 20 of the 67 certified models have one element. Those checks are easy, so the strength of the result rests on the 47 larger models.
+- **Timings are noisy.** They're wall-clock on an 8 GB laptop and vary by about 2×. The atom counts in §3.2 are exact.
 
 ### 4.3 Other examples
 
-`group_comm` (group axioms don't imply commutativity: S₃, 6 elements), plus regression examples for each bug the benchmark found (§5).
+`group_comm`: group axioms don't imply commutativity (S₃, 6 elements). Also a known-answer test (`circle_of_fifths`: the model must be exactly x ↦ x+7 mod 12), plus regression examples for each bug the benchmark found (§5).
 
 ## 5. Why trust it
 
@@ -157,7 +193,7 @@ Lean alone cannot show what each result *depends on*. The counter-models can:
 | Requirements | Lean 4.13 (elan) and Vampire 5.1 (on `PATH`, or set `VAMPIRE`) |
 | Examples | `lake build`; check axioms with `lake env lean Axioms.lean` |
 | Nakamura, against his library | `cd nakamura && lake build && lake env lean Axioms.lean` (clones spinoza-ethica-lean @ 6d4c046, about 11 MB) |
-| Tests | `pytest test_cm.py`: 52 tests, about 4 s |
+| Tests | `pytest test_cm.py`: 43 tests, about 4 s |
 | Benchmark | `python3 bench.py N [WORKERS]` samples from `bench/eligible.tsv` (the 2,561 eligible TPTP problems); results go to `bench/results.jsonl` |
 | Paper | `paper/paper.md` |
 

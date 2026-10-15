@@ -1,9 +1,6 @@
 import Cm.circle_of_fifths
 import Cm.group_comm
 import Cm.guarded_definition
-import Cm.music_fifth_is_a_definition
-import Cm.music_tonic_underdetermined
-import Cm.music_triad_needs_the_pattern
 import Cm.nakamura_a12
 import Cm.nakamura_a15
 import Cm.p14_bridge_weaker
@@ -17,9 +14,6 @@ import Cm.transitive_cnf
 #print axioms circle_of_fifths.countermodel
 #print axioms group_comm.countermodel
 #print axioms guarded_definition.countermodel
-#print axioms music_fifth_is_a_definition.countermodel
-#print axioms music_tonic_underdetermined.countermodel
-#print axioms music_triad_needs_the_pattern.countermodel
 #print axioms nakamura_a12.countermodel
 #print axioms nakamura_a15.countermodel
 #print axioms p14_bridge_weaker.countermodel
