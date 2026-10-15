@@ -110,6 +110,6 @@ Lean alone cannot show what each result *depends on*. The counter-models can:
 
 # Availability
 
-[repo link]. Every number above is reproducible:
+https://github.com/exponentlabshq/lean-countermodel. Every number above is reproducible:
 - `pytest test_cm.py`
 - `python3 bench.py N`
