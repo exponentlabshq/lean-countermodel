@@ -3,7 +3,7 @@
 Usage, from a clean worktree of the commit under test (so the code cannot change mid-run):
     git worktree add --detach ../frozen <commit> && cd ../frozen
     for d in problems sources axioms vampire-cache; do ln -s <repo>/bench/$d bench/$d; done
-    lake build && python3 bench/frozen.py <repo>/bench && python3 bench/replay.py <repo>/bench
+    lake build && python3 bench/frozen.py <repo>/bench [dev second third] && python3 bench/replay.py <repo>/bench
 Writes OUT/results-final-{dev,second,third}.jsonl, each record tagged with the commit and the SHA-256 of the input it
 ran on (bench/inputs.json). Development problems come from OUT/results.jsonl (the original sampling log), the second
 sample from OUT/heldout-sample.json, the third from OUT/third-sample.json."""
@@ -19,6 +19,7 @@ commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=
 sets = {"final-dev": [json.loads(l)["problem"] for l in open(f"{OUT}/results.jsonl")],
         "final-second": json.load(open(f"{OUT}/heldout-sample.json"))["problems"],
         "final-third": json.load(open(f"{OUT}/third-sample.json"))["problems"]}
+sets = {k: v for k, v in sets.items() if len(sys.argv) < 3 or k[len("final-"):] in sys.argv[2:]}  # optional: only the named sets
 inputs = json.load(open(f"{OUT}/inputs.json"))["problems"]
 for d in ("lean", "olean"):  # certificates are written here; a fresh worktree has neither (both are git-ignored)
     os.makedirs(f"bench/{d}", exist_ok=True)

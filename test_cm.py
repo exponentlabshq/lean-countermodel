@@ -278,7 +278,8 @@ def test_a_symbol_at_two_arities_is_rejected(tmp_path):
 
 
 def test_benchmark_records_unsupported_input(tmp_path, monkeypatch):
-    """An input cm.py refuses stays in the benchmark denominator as 'unsupported input', not a crash or a silent drop."""
+    """An input cm.py refuses stays in the benchmark denominator as 'unsupported input', and one that crashes the
+    translator as 'cm.py error': neither stops the run or silently drops the problem."""
     import bench
     monkeypatch.setattr(bench, "DIR", str(tmp_path))
     (tmp_path / "problems").mkdir()
@@ -286,6 +287,9 @@ def test_benchmark_records_unsupported_input(tmp_path, monkeypatch):
     for src in ("fof(a, axiom, (p <~> q)).\n", "fof(a, axiom, ![X]: (p(X) ~| q(X))).\n", "fof(a, axiom, p(\"s\")).\n"):
         (tmp_path / "problems" / "X.p").write_text(src)
         assert bench.run_hybrid("X.p")["verdict"] == "unsupported input", src
+    deep = "fof(a, axiom, " + "~(" * 3000 + "p" + ")" * 3000 + ").\n"  # deeper than Python's recursion limit (KRS290-1)
+    (tmp_path / "problems" / "X.p").write_text(deep)
+    assert bench.run_hybrid("X.p")["verdict"] == "cm.py error"
 
 
 @needs_vampire

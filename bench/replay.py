@@ -58,11 +58,11 @@ if __name__ == "__main__":
     os.makedirs(R)
     for name in sorted(n[len("results-final-"):-6] for n in os.listdir(OUT) if n.startswith("results-final-")):
         rs = [json.loads(l) for l in open(f"{OUT}/results-final-{name}.jsonl")]
-        rs = [r for r in rs if r["verdict"] == "certified" and r.get("commit") == commit]
+        rs = [r for r in rs if r["verdict"] == "certified"]  # each record keeps the commit it ran at
         recs = []
         for r in rs:
             ns, mod, ok, s = certificate(r)
-            recs.append({"problem": r["problem"], "method": r["method"], "module": mod, "compiled": ok, "compile_s": s})
+            recs.append({"problem": r["problem"], "method": r["method"], "run_commit": r.get("commit"), "module": mod, "compiled": ok, "compile_s": s})
             print(name, r["problem"], "compiled" if ok else "COMPILE FAILED", s, file=log, flush=True)
         agg = "Replay_" + re.sub(r"\W", "_", name)
         good = [c for c in recs if c["compiled"]]

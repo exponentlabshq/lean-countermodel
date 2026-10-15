@@ -155,6 +155,8 @@ def run_hybrid(f, threshold=0.9):
         share = fact_share(f"{DIR}/problems/{f}")
     except ValueError as e:
         return {"problem": f, "verdict": "unsupported input", "why": str(e)[:300], "method": "-"}
+    except Exception as e:  # e.g. RecursionError on deep nesting: recorded as a failure, never allowed to stop the run
+        return {"problem": f, "verdict": "cm.py error", "why": f"{type(e).__name__} in the translator: {str(e)[:200]}", "method": "-"}
     r = run_reflect(f) if share >= threshold else run(f)
     return {**r, "method": "reflect" if share >= threshold else "shallow", "fact_share": round(share, 3)}
 

@@ -1,0 +1,12 @@
+Third sample, attempt 1, frozen commit acb343b (2026-10-15). Development and second samples completed and were written; the third
+stopped before writing any result: an uncaught RecursionError in bench.run_hybrid's in-process pre-check, on KRS290-1.p
+(found afterwards by re-running only that pre-check on the third sample). No third-sample verdict was recorded or seen.
+Fix (next commit): bench.run_hybrid records any translator exception as 'cm.py error'. cm.py is unchanged.
+
+Thu Oct 15 14:59:40 EDT 2026
+Build completed successfully (38 jobs).
+final-dev commit acb343b Counter({'certified': 71, 'no model': 19, 'lean rejected': 5, 'unsupported input': 3, 'certified (native)': 2}) in 872 s
+Traceback (most recent call last):
+RecursionError: maximum recursion depth exceeded
+
+[exited with code 1]
