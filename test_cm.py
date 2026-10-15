@@ -56,9 +56,16 @@ def holds(s, n, consts, tables, env={}):
     return form()(env)
 
 
+def raw(path):
+    """[(role, formula)] read straight from the source, without cm.py's rewriting; cnf clauses closed by ∀."""
+    src = uncomment(open(path).read())
+    fs = re.findall(r"(fof|cnf)\(\s*[\w']+\s*,\s*(\w+)\s*,(.*?)\)\s*\.(?=\s*(?:fof|cnf)\(|\s*$)", src, re.S)
+    return [(r, f"![{','.join(sorted(VARS(f)))}]: ({f})" if k == "cnf" and VARS(f) else f) for k, r, f in fs]
+
+
 def countermodel(path, n, consts, tables):
-    """Python's verdict: every axiom holds and the conjecture fails."""
-    return all(holds(f, n, consts, tables) != (r == "conjecture") for r, f in problem(path))
+    """Python's verdict on the *original* formulas, independent of the rewriting: axioms hold, the conjecture fails."""
+    return all(holds(f, n, consts, tables) != (r == "conjecture") for r, f in raw(path))
 
 
 def lean_accepts(path, m, tmp, emitter=emit):
@@ -199,3 +206,17 @@ def test_ablation_finds_what_a_conclusion_needs(tmp_path):
     assert v[("c1", None)] == "follows" and v[("c1", "a")] == "does not follow" and v[("c1", "b")] == "follows"
     assert v[("c2", None)] == "does not follow" and report["minimal"] == {"c1": ["a"]}
     assert "**needed**" in table(report) and "still does not follow" in table(report)
+
+
+def test_boundary_cases_are_rejected_by_the_kernel():
+    """tests/Boundary.lean: invalid models and ill-formed or malformed formulas cannot produce a certificate."""
+    assert run("lake", "build", "Checker").returncode == 0
+    out = run("lake", "env", "lean", "tests/Boundary.lean")
+    assert out.returncode == 0, out.stdout + out.stderr
+
+
+def test_quoted_and_plain_names_are_the_same_symbol():
+    """TPTP: 'cat' and cat are one symbol; 'X' is a constant, never the variable X."""
+    from cm import lean
+    assert lean("p('cat')") == lean("p(cat)")
+    assert lean("![X]: p('X', X)") == "(∀ X : T, («p» «'X'» X))"

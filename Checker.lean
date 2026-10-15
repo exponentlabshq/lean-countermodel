@@ -212,4 +212,219 @@ theorem holds_facts (M : Model) (s w K : Nat) (ar : Nat → Nat) (k : Nat)
   obtain ⟨i, hi, rfl⟩ := List.mem_map.1 hφ
   exact (Fm.check_iff M _ []).1 (List.all_eq_true.1 h i hi)
 
+
+/-! ## Ordinary first-order semantics, and when the bounded semantics agrees with it -/
+
+/-- An ordinary first-order structure: every symbol is interpreted inside the carrier `α`. -/
+structure Structure (α : Type) where
+  const : Nat → α
+  fn : Nat → List α → α
+  pred : Nat → List α → Prop
+
+mutual
+def Tm.interp {α : Type} (S : Structure α) (d : α) (env : List α) : Tm → α
+  | .var i => env.getD i d
+  | .const c => S.const c
+  | .app f args => S.fn f (Tm.interps S d env args)
+def Tm.interps {α : Type} (S : Structure α) (d : α) (env : List α) : List Tm → List α
+  | [] => []
+  | t :: ts => t.interp S d env :: Tm.interps S d env ts
+end
+
+/-- Ordinary satisfaction: quantifiers range over the whole carrier. -/
+def Fm.Sat {α : Type} (S : Structure α) (d : α) : List α → Fm → Prop
+  | env, .atom p args => S.pred p (Tm.interps S d env args)
+  | env, .eq a b => a.interp S d env = b.interp S d env
+  | _, .tru => True
+  | _, .fls => False
+  | env, .not φ => ¬ φ.Sat S d env
+  | env, .and φ ψ => φ.Sat S d env ∧ ψ.Sat S d env
+  | env, .or φ ψ => φ.Sat S d env ∨ ψ.Sat S d env
+  | env, .imp φ ψ => φ.Sat S d env → ψ.Sat S d env
+  | env, .iff φ ψ => (φ.Sat S d env ↔ ψ.Sat S d env)
+  | env, .all φ => ∀ x : α, φ.Sat S d (x :: env)
+  | env, .ex φ => ∃ x : α, φ.Sat S d (x :: env)
+
+/-- Every argument tuple of length `k` over `0 … n-1` satisfies `f`. -/
+def allTuples (n : Nat) (f : List Nat → Bool) : Nat → Bool
+  | 0 => f []
+  | k + 1 => allBelow (fun x => allTuples n (fun xs => f (x :: xs)) k) n
+
+theorem allTuples_iff (n : Nat) : ∀ (k : Nat) (f : List Nat → Bool),
+    allTuples n f k = true ↔ ∀ xs : List Nat, xs.length = k → (∀ x ∈ xs, x < n) → f xs = true
+  | 0, f => by
+    simp only [allTuples]
+    exact ⟨fun h xs hl _ => by rw [List.length_eq_zero_iff.1 hl]; exact h, fun h => h [] rfl (by simp)⟩
+  | k + 1, f => by
+    simp only [allTuples, allBelow_iff, allTuples_iff n k]
+    constructor
+    · intro h xs hl hr
+      match xs, hl with
+      | x :: xs, hl => exact h x (hr x (by simp)) xs (by simpa using hl) (fun y hy => hr y (by simp [hy]))
+    · intro h x hx xs hl hr
+      exact h (x :: xs) (by simp [hl]) (fun y hy => by
+        rcases List.mem_cons.1 hy with rfl | hy
+        · exact hx
+        · exact hr y hy)
+
+/-- A model is valid for the functions it is used with (`fns`: symbol and arity): its domain is non-empty and
+each function maps in-range arguments to an in-range value. Constants are checked where they occur (`Fm.wf`). -/
+def Model.valid (M : Model) (fns : List (Nat × Nat)) : Bool :=
+  0 < M.n && fns.all fun (f, k) => allTuples M.n (fun xs => M.fn f xs < M.n) k
+
+mutual
+/-- A term is well formed at variable depth `d`: variables are bound, constants are in range, and each function
+is applied at an arity listed in `fns`. -/
+def Tm.wf (M : Model) (fns : List (Nat × Nat)) (d : Nat) : Tm → Bool
+  | .var i => i < d
+  | .const c => M.const c < M.n
+  | .app f args => (fns.contains (f, args.length)) && Tm.wfs M fns d args
+def Tm.wfs (M : Model) (fns : List (Nat × Nat)) (d : Nat) : List Tm → Bool
+  | [] => true
+  | t :: ts => t.wf M fns d && Tm.wfs M fns d ts
+end
+
+/-- A formula is well formed at depth `d`: every term in it is. `d = 0` means the formula is closed. -/
+def Fm.wf (M : Model) (fns : List (Nat × Nat)) : Nat → Fm → Bool
+  | d, .atom _ args => Tm.wfs M fns d args
+  | d, .eq a b => a.wf M fns d && b.wf M fns d
+  | _, .tru => true
+  | _, .fls => true
+  | d, .not φ => φ.wf M fns d
+  | d, .and φ ψ => φ.wf M fns d && ψ.wf M fns d
+  | d, .or φ ψ => φ.wf M fns d && ψ.wf M fns d
+  | d, .imp φ ψ => φ.wf M fns d && ψ.wf M fns d
+  | d, .iff φ ψ => φ.wf M fns d && ψ.wf M fns d
+  | d, .all φ => φ.wf M fns (d + 1)
+  | d, .ex φ => φ.wf M fns (d + 1)
+
+theorem Model.valid_pos {M : Model} {fns : List (Nat × Nat)} (h : M.valid fns = true) : 0 < M.n := by
+  simp only [Model.valid, Bool.and_eq_true, decide_eq_true_eq] at h; exact h.1
+
+theorem Model.valid_fn {M : Model} {fns : List (Nat × Nat)} (h : M.valid fns = true) {f k : Nat}
+    (hf : fns.contains (f, k) = true) (xs : List Nat) (hl : xs.length = k) (hr : ∀ x ∈ xs, x < M.n) :
+    M.fn f xs < M.n := by
+  simp only [Model.valid, Bool.and_eq_true, List.all_eq_true] at h
+  have := h.2 (f, k) (by simpa using hf)
+  exact of_decide_eq_true ((allTuples_iff M.n k _).1 this xs hl hr)
+
+/-- The ordinary structure a model with a non-empty domain describes, on the carrier `Fin M.n`. Values are clipped
+into the domain; for a valid model and well-formed formulas, clipping never changes a value (`val_interp`). -/
+def Model.toStructure (M : Model) (h : 0 < M.n) : Structure (Fin M.n) where
+  const c := ⟨min (M.const c) (M.n - 1), Nat.lt_of_le_of_lt (Nat.min_le_right _ _) (Nat.sub_lt h Nat.one_pos)⟩
+  fn f xs := ⟨min (M.fn f (xs.map Fin.val)) (M.n - 1), Nat.lt_of_le_of_lt (Nat.min_le_right _ _) (Nat.sub_lt h Nat.one_pos)⟩
+  pred p xs := M.pred p (xs.map Fin.val) = true
+
+theorem min_pred_self {a n : Nat} (h : a < n) : min a (n - 1) = a := Nat.min_eq_left (by omega)
+
+theorem getD_map_val {n : Nat} (d : Fin n) : ∀ (env : List (Fin n)) (i : Nat), i < env.length →
+    (env.map Fin.val).getD i 0 = (env.getD i d).val
+  | [], _, h => absurd h (Nat.not_lt_zero _)
+  | _ :: _, 0, _ => rfl
+  | _ :: env, i + 1, h => getD_map_val d env i (Nat.lt_of_succ_lt_succ h)
+
+theorem interps_length {α : Type} (S : Structure α) (d : α) (env : List α) :
+    ∀ ts : List Tm, (Tm.interps S d env ts).length = ts.length
+  | [] => rfl
+  | _ :: ts => by simp [Tm.interps, interps_length S d env ts]
+
+mutual
+/-- For a valid model and a well-formed term, the bounded value is the ordinary value. -/
+theorem val_interp (M : Model) (fns : List (Nat × Nat)) (hv : M.valid fns = true) (env : List (Fin M.n))
+    (d : Fin M.n) : ∀ t : Tm, t.wf M fns env.length = true →
+    t.val M (env.map Fin.val) = (t.interp (M.toStructure (Model.valid_pos hv)) d env).val
+  | .var i, h => by
+    simp only [Tm.wf, decide_eq_true_eq] at h
+    simp only [Tm.val, Tm.interp]; exact getD_map_val d env i h
+  | .const c, h => by
+    simp only [Tm.wf, decide_eq_true_eq] at h
+    simp only [Tm.val, Tm.interp, Model.toStructure]; exact (min_pred_self h).symm
+  | .app f args, h => by
+    simp only [Tm.wf, Bool.and_eq_true] at h
+    have ih := vals_interps M fns hv env d args h.2
+    simp only [Tm.val, Tm.interp, Model.toStructure, ih]
+    refine (min_pred_self (Model.valid_fn hv h.1 _ ?_ ?_)).symm
+    · simp [interps_length]
+    · intro x hx; simp only [List.mem_map] at hx; obtain ⟨y, _, rfl⟩ := hx; exact y.isLt
+theorem vals_interps (M : Model) (fns : List (Nat × Nat)) (hv : M.valid fns = true) (env : List (Fin M.n))
+    (d : Fin M.n) : ∀ ts : List Tm, Tm.wfs M fns env.length ts = true →
+    Tm.vals M (env.map Fin.val) ts = (Tm.interps (M.toStructure (Model.valid_pos hv)) d env ts).map Fin.val
+  | [], _ => rfl
+  | t :: ts, h => by
+    simp only [Tm.wfs, Bool.and_eq_true] at h
+    simp only [Tm.vals, Tm.interps, List.map_cons, val_interp M fns hv env d t h.1, vals_interps M fns hv env d ts h.2]
+end
+
+/-- **The bounded semantics is ordinary first-order semantics** for a valid model and a well-formed formula:
+`Sem` with quantifiers over `x < n` holds exactly when ordinary satisfaction holds in the structure on `Fin n`. -/
+theorem sem_iff_sat (M : Model) (fns : List (Nat × Nat)) (hv : M.valid fns = true) (d : Fin M.n) (φ : Fm) :
+    ∀ env : List (Fin M.n), φ.wf M fns env.length = true →
+    (φ.Sem M (env.map Fin.val) ↔ φ.Sat (M.toStructure (Model.valid_pos hv)) d env) := by
+  induction φ with
+  | atom p args =>
+    intro env h; simp only [Fm.wf] at h
+    simp only [Fm.Sem, Fm.Sat, Model.toStructure, vals_interps M fns hv env d args h]
+  | eq a b =>
+    intro env h; simp only [Fm.wf, Bool.and_eq_true] at h
+    simp only [Fm.Sem, Fm.Sat, val_interp M fns hv env d a h.1, val_interp M fns hv env d b h.2, Fin.val_inj]
+  | tru => intro env _; exact Iff.rfl
+  | fls => intro env _; exact Iff.rfl
+  | not φ ih => intro env h; simp only [Fm.wf] at h; simp only [Fm.Sem, Fm.Sat, ih env h]
+  | and φ ψ ihφ ihψ => intro env h; simp only [Fm.wf, Bool.and_eq_true] at h; simp only [Fm.Sem, Fm.Sat, ihφ env h.1, ihψ env h.2]
+  | or φ ψ ihφ ihψ => intro env h; simp only [Fm.wf, Bool.and_eq_true] at h; simp only [Fm.Sem, Fm.Sat, ihφ env h.1, ihψ env h.2]
+  | imp φ ψ ihφ ihψ => intro env h; simp only [Fm.wf, Bool.and_eq_true] at h; simp only [Fm.Sem, Fm.Sat, ihφ env h.1, ihψ env h.2]
+  | iff φ ψ ihφ ihψ => intro env h; simp only [Fm.wf, Bool.and_eq_true] at h; simp only [Fm.Sem, Fm.Sat, ihφ env h.1, ihψ env h.2]
+  | all φ ih =>
+    intro env h; simp only [Fm.wf] at h
+    simp only [Fm.Sem, Fm.Sat]
+    constructor
+    · intro hs x; exact (ih (x :: env) (by simpa using h)).1 (by simpa using hs x.val x.isLt)
+    · intro hs x hx; exact by simpa using (ih (⟨x, hx⟩ :: env) (by simpa using h)).2 (hs ⟨x, hx⟩)
+  | ex φ ih =>
+    intro env h; simp only [Fm.wf] at h
+    simp only [Fm.Sem, Fm.Sat]
+    constructor
+    · rintro ⟨x, hx, hs⟩; exact ⟨⟨x, hx⟩, (ih (⟨x, hx⟩ :: env) (by simpa using h)).1 (by simpa using hs)⟩
+    · rintro ⟨x, hs⟩; exact ⟨x.val, x.isLt, by simpa using (ih (x :: env) (by simpa using h)).2 hs⟩
+
+/-- **What a certificate establishes.** If the model is valid, every formula is closed and well formed, and the
+evaluator accepts them all, then the ordinary structure on `Fin M.n` satisfies every formula of the problem. -/
+theorem certified (M : Model) (fns : List (Nat × Nat)) (φs : List Fm) (hv : M.valid fns = true)
+    (hw : φs.all (·.wf M fns 0) = true) (hh : Holds M φs) (d : Fin M.n) :
+    ∀ φ ∈ φs, φ.Sat (M.toStructure (Model.valid_pos hv)) d [] := by
+  intro φ hφ
+  exact (sem_iff_sat M fns hv d φ [] (List.all_eq_true.1 hw φ hφ)).1 (hh φ hφ)
+
+
+/-! ## What a certificate proves
+
+A block is checked in one pass for well-formedness and truth. `Good` collects both; `countermodel_of_good` turns a
+valid model and a `Good` problem into ordinary first-order satisfaction (`certified`). -/
+
+/-- Every formula is closed and well formed, and holds in `M`. -/
+def Good (M : Model) (fns : List (Nat × Nat)) (φs : List Fm) : Prop := φs.all (·.wf M fns 0) = true ∧ Holds M φs
+
+theorem good_of_check (M : Model) (fns : List (Nat × Nat)) (φs : List Fm)
+    (h : φs.all (fun φ => φ.wf M fns 0 && φ.check M []) = true) : Good M fns φs := by
+  refine ⟨List.all_eq_true.2 fun φ hφ => ?_, fun φ hφ => ?_⟩
+  · have := List.all_eq_true.1 h φ hφ; simp only [Bool.and_eq_true] at this; exact this.1
+  · have := List.all_eq_true.1 h φ hφ; simp only [Bool.and_eq_true] at this
+    exact (Fm.check_iff M φ []).1 this.2
+
+theorem good_facts (M : Model) (fns : List (Nat × Nat)) (s w K : Nat) (ar : Nat → Nat) (k : Nat)
+    (h : (List.range k).all (fun i => (fact s w K ar i).wf M fns 0 && (fact s w K ar i).check M []) = true) :
+    Good M fns (decodeFacts s w K ar k) := by
+  apply good_of_check
+  simp only [decodeFacts, List.all_map]
+  exact h
+
+theorem good_append {M : Model} {fns : List (Nat × Nat)} {a b : List Fm} (ha : Good M fns a) (hb : Good M fns b) :
+    Good M fns (a ++ b) :=
+  ⟨by simp only [List.all_append, Bool.and_eq_true]; exact ⟨ha.1, hb.1⟩, holds_append ha.2 hb.2⟩
+
+/-- **The certificate's conclusion**: the ordinary structure on `Fin M.n` satisfies every formula. -/
+theorem countermodel_of_good (M : Model) (fns : List (Nat × Nat)) (φs : List Fm) (hv : M.valid fns = true)
+    (hg : Good M fns φs) : ∀ φ ∈ φs, φ.Sat (M.toStructure (Model.valid_pos hv)) ⟨0, Model.valid_pos hv⟩ [] :=
+  fun φ hφ => certified M fns φs hv hg.1 hg.2 _ φ hφ
+
 end CM

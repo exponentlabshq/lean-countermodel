@@ -339,7 +339,10 @@ def emit_reflect(path, n, consts, tables, block=4096, facts_per_block=128, per_p
            f"def M : Model where\n  n := {n}\n"
            f"  const c := get ({bsearch('c / ' + str(K), cblocks)}) (c % {K}) {w}\n"
            f"  fn f args := get ({bsearch('f', fn_tables)}) (index {n} args) {w}\n"
-           f"  pred p args := get (get {pack(masks, mw)} p {mw}) (index {n} args) 1 == 1\n"]  # O(1) packed lookup
+           f"  pred p args := get (get {pack(masks, mw)} p {mw}) (index {n} args) 1 == 1\n",  # O(1) packed lookup
+           "/-- The functions the problem uses, with their arities: `M.valid` checks they map the domain into itself. -/",
+           f"def fns : List (Nat × Nat) := [{', '.join(f'({i}, {len(next(iter(tables[f])))})' for f, i in sorted(fns.items(), key=lambda x: x[1]))}]",
+           "theorem valid : M.valid fns = true := by decide +kernel\n"]
     blocks = []  # (Lean declarations, decoded formulas, proof of Holds)
     if facts:
         K = max(len(as_fact(d)[2]) for d in facts)
@@ -354,7 +357,7 @@ def emit_reflect(path, n, consts, tables, block=4096, facts_per_block=128, per_p
             rs = recs[b:b + facts_per_block]
             j = b // facts_per_block
             blocks.append((f"/-- {len(rs)} ground facts, {K + 2} fields of {fw} bits each. -/\ndef F{j} : Nat := {pack([x for r in rs for x in r], fw)}\n"
-                           f"theorem hf{j} : Holds M (decodeFacts F{j} {fw} {K} ar {len(rs)}) := holds_facts M _ _ _ _ _ (by decide +kernel)\n",
+                           f"theorem hf{j} : Good M fns (decodeFacts F{j} {fw} {K} ar {len(rs)}) := good_facts M fns _ _ _ _ _ (by decide +kernel)\n",
                            f"decodeFacts F{j} {fw} {K} ar {len(rs)}", f"hf{j}"))
     parts, cur, size = [], [], 0
     for d in data:  # blocks of about `block` tokens, so each shift touches a small number
@@ -367,13 +370,16 @@ def emit_reflect(path, n, consts, tables, block=4096, facts_per_block=128, per_p
     for b, fs in enumerate(parts):
         depth = max(map(nesting, fs)) + 2
         blocks.append((f"/-- {len(fs)} formulas, as {tw}-bit tokens. -/\ndef D{b} : Nat := {pack([x for d in fs for x in d], tw)}\n"
-                       f"theorem h{b} : Holds M (decode D{b} {tw} {len(fs)} {depth}) := holds_of_check M _ (by decide +kernel)\n",
+                       f"theorem h{b} : Good M fns (decode D{b} {tw} {len(fs)} {depth}) := good_of_check M fns _ (by decide +kernel)\n",
                        f"decode D{b} {tw} {len(fs)} {depth}", f"h{b}"))
     doc = f"/-- Every formula of {name}.p, decoded; `#eval` it to read them. A conjecture appears negated. -/"
     if len(blocks) <= per_part:  # one file
         out += [d for d, _, _ in blocks]
         out += [doc, f"def problem : List Fm := {tree([t for _, t, _ in blocks], '({} ++ {})')}",
-                f"theorem countermodel : Holds M problem :=\n  {tree([p for _, _, p in blocks], '(holds_append {} {})')}"]
+                f"theorem good : Good M fns problem :=\n  {tree([p for _, _, p in blocks], '(good_append {} {})')}",
+                f"/-- The ordinary first-order structure on `Fin M.n` satisfies every formula of {name}.p (a conjecture negated). -/",
+                "theorem countermodel : ∀ φ ∈ problem, φ.Sat (M.toStructure (Model.valid_pos valid)) ⟨0, Model.valid_pos valid⟩ [] :=\n"
+                "  countermodel_of_good M fns problem valid good"]
         return "\n".join(out) + f"\n\nend {ns}\n"
     # Modules, aggregated as a tree: Base (the model), Part k (blocks, their list and its proof), Main.
     head = "\n".join(out[:out.index(f"namespace {ns}\n")])
@@ -383,11 +389,13 @@ def emit_reflect(path, n, consts, tables, block=4096, facts_per_block=128, per_p
         bs, c = blocks[k:k + per_part], k // per_part
         files[f"Part{c}"] = (f"import {ns}.Base\n{opts}\nopen CM\nnamespace {ns}\n\n" + "\n".join(d for d, _, _ in bs)
                              + f"\ndef part{c} : List Fm := {tree([t for _, t, _ in bs], '({} ++ {})')}\n"
-                             f"theorem hpart{c} : Holds M part{c} := {tree([p for _, _, p in bs], '(holds_append {} {})')}\n\nend {ns}\n")
+                             f"theorem hpart{c} : Good M fns part{c} := {tree([p for _, _, p in bs], '(good_append {} {})')}\n\nend {ns}\n")
     m = len(files) - 1
     files["Main"] = ("".join(f"import {ns}.Part{c}\n" for c in range(m)) + f"open CM\nnamespace {ns}\n\n{doc}\n"
                      f"def problem : List Fm := {tree([f'part{c}' for c in range(m)], '({} ++ {})')}\n"
-                     f"theorem countermodel : Holds M problem :=\n  {tree([f'hpart{c}' for c in range(m)], '(holds_append {} {})')}\n\nend {ns}\n")
+                     f"theorem good : Good M fns problem :=\n  {tree([f'hpart{c}' for c in range(m)], '(good_append {} {})')}\n"
+                     f"theorem countermodel : ∀ φ ∈ problem, φ.Sat (M.toStructure (Model.valid_pos valid)) ⟨0, Model.valid_pos valid⟩ [] :=\n"
+                     f"  countermodel_of_good M fns problem valid good\n\nend {ns}\n")
     return files
 
 
