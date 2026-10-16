@@ -235,6 +235,13 @@ Each bug was fixed, regression-tested, and every problem rerun. **What you read 
 | Whitepaper | `python3 paper/assemble.py` builds `paper/whitepaper.md` from `paper/whitepaper/` |
 | Formal-philosophy agenda | `paper/philosophy-lean-vampire-research.md` (original) and `paper/formal-philosophy.md` (revised, with results) |
 
+## License
+
+MIT; see [`LICENSE`](LICENSE). Third-party material keeps its own terms:
+- **TPTP:** `bench/slice10000.p` is a slice of TPTP problem NLP263+1, and the benchmark rebuilds its inputs from the TPTP release; please cite TPTP when you use them.
+- **Nakamura:** `nakamura/` builds against Nakamura's MIT-licensed [spinoza-ethica-lean](https://github.com/Nakammura/spinoza-ethica-lean), which it clones and does not include; `examples/nakamura_*.p` and `ablation/nakamura_register.p` transcribe its definitions and axioms, with citations.
+- **Vampire** is not included; it is distributed under its own license.
+
 ## References
 
 1. Y. Nakamura. *Bennett's Conjecture in Lean 4: Counter-Models for the PSR-Reducibility of Spinoza's Propositions V and XIV.* arXiv:2605.02331, 2026. [github.com/Nakammura/spinoza-ethica-lean](https://github.com/Nakammura/spinoza-ethica-lean)

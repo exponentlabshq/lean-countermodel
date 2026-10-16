@@ -8,4 +8,5 @@ authors:
   - family-names: Dumps
     given-names: Jeff
 repository-code: "https://github.com/exponentlabshq/lean-countermodel"
+license: MIT
 date-released: 2026-10-15
