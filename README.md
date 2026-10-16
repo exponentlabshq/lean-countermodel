@@ -2,6 +2,64 @@
 
 **Kernel-checked finite counter-models for Lean 4, found by Vampire.**
 
+**Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.pdf`](paper/whitepaper.pdf) ([Markdown](paper/whitepaper.md)) covers the method, data structures, scaling recipe, evaluation and related work. Working on the code with an AI agent? See [`AGENTS.md`](AGENTS.md).
+
+
+**Contents:** four short sections for anyone ([the question](#where-this-started-does-spinozas-argument-go-through), [Spinoza](#spinozas-ethics-a-theory-of-everything-built-like-geometry), [Nakamura](#nakamuras-lean-project-checking-spinoza-with-a-proof-checker), [what we built](#what-we-built-and-why-it-matters)), then the technical README: [quick start](#0-quick-start), [results](#1-results-at-a-glance), [method](#3-method), [case studies](#4-case-studies), [trust](#5-why-trust-it), [limits](#6-limits), [reproduce](#7-reproduce).
+
+## Where this started: does Spinoza's argument go through?
+
+In 1677 Baruch Spinoza argued that exactly one substance exists: God, or Nature. One step carries much of the weight, *Ethics* I, Proposition 5: **no two substances can share an attribute.** Readers have argued over that step for three and a half centuries:
+
+| Who | Position |
+|---|---|
+| **Spinoza, 1677** | "There cannot exist in the universe two or more substances having the same nature or attribute." (Elwes translation) |
+| **Bennett** | The demonstration does not establish the full conclusion from the resources Spinoza provides: two substances could share one attribute and differ in another. |
+| **Della Rocca** | The Principle of Sufficient Reason can supply the missing route: distinct things must differ for a reason. |
+| **Nakamura, 2026** | Write the commitments as Lean code and let a proof checker decide what follows from what. |
+
+Nakamura's answer: a weak version of Proposition 5 follows; the strong version does not, from the assumptions tested. The evidence is two **counter-models**, small invented worlds in which every assumption is true and the claim is false, **built by hand**, with 4 and 3 objects.
+
+**This project began with one question: could a machine find those worlds on its own, and could Lean certify what it found?** It could. Vampire, an automated prover, found both in about a tenth of a second, each with only 2 objects, and Lean checked them against Nakamura's own unmodified code.
+
+## Spinoza's *Ethics*: a theory of everything, built like geometry
+
+Spinoza's *Ethics* tries to explain everything, from God to human happiness, and it does so the way Euclid explained geometry: its full title is *Ethics, demonstrated in geometrical order.*
+
+- **What it claims.** Exactly one thing exists on its own: call it God, or Nature. Everything else (people, planets, thoughts) exists in it, as a way it is. From there the book works out what a mind is, where emotions come from, and how a person can live freely.
+- **How it argues.** First define the terms. Then state axioms, assumptions taken as obvious. Then prove propositions one at a time, each proof citing the definitions, axioms and earlier propositions it uses.
+- **Why that invites a machine.** An argument laid out as definitions, axioms and proofs can be checked step by step: does this proposition really follow from what it cites? That question, disputed for centuries, is one software can now answer precisely.
+
+## Nakamura's Lean project: checking Spinoza with a proof checker
+
+In 2026 Yuki Nakamura translated the core of *Ethics* Part I into Lean 4 ([repository](https://github.com/Nakammura/spinoza-ethica-lean) · [paper, arXiv:2605.02331](https://arxiv.org/abs/2605.02331)). Every Spinoza result here builds on it.
+
+- **What Lean is.** A programming language for writing proofs. You state a claim and its proof as code, and a small, carefully trusted part of Lean, the *kernel*, checks every step. If it accepts, no step was skipped or hand-waved. Mathematicians use it to check research mathematics.
+- **What Nakamura built.** Spinoza's definitions and axioms for Part I as Lean code, with the propositions that carry the argument (II to XIV) proved from them. Every assumption added beyond Spinoza's text is listed in a register, and any step left unproven is listed openly as a gap.
+- **What it found.** The weak Proposition 5 can be proved: substances with exactly the same attributes are the same substance. The strong one cannot, from the assumptions tested, and two hand-built counter-models show it.
+
+Building such worlds by hand is slow, and it doesn't scale to every step of every argument. That is the gap this project fills.
+
+## What we built, and why it matters
+
+**Proving that something does *not* follow is half of reasoning, and Lean had no general way to automate it.** Lean can import *proofs* from automated provers. But to show that assumptions do **not** imply a claim, you must exhibit a world where they hold and the claim fails, and Lean projects still build those by hand. Isabelle has had an automatic finder for them (Nitpick) since 2010.
+
+**lean-countermodel closes that gap for any first-order theory.** Our first pass on Spinoza used two automated provers, Z3 and Vampire. They found counter-models in milliseconds, but trust rested on the two provers agreeing. The tool splits the work: **Vampire searches, Lean certifies.** Vampire is never trusted; if it returns a wrong model, Lean rejects it and no certificate is produced.
+
+**What it achieved:**
+- **Spinoza:** both of Nakamura's negative results, reproduced automatically with **2-object worlds** (against 4 and 3 by hand), certified against Nakamura's own library.
+- **Beyond philosophy:** on 300 problems drawn from TPTP, the standard library of problems for automated reasoning, Lean certified 185 counter-models under a strict kernel-only policy, including **59 of the 67 models found on a sample chosen before it was first run**.
+- **At scale:** a problem with over **a million facts**, certified in a median of **5.2 minutes** on an 8 GB laptop.
+- **Under review:** the code, results and paper went through repeated rounds of independent artifact review, which found real defects, all fixed and documented in the [whitepaper](paper/whitepaper.pdf).
+
+**Why it matters beyond Spinoza:** any argument that can be written as definitions and axioms, in mathematics, philosophy, law or software specifications, can now be tested for hidden assumptions. When a step doesn't follow, the tool hands back a concrete, machine-checked world that shows why.
+
+**What it does not claim:** every result is about a formalization, not Spinoza's text itself; whether a formalization is the right reading is interpretation, where the machine stops. A counter-model shows a claim does not follow; it does not show the claim is false.
+
+---
+
+**In technical terms:**
+
 > To show that some axioms do **not** imply a claim, you exhibit a world where the axioms hold and the claim fails.
 > Vampire finds such a world automatically. `cm.py` turns it into a Lean 4 certificate, and Lean's kernel checks it.
 > Vampire is untrusted: a model that is ill-formed or falsifies the encoded problem yields no certificate.
@@ -11,8 +69,6 @@
 python3 cm.py examples/group_comm.p > G.lean && lake env lean G.lean             # one theorem per formula
 python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean   # through the verified checker
 ```
-
-**Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.pdf`](paper/whitepaper.pdf) ([Markdown](paper/whitepaper.md)) covers the method, data structures, scaling recipe, evaluation and related work. Working on the code with an AI agent? See [`AGENTS.md`](AGENTS.md).
 
 ## 0. Quick start
 
