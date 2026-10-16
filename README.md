@@ -1,5 +1,11 @@
 # lean-countermodel
 
+<p align="center">
+  <img src="assets/spinoza-theorem-proving-crisis.jpg" alt="A painting of Spinoza, alarmed, holding a list of his axioms and propositions marked with red crosses, beside a blackboard of failing Lean proofs and books labelled Ethica, Lean 4 and Mathlib" width="480">
+  <br>
+  <em>Spinoza's theorem-proving crisis.</em>
+</p>
+
 **Kernel-checked finite counter-models for Lean 4, found by Vampire.**
 
 **Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.pdf`](paper/whitepaper.pdf) ([Markdown](paper/whitepaper.md)) covers the method, data structures, scaling recipe, evaluation and related work. Working on the code with an AI agent? See [`AGENTS.md`](AGENTS.md).
