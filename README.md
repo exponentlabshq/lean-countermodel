@@ -8,6 +8,8 @@
 
 **Kernel-checked finite counter-models for Lean 4, found by Vampire.**
 
+**Website:** [lean-countermodel-vampire-spinoza.netlify.app](https://lean-countermodel-vampire-spinoza.netlify.app/): the Spinoza story, and an interactive tour of the tool ([/tool](https://lean-countermodel-vampire-spinoza.netlify.app/tool/)).
+
 **Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.pdf`](paper/whitepaper.pdf) ([Markdown](paper/whitepaper.md)) covers the method, data structures, scaling recipe, evaluation and related work. Working on the code with an AI agent? See [`AGENTS.md`](AGENTS.md).
 
 
@@ -83,7 +85,7 @@ Spinoza's *Ethics* tries to explain everything, from God to human happiness, and
 
 ## Nakamura's Lean project: checking Spinoza with a proof checker
 
-In 2026 Yuki Nakamura translated the core of *Ethics* Part I into Lean 4 ([repository](https://github.com/Nakammura/spinoza-ethica-lean) · [paper, arXiv:2605.02331](https://arxiv.org/abs/2605.02331)). Every Spinoza result here builds on it.
+In 2026 Yuki Nakamura translated the core of *Ethics* Part I into Lean 4 ([repository](https://github.com/Nakammura/spinoza-ethica-lean) · [paper, arXiv:2605.02331](https://arxiv.org/abs/2605.02331)). Every Spinoza result here builds on it. The [website](https://lean-countermodel-vampire-spinoza.netlify.app/) walks through it with interactive models.
 
 - **What Lean is.** A programming language for writing proofs. You state a claim and its proof as code, and a small, carefully trusted part of Lean, the *kernel*, checks every step. If it accepts, no step was skipped or hand-waved. Mathematicians use it to check research mathematics.
 - **What Nakamura built.** Spinoza's definitions and axioms for Part I as Lean code, with the propositions that carry the argument (II to XIV) proved from them. Every assumption added beyond Spinoza's text is listed in a register, and any step left unproven is listed openly as a gap.
