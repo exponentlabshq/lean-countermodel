@@ -36,7 +36,7 @@ python3 -m pytest test_cm.py -q          # a fresh clone: 168 passed, 2 skipped
 
 **What to expect:**
 - **The two skipped tests** need data that isn't in the repository: the TPTP benchmark inputs (rebuilt by `bench/inputs.py`, §7) and a Vampire answer cache. With both present, all 170 pass.
-- **Without Vampire,** the 82 tests that need no Vampire model still run.
+- **Without Vampire,** the tests that need no Vampire model still run: 80 in a fresh clone, 82 with the benchmark data present.
 - **To see what a certificate depends on,** append `#print axioms group_comm.countermodel` to `G.lean`. A shallow certificate depends on at most `propext`; a reflected one (`cm.py --reflect`) on `propext` and `Quot.sound`.
 
 **Using it on your own problem:** write it in TPTP `fof` or `cnf` (§6 and the whitepaper's §8.1 list what is supported), then:
@@ -225,7 +225,7 @@ Each bug was fixed, regression-tested, and every problem rerun. **What you read 
 |---|---|
 | Requirements | See §0. `nakamura/` pins Lean 4.13; the main project has no Lean package dependencies |
 | Vampire | One binary from the v5.1.0 release, for example `gh release download v5.1.0 -R vprover/vampire -p vampire-macOS-ARM64.zip && unzip vampire-macOS-ARM64.zip` (other platforms have their own assets) |
-| Tests | `lake build && python3 -m pytest test_cm.py` (170 tests: 168 pass and 2 skip in a fresh clone; the 82 that need no Vampire model also run without Vampire), including `tests/Boundary.lean`; `./recheck.sh` for axioms and a fresh kernel replay; `bench/negative-controls.sh [TPTP-v9.3.1]` for the failure controls |
+| Tests | `lake build && python3 -m pytest test_cm.py` (170 tests: 168 pass and 2 skip in a fresh clone; without Vampire, 80 run in a fresh clone and 82 with the benchmark data), including `tests/Boundary.lean`; `./recheck.sh` for axioms and a fresh kernel replay; `bench/negative-controls.sh [TPTP-v9.3.1]` for the failure controls |
 | Examples | `lake build`, then `lake env lean Axioms.lean` |
 | Nakamura | `cd nakamura && lake build && lake env lean Axioms.lean` (clones spinoza-ethica-lean @ 6d4c046, about 11 MB) |
 | Benchmark inputs | Download and unpack the official [TPTP v9.3.1 release](https://tptp.org/TPTP/Distribution/TPTP-v9.3.1.tgz) (934 MB; about 10 GB unpacked), then `python3 bench/inputs.py verify TPTP-v9.3.1 TPTP-v9.3.1.tgz`. It rebuilds every input and checks every file, and the tarball, against `bench/inputs.json` |
