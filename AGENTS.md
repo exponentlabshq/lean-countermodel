@@ -28,6 +28,7 @@ What is trusted:
 | `bench/*.jsonl`, `*.json`, `*.log` | **Recorded evidence.** Never edit by hand (see the rules below) |
 | `nakamura/` | Certificates compiled against Nakamura's unmodified Lean library (pins Lean 4.13) |
 | `evidence/` | Small, committed review evidence (collision certificate, wrong-model rejections, ablation rerun) |
+| `peer-review-manus/` | The final, consolidated peer review (Manus AI), Markdown and PDF. **Third-party document: never edit it** |
 | `paper/` | The whitepaper: section sources in `paper/whitepaper/`, built by `paper/assemble.py`; response letters; package builders |
 
 Git-ignored and regenerable: `bench/problems`, `bench/sources`, `bench/axioms` (from the TPTP release), `bench/vampire-cache`, `bench/lean`, `bench/olean`, `bench/replay`, `.lake/`.

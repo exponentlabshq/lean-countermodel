@@ -11,7 +11,7 @@
 **Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.pdf`](paper/whitepaper.pdf) ([Markdown](paper/whitepaper.md)) covers the method, data structures, scaling recipe, evaluation and related work. Working on the code with an AI agent? See [`AGENTS.md`](AGENTS.md).
 
 
-**Contents:** notes to [Nakamura](#a-note-to-yuki-nakamura), [the Lean community](#a-note-to-the-lean-community) and [the Vampire team](#a-note-to-the-vampire-team); four short sections for anyone ([the question](#where-this-started-does-spinozas-argument-go-through), [Spinoza](#spinozas-ethics-a-theory-of-everything-built-like-geometry), [Nakamura](#nakamuras-lean-project-checking-spinoza-with-a-proof-checker), [what we built](#what-we-built-and-why-it-matters)), then the technical README: [quick start](#0-quick-start), [results](#1-results-at-a-glance), [method](#3-method), [case studies](#4-case-studies), [trust](#5-why-trust-it), [limits](#6-limits), [reproduce](#7-reproduce).
+**Contents:** notes to [Nakamura](#a-note-to-yuki-nakamura), [the Lean community](#a-note-to-the-lean-community) and [the Vampire team](#a-note-to-the-vampire-team); four short sections for anyone ([the question](#where-this-started-does-spinozas-argument-go-through), [Spinoza](#spinozas-ethics-a-theory-of-everything-built-like-geometry), [Nakamura](#nakamuras-lean-project-checking-spinoza-with-a-proof-checker), [what we built](#what-we-built-and-why-it-matters)); the [peer review](#peer-review); then the technical README: [quick start](#0-quick-start), [results](#1-results-at-a-glance), [method](#3-method), [case studies](#4-case-studies), [trust](#5-why-trust-it), [limits](#6-limits), [reproduce](#7-reproduce).
 
 ## A note to Yuki Nakamura
 
@@ -101,11 +101,47 @@ Building such worlds by hand is slow, and it doesn't scale to every step of ever
 - **Spinoza:** both of Nakamura's negative results, reproduced automatically with **2-object worlds** (against 4 and 3 by hand), certified against Nakamura's own library.
 - **Beyond philosophy:** on 300 problems drawn from TPTP, the standard library of problems for automated reasoning, Lean certified 185 counter-models under a strict kernel-only policy, including **59 of the 67 models found on a sample chosen before it was first run**.
 - **At scale:** a problem with over **a million facts**, certified in a median of **5.2 minutes** on an 8 GB laptop.
-- **Under review:** the code, results and paper went through repeated rounds of independent artifact review, which found real defects, all fixed and documented in the [whitepaper](paper/whitepaper.pdf).
+- **Reviewed:** the code, results and paper went through repeated rounds of artifact review, which found real defects, all fixed and documented. The final review recommends acceptance ([below](#peer-review)).
 
 **Why it matters beyond Spinoza:** any argument that can be written as definitions and axioms, in mathematics, philosophy, law or software specifications, can now be tested for hidden assumptions. When a step doesn't follow, the tool hands back a concrete, machine-checked world that shows why.
 
 **What it does not claim:** every result is about a formalization, not Spinoza's text itself; whether a formalization is the right reading is interpretation, where the machine stops. A counter-model shows a claim does not follow; it does not show the claim is false.
+
+## Peer review
+
+**The full review is in [`peer-review-manus/`](peer-review-manus/):** [Markdown](peer-review-manus/Canonical%20Peer%20Review.md) · [PDF](peer-review-manus/canonical_peer_review.pdf).
+
+| | |
+|---|---|
+| **Reviewer** | Manus AI |
+| **When** | 15–16 October 2026, in several rounds |
+| **Reviewed release** | `e840242` (round 4c); benchmark evaluation at `66c8b32` |
+| **Recommendation** | **Accept** as a scoped formal-methods tool-and-engineering contribution, with no outstanding mandatory correction |
+
+**What kind of review this is.** An AI-generated technical review that we requested, carried out on both the manuscript and the code. It is not an anonymous human review, nor a journal or conference decision. "Independent" in it means the reviewer ran commands and checks itself rather than relying on our logs.
+
+**What the reviewer did.** Beyond reading the paper, it:
+- rebuilt the project from hash-verified packages and ran the full test suite;
+- replayed the shipped certificates through Lean's kernel from scratch;
+- wrote adversarial inputs designed to break the pipeline;
+- regenerated the eight affected benchmark certificates on their complete problems;
+- reran the Spinoza dependency map with real Vampire and Lean.
+
+**What it found, and what changed.**
+- **Silently dropped premises.** The TPTP record reader could skip a legal record without error. Lean then certified a *weaker* problem, a valid proof of the wrong statement. Eight benchmark certificates were withdrawn, and their complete problems were then certified as new results. The reader now accounts for the whole file or rejects it, and the test oracle reads records independently.
+- **Ablation bookkeeping.** Distinct names could collide into one experiment, and some roles were dropped silently. Both are now caught: each record gets a unique identity, and unsupported roles are rejected.
+- **Finder errors.** Vampire's error responses, including older ones in the cache, could be counted as ordinary unsuccessful searches. They are now reported as errors.
+
+Each fix has a regression test. Our responses to each round are in `paper/response-to-*.md`.
+
+**What the acceptance covers, in the reviewer's terms:**
+- **Lean's kernel guarantees** the certified statement, through a formally verified checker.
+- **Whether that statement matches the source file** depends on a tested, trusted translator, not a verified one.
+- **The benchmark samples are descriptive evidence,** not an untouched test, because all three were used during development.
+- **Original-formula checks cover 189 of 192 results;** three are named and unchecked.
+- **The timings belong to the version and machine stated.**
+
+The review is not a guarantee of universal correctness.
 
 ---
 
