@@ -711,3 +711,24 @@ def test_small_structure_check_detects_a_wrong_rewrite():
     structures = list(small_structures())
     assert len(structures) == 1032
     assert sum(holds(original, n, c, t) != holds(wrong, n, c, t) for n, c, t in structures) == 156
+
+
+def test_a_cached_error_is_not_a_search_outcome(tmp_path, monkeypatch):
+    """Closing review: a cache entry that is not a definite answer (here an old 'Internal error' response, as an earlier
+    version could have cached) is ignored. Vampire is run again; when it fails too, the result is a finder error."""
+    import bench, cm, hashlib
+    monkeypatch.setattr(bench, "DIR", str(tmp_path))
+    (tmp_path / "problems").mkdir()
+    (fake := tmp_path / "vampire").write_text("#!/bin/sh\nif [ \"$1\" = --version ]; then echo 'fixture v1'; exit 0; fi\n"
+                                              "printf '%% Termination reason: Internal error\\n'\nexit 3\n")
+    fake.chmod(0o755)
+    monkeypatch.setenv("VAMPIRE", str(fake))
+    monkeypatch.setenv("CM_CACHE", str(cache := tmp_path / "cache"))
+    (prob := tmp_path / "problems" / "X.p").write_text("fof(a, axiom, p(a)).\nfof(b, axiom, ~q(a)).\n")
+    key = hashlib.sha256(prob.read_bytes() + b"-sa fmb -updr off -t 30" + b"fixture v1\n").hexdigest()
+    cache.mkdir()
+    (cache / key).write_text("% Termination reason: Internal error\n")  # the seeded legacy entry
+    r = bench.run_hybrid("X.p")
+    assert r["verdict"] == "finder error", r
+    with pytest.raises(RuntimeError):
+        cm.vampire(str(prob))

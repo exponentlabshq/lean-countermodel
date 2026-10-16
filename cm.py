@@ -338,7 +338,8 @@ def classify(out):
 
 def vampire(path):
     """Vampire's output, cached in $CM_CACHE (if set) under a hash of the problem, the flags and Vampire's version:
-    a Lean upgrade then reruns only Lean. Classified by classify(): definite answers are cached, resource limits
+    a Lean upgrade then reruns only Lean. A cache entry is used only if it classifies as a definite answer; any other
+    entry (for example one written by an older version) is ignored and Vampire runs. Classified by classify(): definite answers are cached, resource limits
     are returned but not cached, and anything else (an SZS Error, an unrecognized status or termination reason, no
     status at all, a missing executable) raises RuntimeError with the exit code and diagnostics, and is not cached."""
     # `-updr off`: otherwise Vampire may settle the problem by deleting unused predicates, without printing a model
@@ -348,8 +349,8 @@ def vampire(path):
         if cache := os.getenv("CM_CACHE"):
             version = subprocess.run([cmd[0], "--version"], capture_output=True, text=True).stdout
             key = hashlib.sha256(open(path, "rb").read() + " ".join(cmd[1:]).encode() + version.encode()).hexdigest()
-            if os.path.exists(hit := os.path.join(cache, key)):
-                return open(hit).read()
+            if os.path.exists(hit := os.path.join(cache, key)) and classify(cached := open(hit).read()) == "search":
+                return cached  # a cache entry counts only if it is itself a definite answer; any other is ignored
         run = subprocess.run(cmd + [path], capture_output=True, text=True)
     except OSError as e:
         raise RuntimeError(f"vampire failed on {path}: cannot run {cmd[0]!r}: {e}")
