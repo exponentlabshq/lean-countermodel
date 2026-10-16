@@ -1,0 +1,111 @@
+{
+ "stopped_run": "8d46e97 (development sample only)",
+ "final_run": "66c8b32",
+ "rows": 100,
+ "differing_rows": [
+  {
+   "problem": "SWV495-1.040.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "NLP083+1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "CSR161+1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "SYO779+1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "SWV497-1.040.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "SYO698+1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "SET502-6.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "NLP051-1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "SET226-6.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "SYO770+1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "SYO772+1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "KLE171+1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "NLP091-1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "SWV500-1.030.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "GEO158-1.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "NUM374+2.p",
+   "stopped": "finder error",
+   "final": "no model"
+  },
+  {
+   "problem": "SWV495-1.050.p",
+   "stopped": "finder error",
+   "final": "no model"
+  }
+ ],
+ "identical_rows_by_verdict": {
+  "certified": 71,
+  "unsupported input": 3,
+  "no model": 2,
+  "lean rejected": 5,
+  "certified (native)": 2
+ },
+ "denominators": {
+  "stopped": {
+   "models_found": 78,
+   "no_model": 2,
+   "finder_error": 17
+  },
+  "final": {
+   "models_found": 78,
+   "no_model": 19,
+   "finder_error": 0
+  }
+ }
+}

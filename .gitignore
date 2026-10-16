@@ -17,3 +17,6 @@ bench/olean/
 ablation/out/
 bench/perf.jsonl.tmp
 bench/inputs.candidate.json
+!bench/fidelity.log
+!bench/rewrite-check.log
+!bench/negative-controls.log

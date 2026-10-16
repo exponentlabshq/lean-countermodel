@@ -509,3 +509,103 @@ def test_a_timeout_is_a_search_outcome_not_a_failure(tmp_path, monkeypatch):
     r = bench.run_hybrid("X.p")
     assert r["verdict"] == "no model" and "Time limit" in r["why"], r
     assert not (tmp_path / "cache").exists() or not os.listdir(tmp_path / "cache")
+
+
+def test_fidelity_check_flags_a_model_of_part_of_the_problem(tmp_path, monkeypatch):
+    """bench/fidelity.py must call the reviewer's wrong model NOT FAITHFUL: it reads the whole original file."""
+    import sys, cm
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "bench"))
+    from fidelity import check
+    (p := tmp_path / "t.p").write_text(DROPPED[0])
+    monkeypatch.setattr(cm, "model", lambda path: (1, {"a": 1}, {"p": {(1,): False}}))
+    assert check(str(p))[0].startswith("NOT FAITHFUL")
+
+
+# Round-4 review: bounded validation of the rewrite on adversarial forms. Every interpretation of the signature
+# (constants a, b; unary p, q; binary r) on domains of size 1 and 2: 8 + 1,024 structures per formula. Original
+# (read by the oracle) and rewritten (problem()) must agree on every one. Bounded validation, not a general proof.
+ADVERSARIAL = [("fof", f) for f in [
+    "![X,Y]: (p(X) | q(Y))",                        # independent variables: scope splits
+    "![X]: (p(X) | ![X]: q(X))",                    # a repeated (shadowed) variable name
+    "![X,Y]: (p(X) | r(X,Y))",                      # ∀ moved across ∨
+    "![X]: (p(X) => ![Y]: (q(Y) => r(X,Y)))",       # implication flattening
+    "![X]: (p(a) | q(a))",                          # vacuous quantification
+    "![X]: (p(X) | ?[Y]: r(X,Y))",                  # ∃ under ∀
+    "![X,Y]: (r(X,Y) | r(Y,X) | X = Y)",            # equality
+    "![X]: ~ (p(X) & ~ q(X))",                      # negated conjunction
+    "![X]: (p(X) <=> q(X))",                        # equivalence: must not be flattened
+    "![X,Y]: ((p(X) & q(Y)) => r(X,Y))",
+    "![X]: (![Y]: r(X,Y) | p(X))",                  # a quantified first literal
+    "![X,Y,Z]: (~ r(X,Y) | ~ r(Y,Z) | r(X,Z))",
+    "![X]: (p(X) | ![Y]: (q(Y) | r(Y,X)))",
+    "?[X]: (p(X) | q(X))",
+    "![X]: (p(X) | p(X))",
+]] + [("cnf", f) for f in ["~ r(X,Y) | ~ r(Y,Z) | r(X,Z)", "p(X) | q(Y)", "X = a | r(X,X)"]]
+
+
+def small_structures():
+    for n in (1, 2):
+        E = range(1, n + 1)
+        tuples1, tuples2 = [(x,) for x in E], list(itertools.product(E, repeat=2))
+        for a, b in itertools.product(E, repeat=2):
+            for pv in itertools.product((False, True), repeat=n):
+                for qv in itertools.product((False, True), repeat=n):
+                    for rv in itertools.product((False, True), repeat=n * n):
+                        yield n, {"a": a, "b": b}, {"p": dict(zip(tuples1, pv)), "q": dict(zip(tuples1, qv)), "r": dict(zip(tuples2, rv))}
+
+
+@pytest.mark.parametrize("kind,f", ADVERSARIAL)
+def test_rewriting_is_equivalent_on_every_small_structure(kind, f, tmp_path):
+    (p := tmp_path / "t.p").write_text(f"{kind}(f, axiom, {f}).\n")
+    (_, original), = raw(str(p))
+    (_, rewritten), = problem(str(p))
+    checked = 0
+    for n, consts, tables in small_structures():
+        assert holds(original, n, consts, tables) == holds(rewritten, n, consts, tables), (f, rewritten, n, consts, tables)
+        checked += 1
+    assert checked == 8 + 1024
+
+
+def clause_holds(clause, n, consts, tables):
+    """A cnf clause ∀X̄ (L1 | … | Lk), evaluated by searching for a falsifying assignment instead of enumerating all
+    n^|X̄| of them: bind the variables of one literal at a time, keep only bindings that make that literal false, and
+    succeed (clause false) when every literal is false. Independent of cm.py (the oracle's own lexer and variable
+    detection), and validated against holds() by test_clause_search_agrees_with_brute_force."""
+    toks = [m[0] for m in ORACLE_LEX.finditer(clause) if m.lastgroup not in ("ws", "comment")]
+    lits, cur, depth = [], [], 0
+    for t in toks:  # split at top-level '|'
+        depth += t in "([" and len(t) == 1
+        depth -= t in ")]" and len(t) == 1
+        if t == "|" and depth == 0:
+            lits.append(cur)
+            cur = []
+        else:
+            cur.append(t)
+    lits.append(cur)
+    var = lambda t: t[0].isupper() and t[0] != "'"
+    lits = [(" ".join(l), sorted({t for t in l if var(t)})) for l in lits]
+
+    def falsify(rest, env):  # is there an extension of env making every literal in rest false?
+        if not rest:
+            return True
+        # the literal with the fewest unbound variables first: most pruning
+        i = min(range(len(rest)), key=lambda j: len([v for v in rest[j][1] if v not in env]))
+        text, vs = rest[i]
+        free = [v for v in vs if v not in env]
+        for vals in itertools.product(range(1, n + 1), repeat=len(free)):
+            e = {**env, **dict(zip(free, vals))}
+            if not holds(text, n, consts, tables, e) and falsify(rest[:i] + rest[i + 1:], e):
+                return True
+        return False
+
+    return not falsify(lits, {})
+
+
+def test_clause_search_agrees_with_brute_force():
+    """clause_holds and holds agree on every adversarial cnf clause, and on clauses with repeated and unused variables,
+    over all 1,032 small structures."""
+    clauses = [f for k, f in ADVERSARIAL if k == "cnf"] + ["~ p(X) | q(X) | r(X,Y)", "p(a) | ~ q(b)", "r(X,X) | ~ r(Y,Y) | X = Y"]
+    for c in clauses:
+        closed = f"![{','.join(sorted(VARS(c)))}]: ({c})" if VARS(c) else c
+        for n, consts, tables in small_structures():
+            assert clause_holds(c, n, consts, tables) == holds(closed, n, consts, tables), (c, n, consts, tables)
