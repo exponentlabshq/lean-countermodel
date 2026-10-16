@@ -11,7 +11,52 @@
 **Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.pdf`](paper/whitepaper.pdf) ([Markdown](paper/whitepaper.md)) covers the method, data structures, scaling recipe, evaluation and related work. Working on the code with an AI agent? See [`AGENTS.md`](AGENTS.md).
 
 
-**Contents:** four short sections for anyone ([the question](#where-this-started-does-spinozas-argument-go-through), [Spinoza](#spinozas-ethics-a-theory-of-everything-built-like-geometry), [Nakamura](#nakamuras-lean-project-checking-spinoza-with-a-proof-checker), [what we built](#what-we-built-and-why-it-matters)), then the technical README: [quick start](#0-quick-start), [results](#1-results-at-a-glance), [method](#3-method), [case studies](#4-case-studies), [trust](#5-why-trust-it), [limits](#6-limits), [reproduce](#7-reproduce).
+**Contents:** notes to [Nakamura](#a-note-to-yuki-nakamura), [the Lean community](#a-note-to-the-lean-community) and [the Vampire team](#a-note-to-the-vampire-team); four short sections for anyone ([the question](#where-this-started-does-spinozas-argument-go-through), [Spinoza](#spinozas-ethics-a-theory-of-everything-built-like-geometry), [Nakamura](#nakamuras-lean-project-checking-spinoza-with-a-proof-checker), [what we built](#what-we-built-and-why-it-matters)), then the technical README: [quick start](#0-quick-start), [results](#1-results-at-a-glance), [method](#3-method), [case studies](#4-case-studies), [trust](#5-why-trust-it), [limits](#6-limits), [reproduce](#7-reproduce).
+
+## A note to Yuki Nakamura
+
+Thank you. Your [spinoza-ethica-lean](https://github.com/Nakammura/spinoza-ethica-lean) is where this project started: its register of every assumption, and its honesty about open gaps, made it possible to ask a machine precise questions.
+
+What we did with it, at commit 6d4c046:
+- **Transcribed** your `Definitions.lean` and `Axioms.lean` into first-order TPTP, each line citing its Lean source (`examples/nakamura_a12.p`, `examples/nakamura_a15.p`). We checked the transcription first by reproducing your **positive** results.
+- **Found** counter-models for S-A12 and S-A15 automatically, with 2 elements each, in about 0.1 s.
+- **Certified them against your library, unmodified.** `nakamura/` compiles each model into instances of your `EthicaWorld` and `StatedAxioms` classes, and `#print axioms` reports only `propext`.
+- **Mapped** which register axioms each conclusion needs (`ablation/`).
+
+The models are smaller partly because one object is both a substance and an attribute, which your register permits. We touched only the first-order layer, not the S5 modal one. If anything here misrepresents your formalization, we'd be grateful to hear it: please open an issue.
+
+## A note to the Lean community
+
+Lean 4 can import *proofs* from automated provers. This project adds the converse: **kernel-checked counter-models**, showing that a claim does *not* follow from a set of axioms.
+
+What you get:
+- **Certificates use only Lean's standard axioms.** They use `decide` (shallow) or `decide +kernel` (reflected); `cm.py` never emits `native_decide`, and the benchmark reports the few results that needed it separately.
+- **A verified checker.** `Checker.lean` proves, once, that its evaluator agrees with ordinary first-order satisfaction (`sem_iff_sat`).
+- **No package dependencies.** It runs on Lean 4.35.0 alone.
+
+What we learned about the kernel at scale is in the whitepaper, §5:
+- certifying a million facts in a median of 5.2 minutes;
+- a failure band near 20,600 declarations per file on Lean 4.13;
+- three verdicts that improved between Lean 4.13 and 4.35.
+
+The obvious next step is a Lean command or tactic front end, so users never write TPTP by hand. Contributions and design advice are welcome.
+
+## A note to the Vampire team
+
+Thank you for Vampire. Its finite-model builder does all the searching here: `vampire -sa fmb -updr off`, version 5.1.0.
+
+This work is the converse of [vamplean](https://github.com/vprover/vamplean) (Bodingbauer et al., ITP 2026): they bring Vampire's *proofs* into Lean, and we bring its *models*. Vampire is treated as untrusted: only Lean's kernel decides whether a model becomes a certificate, and a wrong model never does.
+
+What Vampire found:
+- **The three TPTP samples:** within 30 s per problem, finite models for 78, 62 and 67 of 100 problems.
+- **Spinoza:** both 2-element models in about 0.1 s.
+- **NLP263+1:** a model for over a million facts.
+
+How we read Vampire's answers, for anyone building on it:
+- We parse the finite-model output (`cm.model`).
+- We classify each answer by its SZS status and termination reason (`cm.classify`). A 5.1 time limit exits with status 1 and no SZS status, so we read the termination reason.
+
+If either format changes, those two functions are the only places to update. Feedback is welcome.
 
 ## Where this started: does Spinoza's argument go through?
 
