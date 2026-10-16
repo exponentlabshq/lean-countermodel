@@ -80,14 +80,23 @@ python3 cm.py --reflect problem.p OUTDIR                             # a large p
 
 This project is a general tool for that last row: any first-order theory in TPTP. It is the converse of [3]: Bodingbauer et al. bring Vampire's *proofs* into Lean; we bring its *models*.
 
-## 3. How it works
+## 3. Method
 
-| Step | What happens | Trusted? |
-|---|---|---|
-| **Find** | `vampire -sa fmb -updr off` searches for a finite model of `axioms ∧ ¬conjecture`. Answers are cached by content; timeouts never are. | No |
-| **Rewrite** | Formulas are reshaped so checking can prune: miniscoping, flattening and greedy literal order | **Yes**, tested against the original formulas |
-| **Compile** | Either **shallow** (an `inductive T`, bitmask tables, one theorem per formula) or **reflected** (the problem as packed data, plus the model as packed tables) | **Yes**, the translation; tested independently |
-| **Certify** | Shallow: `decide` per formula. Reflected: `valid` and `Good M fns problem` by `decide +kernel`, concluding ordinary first-order satisfaction through `Checker.lean`'s `sem_iff_sat`, proved once. `#eval problem` prints exactly what is certified. | The kernel |
+A problem passes through six phases (`cm.py`, then Lean). Only one tool is trusted to decide the result: Lean's kernel.
+
+| Phase | What happens | Stack | Trusted? |
+|---|---|---|---|
+| **1. Find** | Vampire reads the original file and searches for a finite model of `axioms ∧ ¬conjecture`. Its answer is classified as a model, a definite non-model, a resource limit or a finder error. Only definite answers are cached, by content. | **Vampire 5.1.0**, `-sa fmb -updr off`, 30 s (`cm.vampire`, `cm.classify`) | **No**: a wrong model yields no certificate |
+| **2. Read** | `cm.py` reads the TPTP file itself, completely: every character is accounted for, or the file is rejected with a line number. Unsupported features are rejected, never misread. The file must be self-contained; the benchmark harness expands `include` directives first (`bench.py`). | Python 3.12, standard library only (`cm.statements`) | **Yes**, tested against an independent reader |
+| **3. Rewrite** | Formulas are reshaped so checking can prune: miniscoping, flattening and greedy literal order. | Python (`cm.problem`) | **Yes**, tested against the original formulas |
+| **4. Compile** | The model and formulas become Lean 4: **shallow** (an `inductive T`, bitmask tables, one theorem per formula) or **reflected** (the problem as packed data, plus the model as packed tables). Large problems are split into modules. | Python (`cm.emit`, `cm.emit_reflect`) | **Yes**, the translation; tested independently |
+| **5. Certify** | Shallow: `decide` per formula. Reflected: `valid` and `Good M fns problem` by `decide +kernel`, concluding ordinary first-order satisfaction through `sem_iff_sat`, proved once. `#eval problem` prints exactly what is certified. | **Lean 4.35.0** kernel (via elan), `Checker.lean`; no Lean package dependencies | **The trusted base**; certificates use only `propext` and `Quot.sound` |
+| **6. Audit** | An independent oracle re-evaluates the original formulas in the model; certificates are replayed from scratch; each safeguard is shown to fail when it should. | pytest (170 tests, with the oracle in `test_cm.py`), `leanchecker --fresh` (`recheck.sh`, `bench/replay.py`), `bench/fidelity.py`, `bench/negative-controls.sh` | Checks, not part of a certificate |
+
+**Around the pipeline:**
+- **Benchmark inputs:** the official TPTP v9.3.1 release, verified byte for byte (`bench/inputs.py`).
+- **Spinoza case study:** Z3 validated the transcription against Nakamura's positive results, and Nakamura's own Lean 4.13 library checks the counter-models (`nakamura/`).
+- **Whitepaper:** pandoc and Tectonic (`paper/assemble.py`).
 
 **Hybrid dispatch:** reflection wins on ground facts: 3.2× less CPU on a 10,000-fact slice and 2.6× on the million-fact problem, in the controlled comparison of §4.3. One theorem per formula still wins on deeply nested quantifiers. The benchmark uses reflection when at least 90% of formulas are ground facts. Details, the measured design patterns and the negative results are in the whitepaper, §4–5.
 
