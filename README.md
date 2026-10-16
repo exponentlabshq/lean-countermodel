@@ -6,14 +6,37 @@
   <em>Spinoza's theorem-proving crisis.</em>
 </p>
 
-**Kernel-checked finite counter-models for Lean 4, found by Vampire.**
+<h3 align="center">Kernel-checked finite counter-models for Lean 4, found by Vampire.</h3>
 
-**Website:** [lean-countermodel-vampire-spinoza.netlify.app](https://lean-countermodel-vampire-spinoza.netlify.app/): the Spinoza story, and an interactive tour of the tool ([/tool](https://lean-countermodel-vampire-spinoza.netlify.app/tool/)).
+<p align="center">
+  <a href="https://lean-countermodel-vampire-spinoza.netlify.app/"><b>Website</b></a> &nbsp;·&nbsp;
+  <a href="paper/whitepaper.pdf"><b>Whitepaper</b></a> &nbsp;·&nbsp;
+  <a href="#peer-review"><b>Peer review</b></a> &nbsp;·&nbsp;
+  <a href="#0-quick-start"><b>Quick start</b></a> &nbsp;·&nbsp;
+  <a href="AGENTS.md"><b>For AI agents</b></a>
+</p>
 
-**Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.pdf`](paper/whitepaper.pdf) ([Markdown](paper/whitepaper.md)) covers the method, data structures, scaling recipe, evaluation and related work. Working on the code with an AI agent? See [`AGENTS.md`](AGENTS.md).
+<p align="center">
+  Michael Jagdeo (Exponent Labs LLC) &nbsp;·&nbsp; Jeff Dumps
+</p>
 
+## Contents
 
-**Contents:** notes to [Nakamura](#a-note-to-yuki-nakamura), [the Lean community](#a-note-to-the-lean-community) and [the Vampire team](#a-note-to-the-vampire-team); four short sections for anyone ([the question](#where-this-started-does-spinozas-argument-go-through), [Spinoza](#spinozas-ethics-a-theory-of-everything-built-like-geometry), [Nakamura](#nakamuras-lean-project-checking-spinoza-with-a-proof-checker), [what we built](#what-we-built-and-why-it-matters)); the [peer review](#peer-review); then the technical README: [quick start](#0-quick-start), [results](#1-results-at-a-glance), [method](#3-method), [case studies](#4-case-studies), [trust](#5-why-trust-it), [limits](#6-limits), [reproduce](#7-reproduce).
+| | Section | What you'll find |
+|---|---|---|
+| **Notes** | [To Yuki Nakamura](#a-note-to-yuki-nakamura) | What we built on Nakamura's Lean formalization, and an invitation to correct us |
+| | [To the Lean community](#a-note-to-the-lean-community) | Kernel-checked counter-models, and what we learned about the kernel at scale |
+| | [To the Vampire team](#a-note-to-the-vampire-team) | How Vampire's models become Lean certificates |
+| **The story,** for anyone | [Where this started](#where-this-started-does-spinozas-argument-go-through) | A centuries-old dispute over one step in Spinoza's argument that only one substance exists |
+| | [Spinoza's *Ethics*](#spinozas-ethics-a-theory-of-everything-built-like-geometry) | A theory of everything, built like geometry |
+| | [Nakamura's Lean project](#nakamuras-lean-project-checking-spinoza-with-a-proof-checker) | Checking Spinoza with a proof checker |
+| | [What we built](#what-we-built-and-why-it-matters) | Why proving what does *not* follow matters, and what the tool achieved |
+| **Review** | [Peer review](#peer-review) | The reviewer's verdict, what it found, and what changed |
+| **Technical** | [0. Quick start](#0-quick-start) | Install, build, run your first certificate, run the tests |
+| | [1. Results](#1-results-at-a-glance) · [2. The gap](#2-the-gap) · [3. Method](#3-method) | What it achieves, what was missing in Lean, and the six phases with their stack |
+| | [4. Case studies](#4-case-studies) | TPTP benchmark, Spinoza, a million facts |
+| | [5. Trust](#5-why-trust-it) · [6. Limits](#6-limits) · [7. Reproduce](#7-reproduce) | Why the certificates mean what they say, what they don't cover, and every command |
+| | [License](#license) · [References](#references) | MIT; the papers we build on |
 
 ## A note to Yuki Nakamura
 
