@@ -42,6 +42,14 @@ for line in git("diff", "--name-status", "-M", BASE, HEAD).decode().splitlines()
     kind = "added" if st == "A" else "renamed" if st.startswith("R") else "changed"
     put(git("show", f"{HEAD}:{path}"), path, f"{kind} at {HEAD[:7]}")
 
+# Tracked files that the round-3 package left out and that are unchanged since, so the applied tree is complete.
+r3 = os.environ.get("ROUND3_MANIFEST", os.path.join(os.path.dirname(os.path.abspath(O)), "lean-countermodel-review-r3", "01_MANIFEST.json"))
+in_r3 = {e["repo_path"] for e in json.load(open(r3))["files"]} if os.path.exists(r3) else set()
+have = {e["repo_path"] for e in files}
+for path in git("ls-files").decode().split():
+    if in_r3 and path not in in_r3 and path not in have and path not in SKIP and path != "bench/slice10000.p":
+        put(git("show", f"{HEAD}:{path}"), path, f"unchanged since {BASE[:7]}, absent from the round-3 package")
+
 inputs = json.load(open("bench/inputs.json"))
 cmp_ = {os.path.basename(r["file"]): r for r in json.load(open("bench/parser-comparison.json"))["inputs"]}
 for f in sorted(p for p, r in cmp_.items() if r["status"] == "changed"):
