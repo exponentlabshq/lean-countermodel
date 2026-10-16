@@ -20,11 +20,11 @@ python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean  
 
 | Claim | Evidence |
 |---|---|
-| **Works on independent problems** | Three samples of 100 TPTP problems with status Satisfiable or CounterSatisfiable, inputs rebuilt from the official TPTP release, frozen code. On the **third sample, drawn and frozen before any result**, Vampire found 67 finite models and **59 were certified under a strict kernel-only policy (88.1%)**; 4 more use `native_decide` (a larger trusted base). Development: 71 of 78 (91.0%); second sample, later used for debugging: 55 of 62 (88.7%). See §4.1. |
+| **Works on independent problems** | Three samples of 100 TPTP problems with status Satisfiable or CounterSatisfiable, inputs rebuilt from the official TPTP release, all rerun at one commit after the round-4 repair. On the **third sample, selected before its first execution**, Vampire found 67 finite models and **59 were certified under a strict kernel-only policy (88.1%)**; 3 more use `native_decide` (a larger trusted base). Development: 71 of 78 (91.0%); second sample: 55 of 62 (88.7%). Descriptive results; see §4.1. |
 | **Scales to a million facts** | NLP263+1 (1,026,857 facts, 383,180 constants) is certified in a median **5.2 min** through the verified checker, against 14.1 min one-theorem-per-formula, in a controlled, repeated comparison on an 8 GB laptop |
-| **Beats hand construction on a published Lean project** | It reproduces both of Nakamura's hand-built Spinoza counter-models from his axioms alone, with **2-element** models against his 4 and 3, checked against his own library (§4.2) |
+| **Beats hand construction on a published Lean project** | It reproduces both of Nakamura's hand-built Spinoza counter-models from their axioms alone, with **2-element** models against their 4 and 3, checked against their own library (§4.2) |
 | **Proved semantics** | `Checker.lean` proves, once, that for a valid model (non-empty domain, closed functions) and closed, well-formed formulas, its evaluator agrees with **ordinary first-order satisfaction** on `Fin n`. Reflected certificates conclude exactly that, using only Lean's standard axioms (`propext`, `Quot.sound`). |
-| **Tested like it matters** | 106 tests: an independent evaluator of the original formulas, corrupted models, rewrite equivalence, kernel-checked boundary cases (empty domain, out-of-range constants, malformed data), rejection of unsupported syntax, variable capture, include expansion, and benchmark inputs checked byte for byte against the official TPTP release; `recheck.sh` replays every shipped certificate with `leanchecker --fresh`, and `bench/replay.py` every strict benchmark certificate |
+| **Tested like it matters** | 149 tests: an independent evaluator of the original formulas, corrupted models, rewrite equivalence, kernel-checked boundary cases (empty domain, out-of-range constants, malformed data), rejection of unsupported syntax, variable capture, include expansion, and benchmark inputs checked byte for byte against the official TPTP release; `recheck.sh` replays every shipped certificate with `leanchecker --fresh`, and `bench/replay.py` every strict benchmark certificate |
 
 ## 2. The gap
 
@@ -55,22 +55,25 @@ From TPTP's ProblemAndSolutionStatistics we kept the **2,561** fof/cnf problems 
 
 - **Development** (100): not uniform (the first 20 came from a domain-first picker), and used to find and fix bugs.
 - **Second sample** (100, uniform, seed 20261015): initially held out, then used to diagnose and repair defects. Descriptive, not an untouched test.
-- **Third sample** (100, uniform, seed 20261016): committed with the frozen code before any result existed. Its first run stopped when `KRS290-1` crashed the translator; the only change afterwards records such crashes as failures (`cm.py` unchanged), and both attempts are kept (whitepaper §6.2.1).
+- **Third sample** (100, uniform, seed 20261016): selected before its first execution. A harness-only change after an aborted attempt recorded translator exceptions as failures (whitepaper §6.2.1).
 
-| Outcome | Development (`acb343b`) | Second (`acb343b`) | **Third (`30ad4f3`)** |
+After the round-4 repair (below), all three samples were rerun at commit `66c8b32`, so all three have now been exposed to development and the results are descriptive. That rerun had a background process of ours occupying one CPU core; strict totals were unchanged.
+
+| Outcome (all at `66c8b32`) | Development | Second | **Third** |
 |---|---|---|---|
 | Unsupported input (rejected, never misread) | 3 | 4 | 3 |
-| Translator crash | 0 | 0 | 2 |
+| Translator crash (one before, one after a model was found) | 0 | 0 | 2 |
 | Vampire found no model (30 s) | 19 | 34 | 29 |
 | Models found | 78 | 62 | 67 |
 | **Certified, strict kernel only** | **71 (91.0% of models)** | **55 (88.7%)** | **59 (88.1%)** |
-| Certified with `native_decide` | 2 | 2 | 4 |
-| Lean rejected (time or instance-search limits) | 5 | 5 | 3 |
+| Certified with `native_decide` | 2 | 2 | 3 |
+| Lean rejected (time or instance-search limits) | 5 | 5 | 4 |
 | Full pipeline, strict, of all 100 | 71% | 55% | 59% |
 
 - **Given a model, strict certification rates are similar across the samples;** full-pipeline success varies mainly with how many models Vampire finds in 30 s.
 - **Uncertified candidates produced no certificate.** Most rejections are deeply nested formulas that exhaust Lean's instance search; the rest exceed the 60 s limit. The third sample also exposed two translator crashes (`KRS290-1`: recursion depth; `SYO595-1`: a >2,000-formula problem on the benchmark's shallow path), reported as failures.
-- **Rebuilding the inputs from the release found a defect:** the old expander also expanded includes inside comments, which had changed `RNG025-9` and `BOO008-3` and made both *no model*. On their correct inputs both are certified.
+- **Rebuilding the inputs from the release found a defect:** the old expander also expanded includes inside comments, which had changed `RNG025-9` and `BOO008-3`. Two benchmark no-model-found outcomes concerned altered inputs and are superseded; on their correct inputs both are certified.
+- **Round-4 artifact audit: record omission.** The record reader could skip a legal TPTP record without error. **Eight earlier certificates omitted source premises and were withdrawn. The repaired pipeline subsequently certified their complete source problems. Unchanged strict totals do not validate the superseded certificates.** One previously native-assisted result (`ALG310-1`) timed out in the rerun and is reported as a failure. Records are now read totally and fail-closed, the oracle reads them independently, and every certified result was checked against its original source file: 189 of 192 are faithful, and 3 remain unchecked and are named (`bench/coverage.md`). All 185 strict certificates passed `leanchecker --fresh`.
 - Superseded runs, kept for the record: `bench/superseded-*.jsonl` (whitepaper §6.2.1).
 - **Three verdicts improved between Lean 4.13 and 4.35 during development:**
   - NLP263+1 (§4.3);
@@ -79,39 +82,39 @@ From TPTP's ProblemAndSolutionStatistics we kept the **2,561** fof/cnf problems 
 
 ### 4.2 Spinoza's *Ethics*: Nakamura's Lean formalization [1]
 
-**The question.** Nakamura formalizes *Ethics* I in Lean 4. His *demote experiments* ask whether a contested axiom of Spinoza's follows from a weaker principle. Two of his published answers are negative:
+**The question.** Nakamura formalizes *Ethics* I in Lean 4. Nakamura's *demote experiments* ask whether a contested axiom of Spinoza's follows from a weaker principle. Two of their published answers are negative:
 
-- **S-A12:** A12 (an attribute belongs to one substance) does not follow from his `StatedAxioms` plus `PSRSubstance`, a principle of sufficient reason requiring distinct substances to differ in some attribute.
+- **S-A12:** A12 (an attribute belongs to one substance) does not follow from their `StatedAxioms` plus `PSRSubstance`, a principle of sufficient reason requiring distinct substances to differ in some attribute.
 - **S-A15:** A15 (every attribute of a substance is an attribute of God) does not follow from `StatedAxioms` plus plenitude.
 
-He proves both with counter-models he built **by hand** ([1] §4.4), with 4 and 3 elements. We asked whether the tool could find them on its own.
+Nakamura proves both with counter-models built **by hand** ([1] §4.4), with 4 and 3 elements. We asked whether the tool could find them on its own.
 
 **How we got the result.**
 
 | Step | What we did | Check |
 |---|---|---|
-| 1. Read | His `Definitions.lean`: 13 primitive predicates (`inItself`, `perSeConceived`, `intellectPerceivesAsEssence`, …) and the defined `Substance`, `Attribute` and `IsGod`. His `Axioms.lean`: the 12 `StatedAxioms` fields, 4 of which are `True` placeholders. His sufficient-reason classes. All at commit 6d4c046. | — |
-| 2. Transcribe | Into first-order logic: primitives → predicates; `def`s → biconditionals; the 8 nontrivial fields of his `StatedAxioms` register (12 fields, 4 of them `True` placeholders; the 8 mix stated axioms with his bridges A8–A11) → axioms; the weaker principle Σ → axiom; the target → conjecture. See `examples/nakamura_a12.p`. | Each line cites its Lean source |
-| 3. Validate | The transcription must reproduce his **positive** results before its negative ones mean anything | It does: weak P5 follows from StatedAxioms + `PSRSubstance`, and A15 from StatedAxioms + A25 + A26 (Z3, unsat cores) |
-| 4. Search, blind | `vampire -sa fmb` on each problem. The encoding came from his definitions and axioms only; we had read his `A15CounterModel` earlier, but not his `A12CounterModel`, and the search is automatic either way. | 2-element models in about 0.1 s. Z3 failed on S-A12. |
+| 1. Read | Nakamura's `Definitions.lean`: 13 primitive predicates (`inItself`, `perSeConceived`, `intellectPerceivesAsEssence`, …) and the defined `Substance`, `Attribute` and `IsGod`. Nakamura's `Axioms.lean`: the 12 `StatedAxioms` fields, 4 of which are `True` placeholders. Nakamura's sufficient-reason classes. All at commit 6d4c046. | — |
+| 2. Transcribe | Into first-order logic: primitives → predicates; `def`s → biconditionals; the 8 nontrivial fields of their `StatedAxioms` register (12 fields, 4 of them `True` placeholders; the 8 mix stated axioms with their bridges A8–A11) → axioms; the weaker principle Σ → axiom; the target → conjecture. See `examples/nakamura_a12.p`. | Each line cites its Lean source |
+| 3. Validate | The transcription must reproduce their **positive** results before its negative ones mean anything | It does: weak P5 follows from StatedAxioms + `PSRSubstance`, and A15 from StatedAxioms + A25 + A26 (Z3, unsat cores) |
+| 4. Search, blind | `vampire -sa fmb` on each problem. The encoding came from their definitions and axioms only; we had read their `A15CounterModel` earlier, but not their `A12CounterModel`, and the search is automatic either way. | 2-element models in about 0.1 s. Z3 failed on S-A12. |
 | 5a. Certify (transcription) | `cm.py` compiles the model; `decide` proves `axioms ∧ ¬conjecture` | `Cm/nakamura_a12.lean`, `Cm/nakamura_a15.lean` |
-| 5b. Certify (**his library**) | The same models are compiled into instances of **his own classes**: a finite `T`, `instance : EthicaWorld T` (13 tables), and `instance : StatedAxioms T` (every field by `decide`). Then `theorem result : StatedAxioms T ∧ Σ ∧ ¬A`. | `nakamura/`: builds against a fresh clone of his unmodified library; `#print axioms` gives `[propext]` |
+| 5b. Certify (**their library**) | The same models are compiled into instances of **their own classes**: a finite `T`, `instance : EthicaWorld T` (13 tables), and `instance : StatedAxioms T` (every field by `decide`). Then `theorem result : StatedAxioms T ∧ Σ ∧ ¬A`. | `nakamura/`: builds against a fresh clone of their unmodified library; `#print axioms` gives `[propext]` |
 
 **The models**, with `attribute(a, s)` meaning "a is an attribute of s":
 
 | | Universe | Substances | Attribute relation | Why the target fails |
 |---|---|---|---|---|
 | **S-A12** | {1, 2} | both | 1 is an attribute of 1; 2 is an attribute of 1 and of 2 | The two substances **share** attribute 2, so A12 fails. They also **differ** in attribute 1, so the sufficient-reason principle still holds. This is the shape of the classic objection to I P5: substances sharing one attribute and differing in another. |
-| **S-A15** | {1, 2} | both, and **both are gods** | 1 is an attribute of 1 and 2; 2 is an attribute of 2 only | Attribute 2 belongs to a substance, but not to god 1, so A15 fails. Plenitude holds, since every substance is itself a god. Two gods, as in his model. |
+| **S-A15** | {1, 2} | both, and **both are gods** | 1 is an attribute of 1 and 2; 2 is an attribute of 2 only | Attribute 2 belongs to a substance, but not to god 1, so A15 fails. Plenitude holds, since every substance is itself a god. Two gods, as in their model. |
 
 **Results.**
 
-| Claim | His model (by hand) | Ours (automatic) |
+| Claim | Nakamura's model (by hand) | Ours (automatic) |
 |---|---|---|
 | S-A12 | 4 elements | **2 elements**, 0.1 s |
 | S-A15 | 3 elements | **2 elements**, 0.1 s |
 
-**Caveat on "smaller".** In our models the same objects are both substances and attributes. Nakamura's axioms permit that: attributes are conceived through themselves, and so they count as substances under his definitions. But it is part of why the models are smaller. A sorted encoding that kept substances and attributes apart would test whether 2 elements still suffice.
+**Caveat on "smaller".** In our models the same objects are both substances and attributes. Nakamura's axioms permit that: attributes are conceived through themselves, and so they count as substances under their definitions. But it is part of why the models are smaller. A sorted encoding that kept substances and attributes apart would test whether 2 elements still suffice.
 
 **Further results in the same framework** (found earlier in this project, with an LLM proposing candidate premises and provers screening them; the counter-models were first written by hand and are now generated by `cm.py`):
 
@@ -166,7 +169,7 @@ This problem forced most of the scaling recipe. On the way it exposed four bugs:
 |---|---|
 | Requirements | Lean 4.35 (elan), Vampire 5.1.0 (on `PATH`, or set `VAMPIRE`), Python 3.12 with pytest. `nakamura/` pins Lean 4.13. The Lean project has no package dependencies. |
 | Vampire | One binary from the v5.1.0 release, e.g. `gh release download v5.1.0 -R vprover/vampire -p vampire-macOS-ARM64.zip && unzip vampire-macOS-ARM64.zip` (other platforms have their own assets) |
-| Tests | `lake build && pytest test_cm.py` (106 tests; the 18 that need no Vampire model also run without Vampire), including `tests/Boundary.lean`; `./recheck.sh` for axioms and a fresh kernel replay |
+| Tests | `lake build && pytest test_cm.py` (149 tests; the 61 that need no Vampire model also run without Vampire), including `tests/Boundary.lean`; `./recheck.sh` for axioms and a fresh kernel replay |
 | Examples | `lake build`, then `lake env lean Axioms.lean` |
 | Nakamura | `cd nakamura && lake build && lake env lean Axioms.lean` (clones spinoza-ethica-lean @ 6d4c046, about 11 MB) |
 | Benchmark inputs | `python3 bench/inputs.py TPTP-v9.3.1 [TPTP-v9.3.1.tgz]` rebuilds every input from the official release (934 MB tarball) and checks it against `bench/inputs.json` |

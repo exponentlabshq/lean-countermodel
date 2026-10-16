@@ -262,7 +262,7 @@ These truth-only lemmas are the inner layer of `good_of_check`, `good_facts` and
 
 | | Shallow (`emit`, §3.5) | Reflected (`emit_reflect`) |
 |---|---|---|
-| Statement form | one Lean `Prop` per formula over `inductive T`; `theorem c<i> : φᵢ := by decide` | ordinary satisfaction `φ.Sat (M.toStructure …)` for every φ in `problem`, over `Fm` data |
+| Statement form | one Lean `Prop` per formula over `inductive T`; `theorem c<i>' : φᵢ := by decide` | ordinary satisfaction `φ.Sat (M.toStructure …)` for every φ in `problem`, over `Fm` data |
 | Trusted code | `lean()`, `sym()`, `emit()`, rewriter, kernel | `tokens()`, `as_fact()`, symbol numbering, rewriter, kernel. `Checker.lean` is proved, and `#eval problem` exposes the statement |
 | Per-formula cost | parse + elaborate + typeclass search + `decide` for each formula | no per-formula elaboration: one Nat literal per block, evaluated by `decide +kernel` |
 | Axioms | `propext` (examples) | `propext`, `Quot.sound` |
@@ -280,11 +280,11 @@ Reflection wins on ground facts and loses badly on nested quantifiers. *Hypothes
 
 ### 4.6 Independent checks of the reflected path (`test_cm.py`)
 
-The reflected path trusts the encoder, not the evaluator. Two tests target it, both against `holds`, a brute-force evaluator of the original TPTP text. It shares the lexer, the `%`-comment stripper and the variable collector with `cm.py`, but no parser, rewriter or translator (§3.10).
+The reflected path trusts the encoder, not the evaluator. Two tests target it, both against `holds`, a brute-force evaluator of the original TPTP text. It reads records with its own reader and shares only the in-formula lexer and the variable collector with `cm.py`: no record reader, parser, rewriter or translator (§3.10).
 
 | Test | Check |
 |---|---|
 | `test_reflected_certificate` | `lake build Checker` succeeds, and for every `examples/*.p` the `emit_reflect` output is accepted by `lake env lean`. |
-| `test_reflected_mutants_agree_with_python` | Two random one-entry corruptions per example (seed 1): a predicate entry is flipped, or a function entry is changed to a different element. The list of reflected Lean verdicts must equal `[countermodel(p, *m) …]`, where `countermodel` evaluates `raw(p)`, the formulas as written in the source, and never `problem(p)`, the production rewriter. Call chain: `countermodel(p, n, consts, tables)` → `raw(p)` (regex over `uncomment(open(p).read())`) → `holds(f, n, consts, tables)` for each formula. Lean accepts **exactly** the mutants that Python accepts, and `not all(lean)` ensures that some mutant is rejected. |
+| `test_reflected_mutants_agree_with_python` | Two random one-entry corruptions per example (seed 1): a predicate entry is flipped, or a function entry is changed to a different element. The list of reflected Lean verdicts must equal `[countermodel(p, *m) …]`, where `countermodel` evaluates `raw(p)`, the formulas as written in the source, and never `problem(p)`, the production rewriter. Call chain: `countermodel(p, n, consts, tables)` → `raw(p)` → `records(text)` (the oracle's own lexer and record matcher over the whole file) → `holds(f, n, consts, tables)` for each formula. Lean accepts **exactly** the mutants that Python accepts, and `not all(lean)` ensures that some mutant is rejected. |
 
 A wrong translation in `tokens` or `as_fact` would certify a formula other than the TPTP one. The mutant test exposes this whenever a corrupted model separates the two formulas, which is why its docstring calls it a check on "the part of the reflected path that is trusted".

@@ -13,7 +13,7 @@ flowchart LR
     M --> F["Reflected emit<br/>emit_reflect()"]
     R --> S
     R --> F
-    S -->|"inductive T, bitmasks,<br/>theorem cᵢ := by decide"| K["Lean kernel"]
+    S -->|"inductive T, bitmasks,<br/>theorem cᵢ' := by decide"| K["Lean kernel"]
     F -->|"Model M, packed tokens,<br/>valid + Good ⇒ Sat"| K
     C["Checker.lean<br/>check_iff, holds_of_check"] --> K
 ```
@@ -23,7 +23,7 @@ flowchart LR
       │            -sa fmb -updr off                                     │
       │            -t 30, $CM_CACHE                                      │
       │                                                                  ▼
-      └──────► problem(path) ──► [(role, formula)] ──┬──► emit()         ── shallow:  T, masks, cᵢ := by decide ──┐
+      └──────► problem(path) ──► [(role, formula)] ──┬──► emit()         ── shallow:  T, masks, cᵢ' := by decide ─┐
                literals / clause / miniscope         └──► emit_reflect() ── reflected: M, Dᵦ/Fᵦ, valid+Good⇒Sat ──┤
                                                                                        ▲                         ▼
                                                                        Checker.lean ───┘                   Lean kernel
@@ -33,7 +33,7 @@ flowchart LR
 
 `vampire` runs `$VAMPIRE` (default `vampire`) with `-sa fmb -updr off -t 30`: the finite-model-building saturation algorithm, a 30 s limit, and unused-predicate-definition removal disabled. Without `-updr off`, Vampire may settle a problem by deleting unused predicates and print no model.
 
-If `$CM_CACHE` is set, the output is stored under `sha256(problem bytes ‖ flags ‖ vampire --version)`. A cache hit skips Vampire entirely, so a Lean upgrade reruns only Lean. Output containing `Time limit` is never written to the cache: a timeout reflects machine load, not the problem.
+If `$CM_CACHE` is set, the output is stored under `sha256(problem bytes ‖ flags ‖ vampire --version)`. A cache hit skips Vampire entirely, so a Lean upgrade reruns only Lean. Vampire's answer must carry an SZS status line or a termination reason. Vampire 5.1 reports a timeout as `% Termination reason: Time limit`, with exit status 1 and no SZS status, and the benchmark records it as *no model*. An answer with neither is an operational failure: `vampire` raises, nothing is cached, and the benchmark records *finder error*, never *no model*. Time and memory limits and run-dependent statuses (`Timeout`, `MemoryOut`, `ResourceOut`, `Error`, `InputError`, `OSError`) are never cached: they reflect the run, not the problem.
 
 ### 3.3 Model parse: `model(path)`
 
@@ -45,15 +45,19 @@ If `$CM_CACHE` is set, the output is stored under `sha256(problem bytes ‖ flag
 | `consts` | `tff(<c>_definition, axiom, c = 'fmb_$i_k')` → element `k`; `tff(<p>_definition, axiom, (~)p)` → `bool` | `{name: int \| bool}` |
 | `tables` | each `(~)f('fmb_$i_…', …) (= 'fmb_$i_k')`; `= k` makes a function entry, a bare (negated) atom a predicate entry | `{symbol: {args tuple: int \| bool}}` |
 
-Elements are numbered `1 … n` as Vampire prints them. If the output has no `FiniteModel`, `model` exits with `no finite counter-model found`; for a theorem this is the correct outcome (`test_a_theorem_has_no_counter_model`).
+Elements are numbered `1 … n` as Vampire prints them. If the output has no `FiniteModel`, `model` exits with `no finite counter-model found` and the SZS status; for a theorem this is the correct outcome (`test_a_theorem_has_no_counter_model`).
 
-Lexing is shared by every stage: `TOKENS` treats a quoted name `'…'` (including escaped quotes and `%`) as one token, and `uncomment` strips `%` comments only outside quoted names.
+**Reading records: `statements(path)`.** Before any formula is translated, `statements` reads the whole file and must account for every character: each is whitespace, part of a `%` comment, or part of a complete `fof` or `cnf` record `kind(name, role, formula[, annotations]).`. It walks the text once, respecting quoted tokens (whose `%`, commas and parentheses are not syntax), comments between any two tokens, and nesting depth. It splits each record at its top-level commas, so annotations are never read as part of the formula. A name must be a lower-case word, a single-quoted word (which may contain punctuation, as in `'thm.bool.TRUTH'`) or an integer. The role must be one that asserts a formula: `axiom`, `hypothesis`, `definition`, `assumption`, `lemma`, `theorem`, `corollary`, `plain`, `negated_conjecture` or `conjecture`. Anything else is rejected with its line number and no certificate is produced: another statement kind (`tff`, `include`, …), a malformed or unterminated record, an unknown role, or a `/* */` comment. `problem` and `ablate.py` both read records only through `statements`.
+
+This replaced a regular expression that *searched* for records rather than *reading* the file. A record it could not match was skipped without error: a quoted name containing punctuation, or a comment or whitespace between `fof` and `(`. The round-4 review found this with two contradictory two-record files, each of which lost its first axiom. In the benchmark it dropped records from 9 inputs (§6.2.2).
+
+Lexing within formulas is shared by every stage: `TOKENS` treats a quoted name `'…'` (including escaped quotes and `%`) as one token, and `uncomment` strips `%` comments only outside quoted names.
 
 ### 3.4 Rewrite: `problem`, `literals`, `clause`, `miniscope`
 
 `decide` and the reflected evaluator both evaluate bounded `∀` and `∨` lazily. A clause with *v* variables over *n* elements has *nᵛ* cases unless a false literal prunes its subtree. The rewrite moves each quantifier as close as possible to the first literal that uses its variable.
 
-`problem(path)` returns `[(role, formula)]`. For each annotated formula it calls `literals(f, cnf)`, which calls `clause(tokens, scope)` to flatten the formula into `(scope, disjuncts)`. The result is rewritten by `miniscope(scope, lits)` when the formula is `cnf`, or when it is `fof`, has a non-empty scope, and flattens into more than one literal. Every other formula is kept verbatim.
+`problem(path)` returns `[(role, formula)]`, one entry per record that `statements` read. For each it calls `literals(f, cnf)`, which calls `clause(tokens, scope)` to flatten the formula into `(scope, disjuncts)`. The result is rewritten by `miniscope(scope, lits)` when the formula is `cnf`, or when it is `fof`, has a non-empty scope, and flattens into more than one literal. Every other formula is kept verbatim.
 
 **`clause` rules** (applied recursively, on tokens; `unwrap` drops enclosing parentheses, `split` splits at a top-level operator):
 
@@ -83,7 +87,7 @@ miniscope(scope, lits, bound):
     return ![new(lit)]: body  if new(lit) ≠ ∅  else body
 ```
 
-Each variable is bound immediately before the first literal that uses it, via ∀X (A ∨ B) ↔ A ∨ ∀X B when X ∉ FV(A). The greedy order chooses the literal that introduces the fewest new variables, so selective guards come first and lazy evaluation prunes early. Each literal is parenthesized by `literals`, because `![Z]: A <=> B` would otherwise bind only `A`.
+Each variable is bound immediately before the first literal that uses it, via ∀X (A ∨ B) ↔ A ∨ ∀X B when X ∉ FV(A). The greedy order chooses the literal that introduces the fewest new variables. That can favour a useful guard, so lazy evaluation prunes early, but it does not estimate selectivity, which depends on the model's data (§5.2). Each literal is parenthesized by `literals`, because `![Z]: A <=> B` would otherwise bind only `A`.
 
 ### 3.5 Compile (shallow): `emit`
 
@@ -96,14 +100,14 @@ Each variable is bound immediately before the first literal that uses it, via �
 | Propositional symbol `p` | `abbrev «p» : Prop := True \| False` |
 | Predicate `p` of arity *k* | `abbrev «p» (x0 … x(k-1) : T) : Prop := (MASK >>> (1 * x0.idx + n * x1.idx + …)) % 2 = 1` |
 | Function `f` | `def «f» : T → … → T` by a pattern-matching table |
-| Formula *i* (from `lean(f)`) | `theorem c<i> : <φᵢ> := by decide`; a conjecture is emitted as `¬φ` |
+| Formula *i* (from `lean(f)`) | `theorem c<i>' : <φᵢ> := by decide`; a conjecture is emitted as `¬φ` |
 | Whole claim | `theorem countermodel : Nonempty T ∧ <tree of ∧> := ⟨⟨T.e1⟩, <tree of ⟨_, _⟩>⟩` |
 
 **Nonemptiness.** A Lean inductive type with no constructors is empty, and `∀ x : T, False` holds over it, although no first-order structure satisfies it. So the domain's nonemptiness is part of the certified statement: `Nonempty T`, proved by `⟨T.e1⟩` and checked by the kernel like every other conjunct. `emit` also refuses a model of size 0 before writing anything (`test_shallow_certificate_proves_a_nonempty_domain`).
 
 `tree(xs, pair)` builds balanced conjunctions and anonymous-constructor proofs: depth log₂ *m* instead of *m*, since a chain of 10,000 `∧` overflows the kernel. One theorem per formula gives each `decide` fresh caches.
 
-Every generated file starts with `set_option autoImplicit false`: an unbound name is an elaboration error, never a silently added implicit argument. `sym(k)` writes a TPTP symbol as `«k»` if it matches `[a-z]\w*`, and as `«'k'»` otherwise. Quoted names keep their quotes, so a constant `'X'` becomes `«'X'»` and cannot be captured by a bound variable `X`, and `'T'` cannot collide with the type `T` (`examples/quoted_capture.p`, `examples/quoted_names.p`).
+Every generated file starts with `set_option autoImplicit false`: an unbound name is an elaboration error, never a silently added implicit argument. `sym(k)` writes a TPTP symbol as `«k»` if it matches `[a-z]\w*`, and as `«'k'»` otherwise. Quoted names keep their quotes, so a constant `'X'` becomes `«'X'»` and cannot be captured by a bound variable `X`, and `'T'` cannot collide with the type `T` (`examples/quoted_capture.p`, `examples/quoted_names.p`). The emitter's own helper declarations carry a prime (`c0'`, `P0'`, `C0'`, `chunk0'`), which no TPTP lower-case word contains, and quoted names are emitted inside their quotes, so no source symbol can collide with them; a source symbol named `countermodel`, the one unprimed public name, is emitted quoted (`'countermodel'` is the same TPTP symbol). Peer review found the collision: a source constant `c0` clashed with the helper theorem `c0` (`test_source_symbols_cannot_collide_with_generated_names`).
 
 **Modular output.** If the problem has more than `CM_CHUNK` formulas (default 2000), `emit` returns a dict of modules instead of one string:
 
@@ -111,8 +115,8 @@ Every generated file starts with `set_option autoImplicit false`: an unbound nam
 |---|---|
 | `Base` | options, `T`, instances, predicate and function tables |
 | `Names<k>` | constant `abbrev`s, `CM_CHUNK × 5` (10,000 by default) per module |
-| `Chunk<j>` | `def P<i> : Prop := φᵢ`, `theorem c<i> : P<i> := by unfold P<i>; decide`, `def C<j>` (balanced ∧ of its `P<i>`), `theorem chunk<j> : C<j>` |
-| `Main` | `theorem countermodel : Nonempty T ∧ <tree of C<j>>` |
+| `Chunk<j>` | `def P<i>' : Prop := φᵢ`, `theorem c<i>' : P<i>' := by unfold P<i>'; decide`, `def C<j>'` (balanced ∧ of its `P<i>'`), `theorem chunk<j>' : C<j>'` |
+| `Main` | `theorem countermodel : Nonempty T ∧ <tree of C<j>'>` |
 
 Constants live in separate `Names` modules because Lean 4.13 fails with "deep recursion" on files with more than about 20,000 declarations (comment in `emit`). No module restates the whole problem, and `lake` checks chunks in parallel.
 
@@ -139,6 +143,7 @@ The kernel checks every `decide` (shallow) or `decide +kernel` (reflected) proof
 | Find | Vampire | **No** | A wrong model makes `decide` fail. Mutation tests confirm that Lean rejects broken models. |
 | Cache | `vampire()`, `$CM_CACHE` | **No** | It returns Vampire's output for an identical problem, flag set and version; the output is untrusted anyway. |
 | Model parse | `model()` | **No**, for reflected certificates | A misparse that leaves the domain is caught: `Model.valid` (non-empty domain, functions closed) and `Fm.wf` (constants in range, bound variables, checked arities) are kernel-checked parts of every reflected certificate. A misparse that stays in the domain yields a different structure. Lean then certifies that structure if, and only if, it satisfies the formulas. For shallow certificates, constants and function values are constructors of `T`, so they lie in the domain by construction, and nonemptiness is a kernel-checked conjunct of the statement (`Nonempty T`, §3.5). |
+| Record reading | `statements` | **Yes** | Which formulas exist. It must account for every character of the file or reject it, so a record cannot be dropped silently (§3.3). Tested against the oracle's separately written record reader and against hand-counted fixtures (`test_every_record_is_accounted_for`, `test_unreadable_records_are_rejected_not_skipped`); the round-4 regressions run a model of part of a problem through both certificate paths, which Lean must reject (`test_a_model_of_part_of_the_problem_is_rejected`). |
 | Rewrite | `problem`, `clause`, `literals`, `miniscope` | **Yes** | A non-equivalent rewrite changes what is certified. Tested by `test_rewriting_preserves_meaning` and regression examples. |
 | Translation (shallow) | `lean()`, `sym()`, `emit()` | **Yes** | The Lean statement must mean the TPTP formula. Tested by the independent evaluator and by mutant agreement; the statement is readable in the `.lean` file. |
 | Translation (reflected) | `tokens()`, `as_fact()`, symbol numbering | **Yes** | The `Fm` data must mean the TPTP formula. Tested by `test_reflected_mutants_agree_with_python` against an evaluator of the *original* formulas; `#eval problem` is a diagnostic that prints the decoded data (with numeric symbol ids), not a fidelity proof. |
@@ -171,13 +176,13 @@ abbrev «a» : T := T.e1
 abbrev «b» : T := T.e2
 abbrev «r» (x0 x1 : T) : Prop := (4 >>> (1 * x0.idx + 2 * x1.idx)) % 2 = 1
 
-theorem c0 : (∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z'))))) := by decide
-theorem c1 : («r» «a» «b») := by decide
-theorem c2 : ¬(«r» «b» «a») := by decide
+theorem c0' : (∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z'))))) := by decide
+theorem c1' : («r» «a» «b») := by decide
+theorem c2' : ¬(«r» «b» «a») := by decide
 
 theorem countermodel : Nonempty T ∧ (((∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z')))))) ∧
     (((«r» «a» «b»)) ∧ (¬(«r» «b» «a»)))) :=
-  ⟨⟨T.e1⟩, ⟨c0, ⟨c1, c2⟩⟩⟩
+  ⟨⟨T.e1⟩, ⟨c0', ⟨c1', c2'⟩⟩⟩
 ```
 
 TPTP variables are emitted primed (`X` becomes `X'`). A TPTP variable cannot contain `'`, so no variable can shadow the domain type `T` or a Lean constant such as `True`.
@@ -196,12 +201,12 @@ Reading the first stream: `9 9` is ∀∀, `6` is ∨, `4 0 0 2 (0 1) (0 0)` is 
 
 ### 3.10 Independent checks (`test_cm.py`)
 
-The trusted Python stages are tested against an evaluator that shares three small helpers with `cm.py`: the lexer (`TOKENS`), the `%`-comment stripper (`uncomment`) and the variable collector (`VARS`); it shares no parser, rewriter or translator. Each test declares the tools it needs: without Vampire, the 18 tests that need no model still run (rejection, preprocessing, nonemptiness, input integrity and the kernel boundary cases); with Vampire 5.1 and Lean 4.35, all 106 run.
+The trusted Python stages are tested against an evaluator with its **own record reader**. It shares two small helpers with `cm.py`: the lexer that its formula evaluator uses inside a formula (`TOKENS`) and the variable collector (`VARS`). It shares no record reader, parser, rewriter or translator. Until round 4 it also shared, by copying, the regular expression that decided which records exist, so both silently skipped the same records; peer review found this (§6.2.2). Each test declares the tools it needs: without Vampire, the 61 tests that need no Vampire model still run (record reading, rejection, preprocessing, nonemptiness, input integrity, name collisions, rewrite equivalence on small structures and the kernel boundary cases); with Vampire 5.1 and Lean 4.35, all 149 run.
 
 | Test | What it checks |
 |---|---|
 | `holds(s, n, consts, tables, env)` | Not a test: a brute-force evaluator of the **original** TPTP text. It parses with its own recursive descent and evaluates `!`/`?` with `itertools.product` over `1 … n`. It never sees `lean()`, `tokens()` or `Checker.lean`. |
-| `raw(path)` | The formulas as written in the source file: a separate regex over the (include-expanded) text, with `%` comments removed and each `cnf` clause closed by `![VARS]`. It never calls `problem()`, so none of `cm.py`'s rewriting reaches the oracle. |
+| `records(text)`, `raw(path)` | The oracle's reader of source records: a separate lexer (`ORACLE_LEX`) and a token-level matcher for `kind(name, role, formula[, annotations]).`, which must consume every token of the file. `raw` returns each record's role and formula, with each `cnf` clause closed by `![VARS]`. It never calls `statements()` or `problem()`, so none of `cm.py`'s record reading or rewriting reaches the oracle. |
 | `countermodel(path, …)` | Python's verdict on `raw(path)`: every original formula holds under `holds`, except the conjecture, which fails. Both mutant tests compare Lean against this verdict. |
 | `test_compiles_to_committed_file`, `test_reflects_to_committed_file` | `cm.py` output equals the committed `Cm/<name>.lean` (shallow) and `Refl/<name>.lean` (reflected), for each of the 15 `examples/*.p`. |
 | `test_kernel_accepts_with_propext_only` | `lake build` succeeds and every line of `#print axioms` (via `Axioms.lean`) ends with `[propext]`. |
@@ -223,8 +228,17 @@ The trusted Python stages are tested against an evaluator that shares three smal
 | `test_block_comments_are_rejected` | A `/* … */` comment, which `cm.py` does not strip, is refused rather than read as formulas; `'/*'` inside a quoted name is just a name. |
 | `test_shallow_certificate_proves_a_nonempty_domain` | `emit` refuses a 0-element model, and every committed shallow certificate states `Nonempty T ∧ …`. |
 | `test_benchmark_inputs_match_their_sources` | Every benchmark input equals `bench.expand` applied to its TPTP original, byte for byte, and originals, expansions and axiom files match the SHA-256s in `bench/inputs.json`. Skipped if the inputs have not been rebuilt (`bench/inputs.py`). |
+| `test_every_record_is_accounted_for` (7 cases), `test_annotations_are_not_formulas` | Hand-counted files: the reviewer's two contradictory files (2 records each), spaced and commented record syntax, annotations, integer and punctuated quoted names (`'thm.bool.TRUTH'`, `'it\'s'`), a `%` inside a name, and a comment hiding a fake record. `statements`, the oracle's `records` and `problem` must each find exactly the hand count. |
+| `test_unreadable_records_are_rejected_not_skipped` (9 cases) | Stray text, a record without a formula, an unknown role, `tff`, `include`, a missing `.`, unbalanced parentheses, a `/* */` comment and a two-word name: both readers refuse the whole file. |
+| `test_a_model_of_part_of_the_problem_is_rejected` (2 cases) | The round-4 reviewer's protocol: for each contradictory file, a one-element model of only `~p(a)`. The oracle rejects it, and Lean rejects both the shallow and the reflected certificate. |
+| `test_source_symbols_cannot_collide_with_generated_names` | Symbols named `c0`, `p0`, `chunk0` and `countermodel` certify on both paths. |
+| `test_a_failing_finder_is_not_a_search_outcome`, `test_benchmark_reports_a_failing_finder_as_finder_error` | A finder that prints no SZS status or termination reason and exits non-zero: `cm.py` reports *vampire failed*, the benchmark records *finder error*, and nothing is cached. |
+| `test_a_timeout_is_a_search_outcome_not_a_failure` | Vampire 5.1's timeout output (`Termination reason: Time limit`, exit 1, no SZS status): the benchmark records *no model*, and nothing is cached. |
+| `test_rewriting_is_equivalent_on_every_small_structure` (18 cases) | Adversarial forms for the rewrite (independent variables, a shadowed variable, ∀ moved across ∨, implication flattening, vacuous quantification, ∃ under ∀, equality, negated conjunction, an equivalence, transitivity clauses): original and rewritten formulas agree on every interpretation of constants `a`, `b`, unary `p`, `q` and binary `r` over domains of size 1 and 2 (8 + 1,024 structures each). Exhaustive within that finite space, not a proof. |
+| `test_clause_search_agrees_with_brute_force` | `clause_holds`, an independent evaluator of `cnf` clauses that searches for a falsifying assignment, agrees with `holds` on six clauses over the same 1,032 structures (each clause is false on 192 to 578 of them). |
+| `test_fidelity_check_flags_a_model_of_part_of_the_problem` | `bench/fidelity.py` reports NOT FAITHFUL for the round-4 reviewer's wrong model, because it reads the whole original file. |
 | `test_ablation_finds_what_a_conclusion_needs` | `ablate.py` labels a needed axiom with a certified counter-model, and never labels an underivable target as needing anything. |
 
-The suite has **106 test cases**: 5 tests parametrized over the 15 examples (75), 14 rejection and capture cases, and 17 single tests. Separately, `recheck.sh` rebuilds all 30 shipped certificates, prints their axioms and replays `Checker`, `AllShallow` and `AllReflected` through the kernel from scratch with `leanchecker --fresh` (Lean 4.35); its output is `bench/recheck.log`. The benchmark certificates are replayed the same way by `bench/replay.py` (§6.2).
+The suite has **149 test cases**: 5 tests parametrized over the 15 examples (75), 14 rejection and capture cases, 18 record-reading cases, 18 adversarial rewrite cases, and 24 single tests. Separately, `recheck.sh` rebuilds all 30 shipped certificates, prints their axioms and replays `Checker`, `AllShallow` and `AllReflected` through the kernel from scratch with `leanchecker --fresh` (Lean 4.35); its output is `bench/recheck.log`. The benchmark certificates are replayed the same way by `bench/replay.py` (§6.2).
 
 **Planted bugs.** The suite was validated by introducing known bugs into `cm.py` and confirming failures (README §5): `=>` compiled as `↔` (7 tests fail), a scoping bug (4), a dropped negation (18), a lost parenthesis (4), and the single-formula case (1). The planted variants are not in the repository; the counts are those recorded in the README, measured against the suite at that time.

@@ -23,8 +23,9 @@ Most of the work is in making the check finish. One benchmark clause has about $
 
 **Evaluation:**
 
-- **Three samples of 100 TPTP problems** with status Satisfiable or CounterSatisfiable [34] (fof/cnf), inputs rebuilt byte for byte from the official TPTP release and run with frozen code. On a **third sample drawn and frozen before any result**, Vampire found 67 finite models within 30 s, and **59 were certified under our strict kernel-only policy (88.1% of models, 59% of all problems)**; 4 more with native evaluation, which enlarges the trusted base. The development set gives 71 of 78 (91.0%), and a second sample, initially held out and later used for debugging, 55 of 62 (88.7%). Conditional certification rates are similar across the three; full-pipeline success varies more (71%, 55%, 59%), mainly with how many models the finder returns. Uncertified candidates hit Lean's time or instance-search limits and produced no certificate; two third-sample inputs crashed the translator and are reported as failures.
-- **A million-fact theory.** NLP263+1 (1,026,857 facts) is certified in a median 5.2 minutes reflected, against 14.1 minutes shallow, in a controlled, repeated comparison on the same Lean version, worker budget and laptop: about 2.7× in wall time and 2.6× in CPU time. Its model has one element, so this measures certificate throughput, not combinatorial checking.
+- **Three samples of 100 TPTP problems** with status Satisfiable or CounterSatisfiable [34] (fof/cnf), inputs rebuilt byte for byte from the official TPTP release. After the round-4 repair (below), all three were rerun at one commit. On the **third sample, selected before its first execution**, Vampire found 67 finite models within 30 s, and **59 were certified under our strict kernel-only policy (88.1% of models, 59% of all problems)**; 3 more with native evaluation, which enlarges the trusted base. The development set gives 71 of 78 (91.0%) and the second sample 55 of 62 (88.7%), with 2 native-assisted each. Conditional certification rates are similar across the three; full-pipeline success varies more (71%, 55%, 59%), mainly with how many models the finder returns. Uncertified candidates either hit Lean's time or instance-search limits or, in one case (`SYO595-1`), crashed in certificate generation; one further input crashed the translator. All are reported as failures. All three samples have now been exposed to development, so these are descriptive results, not an untouched test.
+- **A source-fidelity correction.** Peer review found that the record reader could skip a legal TPTP record without error. **Eight earlier certificates omitted source premises and were withdrawn. The repaired pipeline subsequently certified their complete source problems. Unchanged strict totals do not validate the superseded certificates.** One previously native-assisted result timed out in the rerun and is reported as a failure. Records are now read totally and fail-closed, the test oracle reads them independently, and every certified result is checked against its original source file (§6.2.2).
+- **A million-fact theory.** NLP263+1 (1,026,857 facts) is certified in a median 5.2 minutes reflected, against 14.1 minutes shallow, in a controlled, repeated comparison on the same Lean version, worker budget and laptop: about 2.7× in wall time and 2.6× in CPU time. These timings were measured at an earlier commit; These timings were measured at an earlier commit. The final code generates a byte-identical reflected certificate; its shallow certificate differs only by renamed helper declarations and one conjunct (`Nonempty T`), and was not re-timed (§6.3.1). Its model has one element, so this measures certificate throughput, not combinatorial checking.
 - **A published Lean formalization.** The tool reproduces, from axioms alone, both hand-built counter-models of Nakamura's Lean reconstruction of Spinoza's *Ethics*, with smaller models. It also produces a certified negative-dependency map of that reconstruction's register.
 
 **Keywords:** Lean 4 · finite model finding · counter-models · Vampire · TPTP · proof by reflection · certificates · interactive theorem proving
@@ -70,6 +71,7 @@ Most of the work is in making the check finish. One benchmark clause has about $
 - Table: 6.1.1 The assumption-dependency map
 - Table: 6.2 Case study B: three samples of TPTP
 - Table: 6.2.1 The second and third samples
+- Table: 6.2.2 Round-4 repair: record omission, and what it changed
 - Table: 6.3.1 Controlled comparison
 - Table: 6.4 Summary
 - Table: 7.6 Comparison
@@ -157,7 +159,7 @@ flowchart LR
     M --> F["Reflected emit<br/>emit_reflect()"]
     R --> S
     R --> F
-    S -->|"inductive T, bitmasks,<br/>theorem cᵢ := by decide"| K["Lean kernel"]
+    S -->|"inductive T, bitmasks,<br/>theorem cᵢ' := by decide"| K["Lean kernel"]
     F -->|"Model M, packed tokens,<br/>valid + Good ⇒ Sat"| K
     C["Checker.lean<br/>check_iff, holds_of_check"] --> K
 ```
@@ -167,7 +169,7 @@ flowchart LR
       │            -sa fmb -updr off                                     │
       │            -t 30, $CM_CACHE                                      │
       │                                                                  ▼
-      └──────► problem(path) ──► [(role, formula)] ──┬──► emit()         ── shallow:  T, masks, cᵢ := by decide ──┐
+      └──────► problem(path) ──► [(role, formula)] ──┬──► emit()         ── shallow:  T, masks, cᵢ' := by decide ─┐
                literals / clause / miniscope         └──► emit_reflect() ── reflected: M, Dᵦ/Fᵦ, valid+Good⇒Sat ──┤
                                                                                        ▲                         ▼
                                                                        Checker.lean ───┘                   Lean kernel
@@ -177,7 +179,7 @@ flowchart LR
 
 `vampire` runs `$VAMPIRE` (default `vampire`) with `-sa fmb -updr off -t 30`: the finite-model-building saturation algorithm, a 30 s limit, and unused-predicate-definition removal disabled. Without `-updr off`, Vampire may settle a problem by deleting unused predicates and print no model.
 
-If `$CM_CACHE` is set, the output is stored under `sha256(problem bytes ‖ flags ‖ vampire --version)`. A cache hit skips Vampire entirely, so a Lean upgrade reruns only Lean. Output containing `Time limit` is never written to the cache: a timeout reflects machine load, not the problem.
+If `$CM_CACHE` is set, the output is stored under `sha256(problem bytes ‖ flags ‖ vampire --version)`. A cache hit skips Vampire entirely, so a Lean upgrade reruns only Lean. Vampire's answer must carry an SZS status line or a termination reason. Vampire 5.1 reports a timeout as `% Termination reason: Time limit`, with exit status 1 and no SZS status, and the benchmark records it as *no model*. An answer with neither is an operational failure: `vampire` raises, nothing is cached, and the benchmark records *finder error*, never *no model*. Time and memory limits and run-dependent statuses (`Timeout`, `MemoryOut`, `ResourceOut`, `Error`, `InputError`, `OSError`) are never cached: they reflect the run, not the problem.
 
 ### 3.3 Model parse: `model(path)`
 
@@ -189,15 +191,19 @@ If `$CM_CACHE` is set, the output is stored under `sha256(problem bytes ‖ flag
 | `consts` | `tff(<c>_definition, axiom, c = 'fmb_$i_k')` → element `k`; `tff(<p>_definition, axiom, (~)p)` → `bool` | `{name: int \| bool}` |
 | `tables` | each `(~)f('fmb_$i_…', …) (= 'fmb_$i_k')`; `= k` makes a function entry, a bare (negated) atom a predicate entry | `{symbol: {args tuple: int \| bool}}` |
 
-Elements are numbered `1 … n` as Vampire prints them. If the output has no `FiniteModel`, `model` exits with `no finite counter-model found`; for a theorem this is the correct outcome (`test_a_theorem_has_no_counter_model`).
+Elements are numbered `1 … n` as Vampire prints them. If the output has no `FiniteModel`, `model` exits with `no finite counter-model found` and the SZS status; for a theorem this is the correct outcome (`test_a_theorem_has_no_counter_model`).
 
-Lexing is shared by every stage: `TOKENS` treats a quoted name `'…'` (including escaped quotes and `%`) as one token, and `uncomment` strips `%` comments only outside quoted names.
+**Reading records: `statements(path)`.** Before any formula is translated, `statements` reads the whole file and must account for every character: each is whitespace, part of a `%` comment, or part of a complete `fof` or `cnf` record `kind(name, role, formula[, annotations]).`. It walks the text once, respecting quoted tokens (whose `%`, commas and parentheses are not syntax), comments between any two tokens, and nesting depth. It splits each record at its top-level commas, so annotations are never read as part of the formula. A name must be a lower-case word, a single-quoted word (which may contain punctuation, as in `'thm.bool.TRUTH'`) or an integer. The role must be one that asserts a formula: `axiom`, `hypothesis`, `definition`, `assumption`, `lemma`, `theorem`, `corollary`, `plain`, `negated_conjecture` or `conjecture`. Anything else is rejected with its line number and no certificate is produced: another statement kind (`tff`, `include`, …), a malformed or unterminated record, an unknown role, or a `/* */` comment. `problem` and `ablate.py` both read records only through `statements`.
+
+This replaced a regular expression that *searched* for records rather than *reading* the file. A record it could not match was skipped without error: a quoted name containing punctuation, or a comment or whitespace between `fof` and `(`. The round-4 review found this with two contradictory two-record files, each of which lost its first axiom. In the benchmark it dropped records from 9 inputs (§6.2.2).
+
+Lexing within formulas is shared by every stage: `TOKENS` treats a quoted name `'…'` (including escaped quotes and `%`) as one token, and `uncomment` strips `%` comments only outside quoted names.
 
 ### 3.4 Rewrite: `problem`, `literals`, `clause`, `miniscope`
 
 `decide` and the reflected evaluator both evaluate bounded `∀` and `∨` lazily. A clause with *v* variables over *n* elements has *nᵛ* cases unless a false literal prunes its subtree. The rewrite moves each quantifier as close as possible to the first literal that uses its variable.
 
-`problem(path)` returns `[(role, formula)]`. For each annotated formula it calls `literals(f, cnf)`, which calls `clause(tokens, scope)` to flatten the formula into `(scope, disjuncts)`. The result is rewritten by `miniscope(scope, lits)` when the formula is `cnf`, or when it is `fof`, has a non-empty scope, and flattens into more than one literal. Every other formula is kept verbatim.
+`problem(path)` returns `[(role, formula)]`, one entry per record that `statements` read. For each it calls `literals(f, cnf)`, which calls `clause(tokens, scope)` to flatten the formula into `(scope, disjuncts)`. The result is rewritten by `miniscope(scope, lits)` when the formula is `cnf`, or when it is `fof`, has a non-empty scope, and flattens into more than one literal. Every other formula is kept verbatim.
 
 **`clause` rules** (applied recursively, on tokens; `unwrap` drops enclosing parentheses, `split` splits at a top-level operator):
 
@@ -227,7 +233,7 @@ miniscope(scope, lits, bound):
     return ![new(lit)]: body  if new(lit) ≠ ∅  else body
 ```
 
-Each variable is bound immediately before the first literal that uses it, via ∀X (A ∨ B) ↔ A ∨ ∀X B when X ∉ FV(A). The greedy order chooses the literal that introduces the fewest new variables, so selective guards come first and lazy evaluation prunes early. Each literal is parenthesized by `literals`, because `![Z]: A <=> B` would otherwise bind only `A`.
+Each variable is bound immediately before the first literal that uses it, via ∀X (A ∨ B) ↔ A ∨ ∀X B when X ∉ FV(A). The greedy order chooses the literal that introduces the fewest new variables. That can favour a useful guard, so lazy evaluation prunes early, but it does not estimate selectivity, which depends on the model's data (§5.2). Each literal is parenthesized by `literals`, because `![Z]: A <=> B` would otherwise bind only `A`.
 
 ### 3.5 Compile (shallow): `emit`
 
@@ -240,14 +246,14 @@ Each variable is bound immediately before the first literal that uses it, via �
 | Propositional symbol `p` | `abbrev «p» : Prop := True \| False` |
 | Predicate `p` of arity *k* | `abbrev «p» (x0 … x(k-1) : T) : Prop := (MASK >>> (1 * x0.idx + n * x1.idx + …)) % 2 = 1` |
 | Function `f` | `def «f» : T → … → T` by a pattern-matching table |
-| Formula *i* (from `lean(f)`) | `theorem c<i> : <φᵢ> := by decide`; a conjecture is emitted as `¬φ` |
+| Formula *i* (from `lean(f)`) | `theorem c<i>' : <φᵢ> := by decide`; a conjecture is emitted as `¬φ` |
 | Whole claim | `theorem countermodel : Nonempty T ∧ <tree of ∧> := ⟨⟨T.e1⟩, <tree of ⟨_, _⟩>⟩` |
 
 **Nonemptiness.** A Lean inductive type with no constructors is empty, and `∀ x : T, False` holds over it, although no first-order structure satisfies it. So the domain's nonemptiness is part of the certified statement: `Nonempty T`, proved by `⟨T.e1⟩` and checked by the kernel like every other conjunct. `emit` also refuses a model of size 0 before writing anything (`test_shallow_certificate_proves_a_nonempty_domain`).
 
 `tree(xs, pair)` builds balanced conjunctions and anonymous-constructor proofs: depth log₂ *m* instead of *m*, since a chain of 10,000 `∧` overflows the kernel. One theorem per formula gives each `decide` fresh caches.
 
-Every generated file starts with `set_option autoImplicit false`: an unbound name is an elaboration error, never a silently added implicit argument. `sym(k)` writes a TPTP symbol as `«k»` if it matches `[a-z]\w*`, and as `«'k'»` otherwise. Quoted names keep their quotes, so a constant `'X'` becomes `«'X'»` and cannot be captured by a bound variable `X`, and `'T'` cannot collide with the type `T` (`examples/quoted_capture.p`, `examples/quoted_names.p`).
+Every generated file starts with `set_option autoImplicit false`: an unbound name is an elaboration error, never a silently added implicit argument. `sym(k)` writes a TPTP symbol as `«k»` if it matches `[a-z]\w*`, and as `«'k'»` otherwise. Quoted names keep their quotes, so a constant `'X'` becomes `«'X'»` and cannot be captured by a bound variable `X`, and `'T'` cannot collide with the type `T` (`examples/quoted_capture.p`, `examples/quoted_names.p`). The emitter's own helper declarations carry a prime (`c0'`, `P0'`, `C0'`, `chunk0'`), which no TPTP lower-case word contains, and quoted names are emitted inside their quotes, so no source symbol can collide with them; a source symbol named `countermodel`, the one unprimed public name, is emitted quoted (`'countermodel'` is the same TPTP symbol). Peer review found the collision: a source constant `c0` clashed with the helper theorem `c0` (`test_source_symbols_cannot_collide_with_generated_names`).
 
 **Modular output.** If the problem has more than `CM_CHUNK` formulas (default 2000), `emit` returns a dict of modules instead of one string:
 
@@ -255,8 +261,8 @@ Every generated file starts with `set_option autoImplicit false`: an unbound nam
 |---|---|
 | `Base` | options, `T`, instances, predicate and function tables |
 | `Names<k>` | constant `abbrev`s, `CM_CHUNK × 5` (10,000 by default) per module |
-| `Chunk<j>` | `def P<i> : Prop := φᵢ`, `theorem c<i> : P<i> := by unfold P<i>; decide`, `def C<j>` (balanced ∧ of its `P<i>`), `theorem chunk<j> : C<j>` |
-| `Main` | `theorem countermodel : Nonempty T ∧ <tree of C<j>>` |
+| `Chunk<j>` | `def P<i>' : Prop := φᵢ`, `theorem c<i>' : P<i>' := by unfold P<i>'; decide`, `def C<j>'` (balanced ∧ of its `P<i>'`), `theorem chunk<j>' : C<j>'` |
+| `Main` | `theorem countermodel : Nonempty T ∧ <tree of C<j>'>` |
 
 Constants live in separate `Names` modules because Lean 4.13 fails with "deep recursion" on files with more than about 20,000 declarations (comment in `emit`). No module restates the whole problem, and `lake` checks chunks in parallel.
 
@@ -283,6 +289,7 @@ The kernel checks every `decide` (shallow) or `decide +kernel` (reflected) proof
 | Find | Vampire | **No** | A wrong model makes `decide` fail. Mutation tests confirm that Lean rejects broken models. |
 | Cache | `vampire()`, `$CM_CACHE` | **No** | It returns Vampire's output for an identical problem, flag set and version; the output is untrusted anyway. |
 | Model parse | `model()` | **No**, for reflected certificates | A misparse that leaves the domain is caught: `Model.valid` (non-empty domain, functions closed) and `Fm.wf` (constants in range, bound variables, checked arities) are kernel-checked parts of every reflected certificate. A misparse that stays in the domain yields a different structure. Lean then certifies that structure if, and only if, it satisfies the formulas. For shallow certificates, constants and function values are constructors of `T`, so they lie in the domain by construction, and nonemptiness is a kernel-checked conjunct of the statement (`Nonempty T`, §3.5). |
+| Record reading | `statements` | **Yes** | Which formulas exist. It must account for every character of the file or reject it, so a record cannot be dropped silently (§3.3). Tested against the oracle's separately written record reader and against hand-counted fixtures (`test_every_record_is_accounted_for`, `test_unreadable_records_are_rejected_not_skipped`); the round-4 regressions run a model of part of a problem through both certificate paths, which Lean must reject (`test_a_model_of_part_of_the_problem_is_rejected`). |
 | Rewrite | `problem`, `clause`, `literals`, `miniscope` | **Yes** | A non-equivalent rewrite changes what is certified. Tested by `test_rewriting_preserves_meaning` and regression examples. |
 | Translation (shallow) | `lean()`, `sym()`, `emit()` | **Yes** | The Lean statement must mean the TPTP formula. Tested by the independent evaluator and by mutant agreement; the statement is readable in the `.lean` file. |
 | Translation (reflected) | `tokens()`, `as_fact()`, symbol numbering | **Yes** | The `Fm` data must mean the TPTP formula. Tested by `test_reflected_mutants_agree_with_python` against an evaluator of the *original* formulas; `#eval problem` is a diagnostic that prints the decoded data (with numeric symbol ids), not a fidelity proof. |
@@ -315,13 +322,13 @@ abbrev «a» : T := T.e1
 abbrev «b» : T := T.e2
 abbrev «r» (x0 x1 : T) : Prop := (4 >>> (1 * x0.idx + 2 * x1.idx)) % 2 = 1
 
-theorem c0 : (∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z'))))) := by decide
-theorem c1 : («r» «a» «b») := by decide
-theorem c2 : ¬(«r» «b» «a») := by decide
+theorem c0' : (∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z'))))) := by decide
+theorem c1' : («r» «a» «b») := by decide
+theorem c2' : ¬(«r» «b» «a») := by decide
 
 theorem countermodel : Nonempty T ∧ (((∀ X' Y' : T, (¬(«r» X' Y') ∨ (∀ Z' : T, (¬(«r» Y' Z') ∨ («r» X' Z')))))) ∧
     (((«r» «a» «b»)) ∧ (¬(«r» «b» «a»)))) :=
-  ⟨⟨T.e1⟩, ⟨c0, ⟨c1, c2⟩⟩⟩
+  ⟨⟨T.e1⟩, ⟨c0', ⟨c1', c2'⟩⟩⟩
 ```
 
 TPTP variables are emitted primed (`X` becomes `X'`). A TPTP variable cannot contain `'`, so no variable can shadow the domain type `T` or a Lean constant such as `True`.
@@ -340,12 +347,12 @@ Reading the first stream: `9 9` is ∀∀, `6` is ∨, `4 0 0 2 (0 1) (0 0)` is 
 
 ### 3.10 Independent checks (`test_cm.py`)
 
-The trusted Python stages are tested against an evaluator that shares three small helpers with `cm.py`: the lexer (`TOKENS`), the `%`-comment stripper (`uncomment`) and the variable collector (`VARS`); it shares no parser, rewriter or translator. Each test declares the tools it needs: without Vampire, the 18 tests that need no model still run (rejection, preprocessing, nonemptiness, input integrity and the kernel boundary cases); with Vampire 5.1 and Lean 4.35, all 106 run.
+The trusted Python stages are tested against an evaluator with its **own record reader**. It shares two small helpers with `cm.py`: the lexer that its formula evaluator uses inside a formula (`TOKENS`) and the variable collector (`VARS`). It shares no record reader, parser, rewriter or translator. Until round 4 it also shared, by copying, the regular expression that decided which records exist, so both silently skipped the same records; peer review found this (§6.2.2). Each test declares the tools it needs: without Vampire, the 61 tests that need no Vampire model still run (record reading, rejection, preprocessing, nonemptiness, input integrity, name collisions, rewrite equivalence on small structures and the kernel boundary cases); with Vampire 5.1 and Lean 4.35, all 149 run.
 
 | Test | What it checks |
 |---|---|
 | `holds(s, n, consts, tables, env)` | Not a test: a brute-force evaluator of the **original** TPTP text. It parses with its own recursive descent and evaluates `!`/`?` with `itertools.product` over `1 … n`. It never sees `lean()`, `tokens()` or `Checker.lean`. |
-| `raw(path)` | The formulas as written in the source file: a separate regex over the (include-expanded) text, with `%` comments removed and each `cnf` clause closed by `![VARS]`. It never calls `problem()`, so none of `cm.py`'s rewriting reaches the oracle. |
+| `records(text)`, `raw(path)` | The oracle's reader of source records: a separate lexer (`ORACLE_LEX`) and a token-level matcher for `kind(name, role, formula[, annotations]).`, which must consume every token of the file. `raw` returns each record's role and formula, with each `cnf` clause closed by `![VARS]`. It never calls `statements()` or `problem()`, so none of `cm.py`'s record reading or rewriting reaches the oracle. |
 | `countermodel(path, …)` | Python's verdict on `raw(path)`: every original formula holds under `holds`, except the conjecture, which fails. Both mutant tests compare Lean against this verdict. |
 | `test_compiles_to_committed_file`, `test_reflects_to_committed_file` | `cm.py` output equals the committed `Cm/<name>.lean` (shallow) and `Refl/<name>.lean` (reflected), for each of the 15 `examples/*.p`. |
 | `test_kernel_accepts_with_propext_only` | `lake build` succeeds and every line of `#print axioms` (via `Axioms.lean`) ends with `[propext]`. |
@@ -367,9 +374,18 @@ The trusted Python stages are tested against an evaluator that shares three smal
 | `test_block_comments_are_rejected` | A `/* … */` comment, which `cm.py` does not strip, is refused rather than read as formulas; `'/*'` inside a quoted name is just a name. |
 | `test_shallow_certificate_proves_a_nonempty_domain` | `emit` refuses a 0-element model, and every committed shallow certificate states `Nonempty T ∧ …`. |
 | `test_benchmark_inputs_match_their_sources` | Every benchmark input equals `bench.expand` applied to its TPTP original, byte for byte, and originals, expansions and axiom files match the SHA-256s in `bench/inputs.json`. Skipped if the inputs have not been rebuilt (`bench/inputs.py`). |
+| `test_every_record_is_accounted_for` (7 cases), `test_annotations_are_not_formulas` | Hand-counted files: the reviewer's two contradictory files (2 records each), spaced and commented record syntax, annotations, integer and punctuated quoted names (`'thm.bool.TRUTH'`, `'it\'s'`), a `%` inside a name, and a comment hiding a fake record. `statements`, the oracle's `records` and `problem` must each find exactly the hand count. |
+| `test_unreadable_records_are_rejected_not_skipped` (9 cases) | Stray text, a record without a formula, an unknown role, `tff`, `include`, a missing `.`, unbalanced parentheses, a `/* */` comment and a two-word name: both readers refuse the whole file. |
+| `test_a_model_of_part_of_the_problem_is_rejected` (2 cases) | The round-4 reviewer's protocol: for each contradictory file, a one-element model of only `~p(a)`. The oracle rejects it, and Lean rejects both the shallow and the reflected certificate. |
+| `test_source_symbols_cannot_collide_with_generated_names` | Symbols named `c0`, `p0`, `chunk0` and `countermodel` certify on both paths. |
+| `test_a_failing_finder_is_not_a_search_outcome`, `test_benchmark_reports_a_failing_finder_as_finder_error` | A finder that prints no SZS status or termination reason and exits non-zero: `cm.py` reports *vampire failed*, the benchmark records *finder error*, and nothing is cached. |
+| `test_a_timeout_is_a_search_outcome_not_a_failure` | Vampire 5.1's timeout output (`Termination reason: Time limit`, exit 1, no SZS status): the benchmark records *no model*, and nothing is cached. |
+| `test_rewriting_is_equivalent_on_every_small_structure` (18 cases) | Adversarial forms for the rewrite (independent variables, a shadowed variable, ∀ moved across ∨, implication flattening, vacuous quantification, ∃ under ∀, equality, negated conjunction, an equivalence, transitivity clauses): original and rewritten formulas agree on every interpretation of constants `a`, `b`, unary `p`, `q` and binary `r` over domains of size 1 and 2 (8 + 1,024 structures each). Exhaustive within that finite space, not a proof. |
+| `test_clause_search_agrees_with_brute_force` | `clause_holds`, an independent evaluator of `cnf` clauses that searches for a falsifying assignment, agrees with `holds` on six clauses over the same 1,032 structures (each clause is false on 192 to 578 of them). |
+| `test_fidelity_check_flags_a_model_of_part_of_the_problem` | `bench/fidelity.py` reports NOT FAITHFUL for the round-4 reviewer's wrong model, because it reads the whole original file. |
 | `test_ablation_finds_what_a_conclusion_needs` | `ablate.py` labels a needed axiom with a certified counter-model, and never labels an underivable target as needing anything. |
 
-The suite has **106 test cases**: 5 tests parametrized over the 15 examples (75), 14 rejection and capture cases, and 17 single tests. Separately, `recheck.sh` rebuilds all 30 shipped certificates, prints their axioms and replays `Checker`, `AllShallow` and `AllReflected` through the kernel from scratch with `leanchecker --fresh` (Lean 4.35); its output is `bench/recheck.log`. The benchmark certificates are replayed the same way by `bench/replay.py` (§6.2).
+The suite has **149 test cases**: 5 tests parametrized over the 15 examples (75), 14 rejection and capture cases, 18 record-reading cases, 18 adversarial rewrite cases, and 24 single tests. Separately, `recheck.sh` rebuilds all 30 shipped certificates, prints their axioms and replays `Checker`, `AllShallow` and `AllReflected` through the kernel from scratch with `leanchecker --fresh` (Lean 4.35); its output is `bench/recheck.log`. The benchmark certificates are replayed the same way by `bench/replay.py` (§6.2).
 
 **Planted bugs.** The suite was validated by introducing known bugs into `cm.py` and confirming failures (README §5): `=>` compiled as `↔` (7 tests fail), a scoping bug (4), a dropped negation (18), a lost parenthesis (4), and the single-formula case (1). The planted variants are not in the repository; the counts are those recorded in the README, measured against the suite at that time.
 
@@ -637,7 +653,7 @@ These truth-only lemmas are the inner layer of `good_of_check`, `good_facts` and
 
 | | Shallow (`emit`, §3.5) | Reflected (`emit_reflect`) |
 |---|---|---|
-| Statement form | one Lean `Prop` per formula over `inductive T`; `theorem c<i> : φᵢ := by decide` | ordinary satisfaction `φ.Sat (M.toStructure …)` for every φ in `problem`, over `Fm` data |
+| Statement form | one Lean `Prop` per formula over `inductive T`; `theorem c<i>' : φᵢ := by decide` | ordinary satisfaction `φ.Sat (M.toStructure …)` for every φ in `problem`, over `Fm` data |
 | Trusted code | `lean()`, `sym()`, `emit()`, rewriter, kernel | `tokens()`, `as_fact()`, symbol numbering, rewriter, kernel. `Checker.lean` is proved, and `#eval problem` exposes the statement |
 | Per-formula cost | parse + elaborate + typeclass search + `decide` for each formula | no per-formula elaboration: one Nat literal per block, evaluated by `decide +kernel` |
 | Axioms | `propext` (examples) | `propext`, `Quot.sound` |
@@ -655,12 +671,12 @@ Reflection wins on ground facts and loses badly on nested quantifiers. *Hypothes
 
 ### 4.6 Independent checks of the reflected path (`test_cm.py`)
 
-The reflected path trusts the encoder, not the evaluator. Two tests target it, both against `holds`, a brute-force evaluator of the original TPTP text. It shares the lexer, the `%`-comment stripper and the variable collector with `cm.py`, but no parser, rewriter or translator (§3.10).
+The reflected path trusts the encoder, not the evaluator. Two tests target it, both against `holds`, a brute-force evaluator of the original TPTP text. It reads records with its own reader and shares only the in-formula lexer and the variable collector with `cm.py`: no record reader, parser, rewriter or translator (§3.10).
 
 | Test | Check |
 |---|---|
 | `test_reflected_certificate` | `lake build Checker` succeeds, and for every `examples/*.p` the `emit_reflect` output is accepted by `lake env lean`. |
-| `test_reflected_mutants_agree_with_python` | Two random one-entry corruptions per example (seed 1): a predicate entry is flipped, or a function entry is changed to a different element. The list of reflected Lean verdicts must equal `[countermodel(p, *m) …]`, where `countermodel` evaluates `raw(p)`, the formulas as written in the source, and never `problem(p)`, the production rewriter. Call chain: `countermodel(p, n, consts, tables)` → `raw(p)` (regex over `uncomment(open(p).read())`) → `holds(f, n, consts, tables)` for each formula. Lean accepts **exactly** the mutants that Python accepts, and `not all(lean)` ensures that some mutant is rejected. |
+| `test_reflected_mutants_agree_with_python` | Two random one-entry corruptions per example (seed 1): a predicate entry is flipped, or a function entry is changed to a different element. The list of reflected Lean verdicts must equal `[countermodel(p, *m) …]`, where `countermodel` evaluates `raw(p)`, the formulas as written in the source, and never `problem(p)`, the production rewriter. Call chain: `countermodel(p, n, consts, tables)` → `raw(p)` → `records(text)` (the oracle's own lexer and record matcher over the whole file) → `holds(f, n, consts, tables)` for each formula. Lean accepts **exactly** the mutants that Python accepts, and `not all(lean)` ensures that some mutant is rejected. |
 
 A wrong translation in `tokens` or `as_fact` would certify a formula other than the TPTP one. The mutant test exposes this whenever a corrupted model separates the two formulas, which is why its docstring calls it a check on "the part of the reflected path that is trusted".
 
@@ -840,15 +856,15 @@ Can the tool find these counter-models by itself?
 
 **Method.**
 
-1. **Read** his `Definitions.lean` and `Axioms.lean` at commit 6d4c046.
-2. **Transcribe** them into TPTP: primitives become predicates, `def`s become biconditionals, the 8 nontrivial fields of his `StatedAxioms` register become axioms (the register has 12 fields; 4 are `True` placeholders for A3–A6, and the 8 combine stated-axiom content with an exclusivity rider and his bridge axioms A8–A11, so they are not Spinoza's seven axioms one-for-one), the weaker principle is an axiom and the target is the conjecture.
-3. **Validate:** the transcription must reproduce his *positive* results first. Weak P5 follows from `StatedAxioms` + `PSRSubstance`, and A15 from `StatedAxioms` + A25 + A26.
-4. **Search blind:** run Vampire on his axioms only, without consulting his `A12CounterModel`.
-5. **Certify twice:** once on the transcription, and once as instances of his own `EthicaWorld` and `StatedAxioms` classes, checked against his unmodified library (`nakamura/`, pinned to Lean 4.13).
+1. **Read** their `Definitions.lean` and `Axioms.lean` at commit 6d4c046.
+2. **Transcribe** them into TPTP: primitives become predicates, `def`s become biconditionals, the 8 nontrivial fields of their `StatedAxioms` register become axioms (the register has 12 fields; 4 are `True` placeholders for A3–A6, and the 8 combine stated-axiom content with an exclusivity rider and their bridge axioms A8–A11, so they are not Spinoza's seven axioms one-for-one), the weaker principle is an axiom and the target is the conjecture.
+3. **Validate:** the transcription must reproduce their *positive* results first. Weak P5 follows from `StatedAxioms` + `PSRSubstance`, and A15 from `StatedAxioms` + A25 + A26.
+4. **Search blind:** run Vampire on their axioms only, without consulting their `A12CounterModel`.
+5. **Certify twice:** once on the transcription, and once as instances of their own `EthicaWorld` and `StatedAxioms` classes, checked against their unmodified library (`nakamura/`, pinned to Lean 4.13).
 
 **Results.**
 
-| Claim | His model (hand-built) | Ours (automatic) | Checked against his library |
+| Claim | Nakamura's model (hand-built) | Ours (automatic) | Checked against their library |
 |---|---|---|---|
 | S-A12 | 4 elements (`A12CounterModel`) | **2 elements**, 0.1 s | yes; axioms `[propext]` |
 | S-A15 | 3 elements (`A15CounterModel`) | **2 elements**, 0.1 s | yes; axioms `[propext]` |
@@ -858,7 +874,7 @@ Can the tool find these counter-models by itself?
 - **S-A12:** two substances that *share* one attribute and *differ* in another. The sufficient-reason principle holds, and A12 fails. This is the shape of the classic objection to *Ethics* I P5.
 - **S-A15:** two gods, one lacking an attribute of the other.
 
-**Caveats.** In our models one object can be both a substance and an attribute. That is not an artifact of the encoding: in Nakamura's reconstruction, A10 makes an attribute conceived through itself and A8 identifies that with being in itself, so any attribute *is* a substance. A sorted encoding that kept the two apart would therefore *conflict* with A8 and A10, not just refine them; it would need a revised signature or revised bridges. Also, his definition of God requires at least one attribute, not infinitely many (his source records the stronger cardinality content as a gap). Our smaller models are an automation result within this reconstruction, not evidence of a more faithful reading of Spinoza.
+**Caveats.** In our models one object can be both a substance and an attribute. That is not an artifact of the encoding: in Nakamura's reconstruction, A10 makes an attribute conceived through itself and A8 identifies that with being in itself, so any attribute *is* a substance. A sorted encoding that kept the two apart would therefore *conflict* with A8 and A10, not just refine them; it would need a revised signature or revised bridges. Also, their definition of God requires at least one attribute, not infinitely many (their source records the stronger cardinality content as a gap). Our smaller models are an automation result within this reconstruction, not evidence of a more faithful reading of Spinoza.
 
 #### 6.1.1 The assumption-dependency map
 
@@ -895,7 +911,7 @@ Can the tool find these counter-models by itself?
 1. **Index:** from TPTP's ProblemAndSolutionStatistics, keep the 2,561 fof/cnf problems marked Satisfiable or CounterSatisfiable.
 2. **Sample** 100 problems, never hand-picked, but **not a uniform sample overall**. The first 20 came from an earlier picker that chose a random *domain*, then a problem in it, which favors problems from small domains. The last 80 were drawn uniformly from the index. The set was also our **development set**: bugs found on it became fixes and regression tests, and it was rerun after each fix. So results on it measure performance on development-exposed problems. §6.2.1 reports two further uniform samples.
 3. **Search:** 30 s of Vampire per problem. Results are cached by content, and timeouts are never cached.
-4. **Certify** with hybrid dispatch: reflected when at least 90% of formulas are ground facts, shallow otherwise. Lean gets 60 s per file.
+4. **Certify** with hybrid dispatch: reflected when at least 90% of formulas are ground facts, shallow otherwise. **Budgets** (`bench.py`): a shallow certificate gets 60 s for its single file with `decide`; if that times out, a second 60 s attempt with `native_decide`, reported separately as native-assisted. A one-file reflected certificate gets 60 s. A modular reflected certificate gets 600 s for each module (Base, each Part, Main), with four Parts built in parallel and no cap on the total; NLP263+1 is the only problem that used it.
 
 Problems were developed in Fibonacci batches (1, 1, 2, 3, 5, 8). Every bug found became a regression example, and after the last fix every problem was rerun with the final compiler.
 
@@ -909,11 +925,11 @@ Problems were developed in Fibonacci batches (1, 1, 2, 3, 5, 8). Every bug found
 | Vampire found no model within 30 s | 23 |
 | `cm.py` error (NLP263, before the quoted-name fixes) | 1 |
 
-**Inputs.** Every benchmark input is rebuilt from the official TPTP v9.3.1 release (`bench/inputs.py`; tarball SHA-256 in `bench/inputs.json`), with includes expanded by the tested `bench.expand` (§3.8). The rebuild found a defect in the earlier scraped inputs: two of them, `RNG025-9` (development) and `BOO008-3` (second sample), contain an include that the TPTP file comments out (`% include('Axioms/…').`), and the old expander had inlined it, adding the axiom file's clauses to the problem (40 against 25 and 43 against 21 `cnf` lines). Both had been reported as *no model*. On their correct inputs Vampire finds models of 3 and 2 elements, and both are now certified. The defect produced two wrong *no model* verdicts and no certificate.
+**Inputs.** Every benchmark input is rebuilt from the official TPTP v9.3.1 release (`bench/inputs.py`; tarball SHA-256 in `bench/inputs.json`), with includes expanded by the tested `bench.expand` (§3.8). The rebuild found a defect in the earlier scraped inputs: two of them, `RNG025-9` (development) and `BOO008-3` (second sample), contain an include that the TPTP file comments out (`% include('Axioms/…').`), and the old expander had inlined it, adding the axiom file's clauses to the problem (40 against 25 and 43 against 21 `cnf` lines). Both had been reported as *no model*. On their correct inputs Vampire finds models of 3 and 2 elements, and both are now certified. Two benchmark no-model-found outcomes concerned altered inputs and are superseded by the corrected runs; the defect produced no certificate.
 
-**Results.** The first two columns are development history. The **final** column is the frozen implementation (commit `acb343b`: validated reflected certificates, fail-closed parsing, primed variables, `Nonempty T` in shallow statements, inputs from the TPTP release), run from a separate git worktree on an otherwise idle machine with the same 30 s Vampire limit; it is the result this paper reports.
+**Results.** The first two columns are development history. The **final** column is the repaired implementation at commit `66c8b32`: validated reflected certificates, fail-closed parsing, primed variables, `Nonempty T` in shallow statements, inputs from the TPTP release, and total record reading (§6.2.2). It was run from a separate git worktree with the same 30 s Vampire limit, and it is the result this paper reports. That rerun was not an idle-machine execution (§6.2.2).
 
-| Outcome | Lean 4.13 (shallow) | Lean 4.35 (hybrid, before review) | **Final, frozen `acb343b`** |
+| Outcome | Lean 4.13 (shallow) | Lean 4.35 (hybrid, before review) | **Final, `66c8b32`** |
 |---|---|---|---|
 | Models found by Vampire | 77 | 77 | 78 |
 | **Certified, strict kernel only** | 67 | 70 | **71** |
@@ -955,35 +971,75 @@ Of the 19 problems with no model in the final run, 10 are rated 1.00 in TPTP: no
 1. At `900818d`, the run stopped on its first development certificate because a fresh worktree lacked an output directory; `acb343b` creates it. No third-sample problem had been reached.
 2. At `acb343b`, the development and second samples completed, and the third stopped when `KRS290-1`, whose formulas nest deeper than Python's recursion limit, raised an exception the harness did not catch. No third-sample verdict was written. Before it stopped, the run had already run Vampire on the third-sample problems it reached, and may have compiled certificates for some; the Vampire answers stayed in the content-addressed cache, and we did not inspect them or any intermediate result. To locate the crash, we reran only the translator's pre-check on the third sample; it showed that `KRS290-1` was the only problem raising the exception (`bench/superseded-acb343b-third-attempt1.txt`).
 
-The one change made after that, `30ad4f3`, is in the harness: any translator exception is now recorded as a *cm.py error* instead of stopping the run. `cm.py`, `Checker.lean`, the dispatch rule, the time limits and the inputs did not change, so `KRS290-1` is reported as a failure, not repaired. The third sample was then run in full at `30ad4f3` and is reported as recorded. It is therefore not strictly untouched: one piece of information from it, that a problem crashes the pre-check, led to a harness change. We judge that change neutral for the reported rates, since it turns a crash of the whole run into one recorded failure and changes no verdict that the earlier code could produce.
+The one change made after that, `30ad4f3`, is in the harness: any translator exception is now recorded as a *cm.py error* instead of stopping the run. `cm.py`, `Checker.lean`, the dispatch rule, the time limits and the inputs did not change, so `KRS290-1` is reported as a failure, not repaired. The third sample was then run in full at `30ad4f3`. It is therefore not strictly untouched: one piece of information from it, that a problem crashes the pre-check, led to a harness change.
 
-| Outcome | Development (100), `acb343b` | Second sample (100), `acb343b` | **Third sample (100), `30ad4f3`** |
+**All three samples were then rerun after the round-4 repair** (§6.2.2), which peer review prompted by auditing the code, not by any sample's results. That repair changed what three third-sample inputs mean to the translator. **The reported results are therefore a corrected evaluation on samples that have all been exposed to development**, with the original sampling design retained. On the third sample, selected before its first execution, the solver and translator stayed frozen until the round-4 repair; a harness-only change after an aborted attempt recorded translator exceptions as failures. The completed evaluation strictly certified 59 of 67 found models.
+
+| Outcome | Development (100) | Second sample (100) | **Third sample (100)** |
 |---|---|---|---|
 | Unsupported input (rejected by the parser) | 3 | 4 | 3 |
-| Translator crash (*cm.py error*) | 0 | 0 | 2 |
+| Translator crash before a model outcome (`KRS290-1`) | 0 | 0 | 1 |
 | Vampire found no model within 30 s | 19 | 34 | 29 |
 | **Models found** | **78** | **62** | **67** |
 | **Certified, strict kernel only** | **71** | **55** | **59** |
-| Certified with `native_decide` | 2 | 2 | 4 |
-| Lean rejected (time or instance-search limits) | 5 | 5 | 3 |
-| Model found, certificate not written | 0 | 0 | 1 |
+| Certified with `native_decide` | 2 | 2 | 3 |
+| Lean rejected (time or instance-search limits) | 5 | 5 | 4 |
+| Model found, certificate generation crashed (`SYO595-1`)¹ | 0 | 0 | 1 |
 | **Strict, of models found** | **91.0%** | **88.7%** | **88.1%** |
-| Strict or native, of models found | 93.6% | 91.9% | 94.0% |
+| Strict or native, of models found | 93.6% | 91.9% | 92.5% |
 | **Full pipeline, strict, of all sampled problems** | **71%** | **55%** | **59%** |
 | Full pipeline, strict, of supported inputs | 71 of 97 (73.2%) | 55 of 96 (57.3%) | 59 of 97 (60.8%) |
 
-**Reading.** On the third sample, the frozen implementation strictly certified 59 of the 67 models Vampire found (88.1%), against 91.0% on the development set and 88.7% on the second sample. The conditional rates are similar; three samples of this size do not establish that they are equal. Full-pipeline success differs more (71%, 55%, 59%), and that difference coincides mainly with how many problems Vampire found a model for within 30 s (78, 62, 67), not with certification. These are descriptive results on uniform samples of the eligible problems, not a guarantee for any particular problem class.
+All three samples at commit `66c8b32`. The rows are mutually exclusive and each column sums to 100; models found = strict + native + Lean rejected + generation crash.
+¹ `SYO595-1` and `KRS290-1` are the two *cm.py error* records of the third sample: one after a model was found, one before any model outcome. Both stay in the supported-input denominator.
+
+**Reading.** On the third sample, the repaired implementation strictly certified 59 of the 67 models Vampire found (88.1%), against 91.0% on the development set and 88.7% on the second sample. The conditional rates are similar; three samples of this size do not establish that they are equal. Full-pipeline success differs more (71%, 55%, 59%), and that difference coincides mainly with how many problems Vampire found a model for within 30 s (78, 62, 67), not with certification. These are descriptive results; the second and third samples are uniform samples of the eligible problems, while the development set is not.
 
 **Failures, each listed.**
 
-- **Lean rejected.** Second sample: `LCL649+1.015`, `LCL681+1.010` and `GEG001+1` fail in instance search on deeply nested formulas, the development family; `NLP055-1` and `HWV076+1` exceed the 60 s Lean limit. Third sample: `LCL663+1.010` and `LCL649+1.020` fail in instance search; `NLP213+1` exceeds 60 s.
-- **Native-assisted.** Second: `NLP179+1`, `SWB022+3`. Third: `ALG310-1`, `NLP016+1`, `NLP186+1`, `NLP243+1`.
-- **Unsupported input.** Second: `<~>` in `KRS182+1`, `KRS199+1`, `KRS210+1`, and a selective include in `SYN000+2`. Third: `<~>` in `KRS224+1`, `KRS249+1`, `HWV105+1`.
-- **Translator crashes (third sample, new failure classes).** `KRS290-1`: formula nesting exceeds Python's recursion limit in `cm.py`'s recursive-descent translator. `SYO595-1`: Vampire found a model, but the problem has more than 2,000 formulas, so `cm.py` emits a multi-module certificate, and the benchmark's shallow path calls it without the output directory that requires; it crashes before writing the certificate. Both are limitations of the implementation as frozen, reported rather than fixed (§8.2).
+- **Lean rejected.** Development: the five LCL instance-search failures above. Second sample: `LCL649+1.015`, `LCL681+1.010` and `GEG001+1` fail in instance search on deeply nested formulas; `NLP055-1` and `HWV076+1` exceed the 60 s Lean limit. Third sample: `LCL663+1.010` and `LCL649+1.020` fail in instance search; `NLP213+1` exceeds 60 s; and `ALG310-1`, native-assisted in round 3 (54.8 s against the 60 s limit), exceeded the native limit in this rerun.
+- **Native-assisted** (seven in all, reported separately from strict certificates). Development: `ALG306-1`, `ALG334-1`. Second: `NLP179+1`, `SWB022+3`. Third: `NLP016+1`, `NLP186+1`, `NLP243+1`.
+- **Unsupported input.** Development: `BIO001+1`, `HWV042+1`, `KRS244+1`. Second: `<~>` in `KRS182+1`, `KRS199+1`, `KRS210+1`, and `SYN000+2`, which uses the role `unknown` and a selective include. Third: `<~>` in `KRS224+1`, `KRS249+1`, `HWV105+1`.
+- **Translator crashes (third sample).** `KRS290-1`: formula nesting exceeds Python's recursion limit in `cm.py`'s recursive-descent translator. `SYO595-1`: Vampire found a model, but the problem has more than 2,000 formulas, so `cm.py` emits a multi-module certificate, and the benchmark's shallow path calls it without the output directory that requires; it crashes before writing the certificate. Both are limitations of the implementation as evaluated, reported rather than fixed (§8.2).
 
-No uncertified model is a certificate of the wrong statement: in each case Lean or the harness produced no certificate at all. That is an observation about these runs, not a theorem; the source fidelity of the certificates that were produced rests on the trusted translation and its tests (§3.10, §8.2).
+**Why no model was found.** Two kinds of *no model* outcome occur, and both are search outcomes. Most are timeouts at 30 s: Vampire 5.1 reports `Termination reason: Time limit`. The rest are fast give-ups (`SZS status GaveUp`, "Cannot represent all propositional literals internally"): the problem exceeds the finite-model builder's internal encoding. Of the 82 across the three samples (19, 34 and 29), the TPTP headers say that 18 have no finite model at all (4, 8 and 6: "Has only infinite models", "No finite models", or Infinox's verdict), so no finite-model finder can succeed on them. GRP773-1's smallest model has 64 elements. Nine are encoding give-ups (PLA041-1, SYN832-1; SYO593-1, SYN817-1, KRS281-1; SYN821-1, SYO603+1, SYN864-1, HWV070+1). The other 54 timed out without a documented cause; 28 of them are rated 1.00 by TPTP, meaning no prover solved them in TPTP's reference runs. *No model* means only that none was found within the limit; it is not a semantic result.
 
-**Fresh replay of the benchmark certificates.** `bench/replay.py` recompiled every strictly certified benchmark certificate from the frozen runs as a Lean module, printed `#print axioms` for each `countermodel`, and replayed one aggregate module per sample from scratch with `leanchecker --fresh`, imports included (Lean 4.35, on the same laptop). **All 185 replayed:** development 71 in 896 s, including the million-fact NLP263+1 certificate; second sample 55 in 67 s; third sample 59 in 191 s (`bench/replay.log`, `bench/replay-{dev,second,third}.jsonl`). Axioms: `propext` for 182, `propext` and `Quot.sound` for the two reflected certificates (NLP263+1 and AGT042+1), and none at all for `SYN092-1.003`; the replay script's summary line flagged that last one only because its parser did not recognize Lean's "does not depend on any axioms" message, which the log records (parser fixed afterwards). Native-assisted certificates are not replayed: replay cannot validate their compiled-code axioms, so they stay a separate, weaker category. `leanchecker --fresh` replays through Lean's own kernel; it is not an independent kernel implementation.
+#### 6.2.2 Round-4 repair: record omission, and what it changed
+
+**The defect.** Peer review audited the delivered code and showed that `cm.py` found records with a regular expression that *searched* the file. A record it could not match was skipped without error: a quoted name with punctuation, or a comment or whitespace between `fof` and `(`. The test oracle had copied that expression, so it agreed with the translator on the weakened problem. With two contradictory two-record files and a deliberately wrong model of only the surviving record, both certificate paths accepted it. Records are now read by the total, fail-closed `statements` (§3.3), the oracle has its own reader (§3.10), and those two files are regressions that both paths must reject.
+
+**Its effect on the benchmark** (`bench/compare_parsers.py`, `bench/parser-comparison.json`):
+- **297 of the 316 inputs read identically.** These are the 300 benchmark problems, the 15 examples and the ablation theory; the 297 include NLP263+1, compared as an exact list of 1,026,857 records.
+- **10 are rejected by both versions.**
+- **9 changed.** Each has quoted record names with punctuation (`'EQ-var'`, `'thm.bool.TRUTH'`): `COM150+1` (28 → 60 records) and eight SWW problems (5 → 10 to 44). `COM150+1` had been *no model*, which stands, since Vampire read the full file. **Eight earlier certificates omitted source premises and were withdrawn:** `SWW883+1` (development), `SWW882+1`, `SWW902+1`, `SWW938+1`, `SWW942+1` (second), and `SWW865+1`, `SWW889+1`, `SWW921+1` (third). **The repaired pipeline subsequently certified their complete source problems**, each with a 2- or 3-element model. Unchanged strict totals do not validate the superseded certificates. One previously native-assisted result, `ALG310-1`, timed out in the rerun and is reported as a failure.
+
+**Running the rerun.** The first rerun, at `8d46e97`, required an SZS status from Vampire. Vampire 5.1 reports a timeout without one, so that run labelled its 17 development timeouts *finder error*. We stopped it after the development sample and kept the partial ledger (`bench/superseded-8d46e97-dev-timeout-misclassified.jsonl`). `66c8b32` also accepts Vampire's termination reason, and all three samples were rerun there. A row-by-row comparison (`bench/timeout-correction-comparison.json`) finds exactly those 17 rows different, all *finder error* → *no model*; the other 83, including all 71 strict certificates, are identical, and the models-found denominator is 78 in both. All three samples were rerun with a background process occupying one CPU core: an orphaned worker of our own parse comparison, found and stopped afterwards. Strict certification totals were unchanged. `ALG310-1` exceeded the native-assisted time limit; background contention may have contributed, but causation was not established. The timeout is retained in the reported outcomes, and this load qualification does not apply to the controlled timings of §6.3.1.
+
+**Source-fidelity coverage of every certified result** (`bench/coverage.py`, `bench/coverage.md`). Each check is reported separately, and *unchecked* means neither verified nor failed.
+
+For every one of the 192 certified results, the test oracle reads the **original** problem file with its own record reader and evaluates every original formula, by brute force, in the model Lean certified (`bench/fidelity.py`, cap 300 s per problem).
+
+| | Strict (185) | Native-assisted (7) |
+|---|---|---|
+| Original-formula satisfaction | **184 faithful**, 1 unchecked | 5 faithful, 2 unchecked |
+| Rewrite agreement (below) | 176 agree, 9 unchecked | 4 agree, 3 unchecked |
+| Compilation and fresh kernel replay | **185 passed** | not replayed (see below) |
+| Failed, in any check | **0** | **0** |
+
+Three results are **unchecked** for original-formula satisfaction, because brute-force evaluation of their original formulas did not finish in 300 s:
+- `NLP219-1` (development, strict);
+- `NLP179+1` (second sample, native-assisted);
+- `NLP186+1` (third sample, native-assisted).
+
+For these three, two supplementary checks are reported separately and do **not** establish that the original formulas hold. First, record identity: `cm.statements` and the oracle's reader consume the whole file and agree record by record on kind, name, role and formula tokens (124, 67 and 67 records). Second, satisfaction of the rewritten formulas: the oracle confirmed it for `NLP179+1`, while it was unchecked at 300 s for `NLP219-1` and `NLP186+1`. An independent clause-search evaluator, validated against the brute-force one on every small structure, also did not finish on `NLP219-1` within 10 minutes. **Original-formula satisfaction of these three results therefore remains unchecked, so the source-fidelity claim covers 189 of the 192 certified results.** `bench/coverage.md` lists every exception with all its checks.
+
+**Bounded validation of the rewrite.**
+- **Adversarial forms.** On 18 hand-written formulas (15 `fof`, 3 `cnf`) covering independent variables, a shadowed variable name, ∀ moved across ∨, implication flattening, vacuous quantification, ∃ under ∀, equality, negated conjunction, an equivalence that must not be flattened, and transitivity clauses, the original and rewritten formulas agree on every interpretation of the signature (constants `a`, `b`; unary `p`, `q`; binary `r`) over domains of size 1 and 2. That is 8 + 1,024 = 1,032 structures per formula, 18,576 comparisons in all (`test_rewriting_is_equivalent_on_every_small_structure`). A deliberately wrong rewrite (a variable replaced by a constant) disagrees on 156 of the 1,032.
+- **Benchmark.** `bench/rewrite_check.py` pairs every source record (read by the oracle) with its rewritten formula, for every problem where a model was found, and compares each rewritten formula with its original on the model, up to 50 one-entry mutations and 10 random structures of the same signature (domains of 1 to 3 elements). Of the 206 problems with a found model, **192 were checked in full**: 7,165 rewritten formulas (out of 1,036,470 formulas in those problems), 364,181 original-against-rewritten evaluations (7,165 on the models, 285,366 on mutations, 71,650 on random structures), **0 disagreements**. **14 are unchecked** at the 60 s cap per problem, because brute-force evaluation of their original formulas is too slow: 9 with strict certificates (`NLP184-1`, `NLP219-1`, `SWB017+3`, `SWB023+3` in development; `NLP192-1`, `NLP199-1`, `SWB007+3` in the second sample; `NLP238-1`, `SWB025+3` in the third), 3 native-assisted (`ALG306-1`, `ALG334-1`, `SWB022+3`) and 2 Lean-rejected (`NLP055-1`, `ALG310-1`) (`bench/rewrite-check.jsonl`).
+
+This is exhaustive within the stated finite test space and bounded validation on the benchmark, not a proof that the rewrite preserves meaning.
+
+**Fresh replay of the strict benchmark certificates.** `bench/replay.py` recompiled every strict certificate of the rerun as a Lean module, printed `#print axioms` for each `countermodel`, and replayed one aggregate module per sample from scratch with `leanchecker --fresh`, imports included (Lean 4.35, same laptop). **All 185 compiled and passed:** development 71 in 910 s, including the million-fact NLP263+1 certificate; second sample 55 in 47 s; third sample 59 in 55 s (`bench/replay.log`, `bench/replay-{dev,second,third}.jsonl`; `replay.py` exited 0). Axioms: `propext` for 182, `propext` and `Quot.sound` for the two reflected certificates (NLP263+1 and AGT042+1), and none for `SYN092-1.003`. The seven native-assisted certificates are not replayed: replay cannot validate their compiled-code axioms, so they stay a separate, weaker category. `leanchecker --fresh` replays through Lean's own kernel; it is not an independent kernel implementation. A successful replay shows that the kernel accepts the emitted statements; it says nothing about whether those statements are faithful to the source, which the fidelity check above addresses.
 
 ### 6.3 Case study C: one million facts (NLP263+1)
 
@@ -995,7 +1051,7 @@ The first measurements (Lean 4.13 shallow against Lean 4.35 reflected, single ru
 
 `bench/perf.py` at commit `62d43d6`. Lean 4.35.0; Vampire 5.1.0 answers from the cache; Apple M2, 8 cores, 8 GB, macOS 14.4. Each run is a clean build of the generated certificate with **4 parallel Lean workers for both methods**; the checker library is prebuilt and not timed. Shallow and reflected runs alternate, three repetitions each, on an otherwise idle machine (a macOS update service was active in the background). The reflected timings include the validity and well-formedness checks of §4.4.
 
-**Version.** The timings were taken at `62d43d6`. Regenerated with the final code (`30ad4f3`) from the same cached Vampire model, all 253 reflected modules of NLP263+1 are byte-identical, and 554 of the 555 shallow modules; the exception is the shallow `Main.lean`, whose statement gained the `Nonempty T` conjunct (§3.5), a change we have not re-timed (`bench/perf-equivalence.json`). The rebuilt input differs from the timed one only by trailing blank lines.
+**Version.** The timings were taken at `62d43d6`. Regenerated with the final evaluation code (`cm.py` as at `66c8b32`) from the same cached Vampire model, **all 253 reflected modules of NLP263+1 are byte-identical** to the timed ones. Of the 555 shallow modules, 40 are byte-identical and 515 differ. They differ only by the round-4 renaming of the emitter's helper declarations (`c_i`, `P_i`, `C_j`, `chunk_j` gain a prime) and, in `Main.lean`, the `Nonempty T` conjunct (§3.5). Applying exactly that renaming to the timed output makes all 555 byte-identical (`bench/perf-equivalence.json`). The reflected timing therefore measured exactly the certificate the final code produces; the shallow timing measured a certificate that differs by those changes, which were not re-timed, and whose cost we have not measured. The rebuilt input differs from the timed one only by trailing blank lines.
 
 | NLP263+1 (1,026,857 facts) | Shallow: median (range) | **Reflected: median (range)** | Ratio of medians |
 |---|---|---|---|
@@ -1022,10 +1078,10 @@ The first measurements (Lean 4.13 shallow against Lean 4.35 reflected, single ru
 
 | | Evidence |
 |---|---|
-| Generality | Strict certification of 71 of 78 models (development), 55 of 62 (second sample, used for debugging) and 59 of 67 (third sample, drawn and frozen before any result); uncertified models produced no certificate, and two inputs crashed the translator (§6.2.1) |
+| Generality | Strict certification of 71 of 78 models (development), 55 of 62 (second sample) and 59 of 67 (third sample), at one commit after the round-4 repair; 2, 2 and 3 more native-assisted, reported separately. All three samples have been exposed to development, so these are descriptive results. Uncertified models produced no certificate; two third-sample inputs crashed the translator (§6.2.1) |
 | Scale | 1,026,857 facts certified in a median 5.2 min reflected, against 14.1 min shallow, under matched conditions (§6.3.1) |
 | Usefulness on real formal work | Automatic, smaller counter-models for a published Lean formalization |
-| Trust | Strict certificates use kernel checks and standard axioms only (2 more native-assisted, reported separately); reflected certificates prove ordinary first-order satisfaction (§4.4); four real bugs in trusted layers caught by independent checks, and three more found during the review: silent misreading of unsupported syntax; variable capture, which failed closed; and include expansion inside comments, which changed two inputs and produced two wrong *no model* verdicts |
+| Trust | Strict certificates use kernel checks and standard axioms only (7 more native-assisted across the three samples, reported separately); reflected certificates prove ordinary first-order satisfaction (§4.4); four real bugs in trusted layers caught by independent checks, and three more found during the review: silent misreading of unsupported syntax; variable capture, which failed closed; and include expansion inside comments, which changed two inputs and made two benchmark no-model-found outcomes concern altered inputs (superseded by the corrected runs). An artifact audit in round 4 found that the record reader could skip a legal record: eight certificates had omitted source premises and were withdrawn; the repaired pipeline certified their complete source problems, and every certified result is now checked against its original source file (§6.2.2) |
 
 ## 7. Related Work
 
@@ -1102,7 +1158,9 @@ We found no direct precedent for the exact combination, but our first search mis
 | Feature | Status |
 |---|---|
 | `fof`, `cnf` statements | supported |
-| Roles: `axiom`, `hypothesis`, `definition`, `lemma`, `theorem`, `negated_conjecture`; `conjecture` (negated in the certificate) | supported (non-conjecture roles are treated as assumptions) |
+| Every record read in full: whitespace and `%` comments between any two tokens; record names that are lower-case words, single-quoted words with any punctuation (`'thm.bool.TRUTH'`) or integers; optional annotations after the formula | supported, tested; text that is not a complete record makes the whole file **rejected** (§3.3) |
+| Roles: `axiom`, `hypothesis`, `definition`, `assumption`, `lemma`, `theorem`, `corollary`, `plain`, `negated_conjecture`; `conjecture` (negated in the certificate) | supported (non-conjecture roles are treated as assumptions) |
+| Other roles (`type`, `unknown`, `question`, `fi_*`, …) | **rejected** (no assertion meaning to certify) |
 | Connectives `~ & \| => <=>`; quantifiers `! ?`; `=`, `!=`; `$true`, `$false` | supported |
 | Plain and quoted names (`cat` and `'cat'` are one symbol; `'X'` is never a variable) | supported, tested |
 | `%` comments, including `%` inside quoted names | supported, tested |
@@ -1120,10 +1178,10 @@ We found no direct precedent for the exact combination, but our first search mis
 |---|---|---|
 | **No front end inside Lean** | Users write TPTP by hand | A Lean command that exports the current goal (first-order part) to TPTP and applies the certificate. This is the step that makes the tool adoptable. |
 | **Reflected checking of nested quantifiers is slow** | PLA025+1 did not finish in 400 s reflected, against 4.4 s shallow, so we dispatch by fact share | Decode once, then check (`decode D = L`, then `check L`), so that lazy kernel evaluation stops re-decoding subformulas inside quantifier loops |
-| **Trusted translation and rewriting** | A bug here can certify the wrong statement. It happened once (§5) and was caught by an independent check; peer review prompted a second class (silent misreading of unsupported syntax), now closed by fail-closed parsing. An audit of the archived inputs at `1a55aef` (`bench/input-audit.json`, on the earlier scraped inputs) found 3 development inputs with unsupported syntax; all 3 were *no model*, so no certificate was affected. The final runs apply the same checks to the rebuilt inputs before Vampire runs, and their *unsupported input* verdicts supersede that audit. The frozen run of the second sample then exposed variable capture: `GEG001+1` binds a variable named `T`, the domain type's name; Lean rejected the certificate, and variables are now emitted primed (`X'`). The input rebuild from the TPTP release (§6.2) exposed include expansion inside comments, which had changed two inputs and produced two wrong *no model* verdicts. The test oracle shares the lexer, the `%`-comment stripper and the variable collector with `cm.py`, so correlated errors in those helpers remain possible. | Prove the rewrites in Lean, or emit both the original and the rewritten formula and prove them equivalent |
+| **Trusted translation and rewriting** | A bug here can certify the wrong statement. It happened once (§5) and was caught by an independent check; peer review prompted a second class (silent misreading of unsupported syntax), now closed by fail-closed parsing. An audit of the archived inputs at `1a55aef` (`bench/input-audit.json`, on the earlier scraped inputs) found 3 development inputs with unsupported syntax; all 3 were *no model*, so no certificate was affected. The final runs apply the same checks to the rebuilt inputs before Vampire runs, and their *unsupported input* verdicts supersede that audit. The frozen run of the second sample then exposed variable capture: `GEG001+1` binds a variable named `T`, the domain type's name; Lean rejected the certificate, and variables are now emitted primed (`X'`). The input rebuild from the TPTP release (§6.2) exposed include expansion inside comments, which had changed two inputs: two benchmark no-model-found outcomes concerned altered inputs and are superseded by the corrected runs. **Round-4 review: record omission.** The regular expression that found records skipped any record it could not match, and the test oracle had copied it, so both agreed on a weakened problem. It dropped records from 9 benchmark inputs, 8 of which had been reported certified; Lean had checked only the formulas it was given (§6.2.2). Records are now read by a total, fail-closed reader, and the oracle has its own. The oracle still shares the in-formula lexer and the variable collector with `cm.py`, so correlated errors in those two helpers remain possible. | Prove the rewrites in Lean, or emit both the original and the rewritten formula and prove them equivalent |
 | **Translator robustness** | The third sample exposed two crashes, reported as failures: `cm.py`'s recursive-descent translator exceeds Python's recursion limit on very deep nesting (`KRS290-1`), and the benchmark's shallow path does not pass the output directory that `cm.py` needs for problems over 2,000 formulas (`SYO595-1`) | An iterative parser; pass the output directory and build the modules, as the reflected path already does |
 | **Untyped first-order logic only** | No sorts, arithmetic or higher-order input | TPTP `tff` sorts, using Vampire's multi-sorted models |
-| **Vampire's limits are our limits** | Within 30 s, no model for 19, 34 and 29 of the three 100-problem samples; 10, 19 and 19 of those are rated 1.00 by TPTP | Longer limits; other finders such as Mace4 or SAT-based search |
+| **Vampire's limits are our limits** | Within 30 s, no model for 19, 34 and 29 of the three 100-problem samples. By the TPTP headers, 18 of those 82 have no finite model at all and one needs 64 elements; 9 hit the finite-model builder's encoding limit; the other 54 timed out without a documented cause (§6.2.1) | Longer limits; other finders such as Mace4 or SAT-based search |
 | **Some formats are unread** | Purely propositional problems that Vampire settles without printing a finite model | Parse Vampire's other model formats |
 | **Lean-version effects** | Lean 4.13's limit of about 20,600 declarations per file may not hold on Lean ≥ 4.33, which changed how kernel recursion is bounded | Re-test on current Lean before reporting upstream |
 | **Spinoza encoding** | Our 2-element models let objects be both substances and attributes, as Nakamura's axioms allow | A sorted encoding; as §6.1 explains, separating substances from attributes would revise the relevant bridges or the signature, so it would be a different reconstruction, not a refinement of this one |
@@ -1137,7 +1195,7 @@ Counter-models are how one shows that something does *not* follow. With `lean-co
 
 The tool is small. The work was in making certificates finish. One lesson recurred on the ground-fact workloads we measured: **Lean's cost lay in elaborating statements, not in evaluating them.** Each pattern that reduced elaboration paid off, among them balanced trees, hierarchical aggregation, compact encodings and reflection through a once-verified evaluator. The patterns that added elaboration or unification work backfired, and we report those too.
 
-The verified checker turns a certificate into a single statement: the ordinary first-order structure the model describes satisfies every formula of the problem. It depends only on Lean's standard axioms, and every shipped certificate, along with all 185 strict certificates of the three benchmark samples, replays through `leanchecker --fresh`. With it, a million-fact problem is certified in a median of 5.2 minutes on a laptop, about 2.7× faster than one theorem per formula under matched conditions. The tool also reproduces, automatically and with smaller models, the hand-built counter-models of a published Lean formalization.
+The verified checker turns a certificate into a single statement: the ordinary first-order structure the model describes satisfies every formula of the problem. It depends only on Lean's standard axioms, and every shipped certificate replays through `leanchecker --fresh`; so do all 185 strict certificates of the three benchmark samples. Separately, 189 of the 192 certified results (strict and native-assisted) were checked against their original source files; for the other three, that check did not finish and they are listed by name (§6.2.2). With it, a million-fact problem is certified in a median of 5.2 minutes on a laptop, about 2.7× faster than one theorem per formula under matched conditions, measured at an earlier commit (§6.3.1). The tool also reproduces, automatically and with smaller models, the hand-built counter-models of a published Lean formalization.
 
 The remaining gap is the user's side: a command inside Lean that takes a goal and returns a certified counter-model. The checker and the scaling recipe are the foundation for it.
 
@@ -1151,7 +1209,7 @@ The remaining gap is the user's side: a command inside Lean that takes a goal an
 | Axioms and fresh kernel replay of all shipped certificates | `./recheck.sh` | writes `bench/recheck.log` |
 | Examples (shallow) | `lake build`; `lake env lean Axioms.lean` | `examples/`, `Cm/` |
 | One reflected certificate | `python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean` | — |
-| Nakamura, against his library | `cd nakamura && lake build && lake env lean Axioms.lean` | spinoza-ethica-lean @ 6d4c046 |
+| Nakamura, against their library | `cd nakamura && lake build && lake env lean Axioms.lean` | spinoza-ethica-lean @ 6d4c046 |
 | Benchmark inputs, from the official TPTP v9.3.1 release (§6.2) | `python3 bench/inputs.py TPTP-v9.3.1 [TPTP-v9.3.1.tgz]` | `bench/inputs.json` (SHA-256 of the tarball, every original, expansion and axiom file) |
 | TPTP development sample (original sampling) | `python3 bench.py N [WORKERS]` | `bench/eligible.tsv`, `bench/results*.jsonl` |
 | Frozen runs (§6.2): development and second sample at `acb343b`, third sample at `30ad4f3` | `python3 bench/frozen.py <repo>/bench [dev second third]`, from a worktree of that commit (usage in the file) | `bench/heldout-sample.json`, `bench/third-sample.json`, `bench/results-final-{dev,second,third}.jsonl`, `bench/superseded-*.jsonl` |

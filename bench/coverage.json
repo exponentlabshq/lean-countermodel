@@ -1,0 +1,1773 @@
+{
+ "report_code_commit": "5b56935cf6bb55f36afb5def59d9efcb64e56e3c",
+ "evaluation_commits": [
+  "66c8b32"
+ ],
+ "sources": [
+  "results-final-{dev,second,third}.jsonl",
+  "fidelity.jsonl",
+  "rewrite-check.jsonl",
+  "replay-{dev,second,third}.jsonl",
+  "replay.log"
+ ],
+ "rows": [
+  {
+   "sample": "dev",
+   "problem": "LCL643+1.005.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP219-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "unchecked: time limit 300 s",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "compiled",
+   "kernel_replay": "passed",
+   "record_identity": {
+    "result": "identical: 124 records",
+    "time_cap_s": 300,
+    "seconds": 0.1
+   },
+   "rewritten_satisfaction": {
+    "result": "unchecked: time limit 300 s",
+    "time_cap_s": 300,
+    "seconds": 300.0
+   }
+  },
+  {
+   "sample": "dev",
+   "problem": "SWB017+3.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "HAL007+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "GRP126-4.005.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "PLA025+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "PHI032+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "MED004+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "PLA026+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "PHI016+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "KRS006-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "ROB029-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN807-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "PHI030+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LDA030-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP165-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NUM448+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LCL183-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "KRS009-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP226-10.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYO609+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LCL645+1.015.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SWB016-10.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "KRS173+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LAT024-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN779-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LCL661+1.015.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LAT051-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SWV920-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP018-10.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "GRP133-1.004.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "COL071-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP137-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP232+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "AGT042+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "HWV048-2.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP060-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP108+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN424+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "PHI040+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN903-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP106+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN773-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SWB014+4.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN092-1.003.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "ROB012-2.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NUM288-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LCL645+1.010.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN493-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN342-10.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN529-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP162-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LDA032-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN307-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP225+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN803-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "ALG306-1.p",
+   "assurance": "native-assisted",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "not replayed (native-assisted)",
+   "kernel_replay": "not replayed (native-assisted)"
+  },
+  {
+   "sample": "dev",
+   "problem": "SYN324+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "RNG025-9.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LAT112-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP184-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LCL179-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SWB013+4.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SWW883+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "REL053-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP042-10.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LCL661+1.020.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "ALG334-1.p",
+   "assurance": "native-assisted",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "not replayed (native-assisted)",
+   "kernel_replay": "not replayed (native-assisted)"
+  },
+  {
+   "sample": "dev",
+   "problem": "NLP263+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "LCL681+1.001.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "PLA029-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "PRO007+3.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "dev",
+   "problem": "SWB023+3.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LDA031-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SYN322+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "BOO008-3.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "GEO661+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LCL914+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SYN754-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWB011+4.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWB007+3.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP040-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SYN456+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "GRP135-1.005.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP043-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LCL673+1.005.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "GRP398-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP125-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP124+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWB004+4.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LCL667+1.001.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "GRP027-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SYN446-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "GRP134-1.005.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "GRP800+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LCL883+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SYN795-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "GEO224+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "MGT037-2.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWW938+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "CAT020-2.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWW902+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP126-10.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "RNG132-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LAT102-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LAT100-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "KLE181+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP199-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SYN536-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "PHI021+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWV017+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWW415-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWW882+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "BOO030-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP179+1.p",
+   "assurance": "native-assisted",
+   "original_satisfaction": "unchecked: time limit 300 s",
+   "rewrite_agreement": "agree",
+   "compilation": "not replayed (native-assisted)",
+   "kernel_replay": "not replayed (native-assisted)",
+   "record_identity": {
+    "result": "identical: 67 records",
+    "time_cap_s": 300,
+    "seconds": 0.2
+   },
+   "rewritten_satisfaction": {
+    "result": "satisfied",
+    "time_cap_s": 300,
+    "seconds": 191.3
+   }
+  },
+  {
+   "sample": "second",
+   "problem": "MGT040-2.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP192-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LAT106-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP065+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWW942+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SYN526+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWB009-10.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP115+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "NLP066+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LCL685+1.001.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SYO640-10.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "LCL886+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "SWB022+3.p",
+   "assurance": "native-assisted",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "not replayed (native-assisted)",
+   "kernel_replay": "not replayed (native-assisted)"
+  },
+  {
+   "sample": "second",
+   "problem": "PHI027+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "second",
+   "problem": "GRP123-4.004.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "LAT133-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SWW865+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "LCL677+1.010.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "KRS037+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP061+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP152+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GRP133-2.004.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN434+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "PUZ133+3.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "RNG007-5.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SWV015+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN422+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "PRO013+3.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN747-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP063+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GEO078-5.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN449-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP044+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN791-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP244-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "LCL407-2.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "LCL136-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP111-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "LCL413-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "KRS016-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SWW889+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN441-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP186+1.p",
+   "assurance": "native-assisted",
+   "original_satisfaction": "unchecked: time limit 300 s",
+   "rewrite_agreement": "agree",
+   "compilation": "not replayed (native-assisted)",
+   "kernel_replay": "not replayed (native-assisted)",
+   "record_identity": {
+    "result": "identical: 67 records",
+    "time_cap_s": 300,
+    "seconds": 0.2
+   },
+   "rewritten_satisfaction": {
+    "result": "unchecked: time limit 300 s",
+    "time_cap_s": 300,
+    "seconds": 1209.1
+   }
+  },
+  {
+   "sample": "third",
+   "problem": "LAT396-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "LAT048-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP229-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "PLA028+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN419+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "PRD002+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GRP204-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GRP818+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "KLE178+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "PUZ028-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GRP790+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GRP814+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SWB025+3.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GRP810+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "LAT109-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN780-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "LCL913+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP238-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "unchecked: time limit 60 s",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP104+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP249+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GRP792+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "LAT062-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN799-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP016+1.p",
+   "assurance": "native-assisted",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "not replayed (native-assisted)",
+   "kernel_replay": "not replayed (native-assisted)"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN438+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SWW921+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN530-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GRP798+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SWV013-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SWW401-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "GRP025-2.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "SYN492+1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  },
+  {
+   "sample": "third",
+   "problem": "NLP243+1.p",
+   "assurance": "native-assisted",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "not replayed (native-assisted)",
+   "kernel_replay": "not replayed (native-assisted)"
+  },
+  {
+   "sample": "third",
+   "problem": "MGT040-1.p",
+   "assurance": "strict",
+   "original_satisfaction": "faithful",
+   "rewrite_agreement": "agree",
+   "compilation": "compiled",
+   "kernel_replay": "passed"
+  }
+ ]
+}

@@ -1,0 +1,84 @@
+commit 5b56935cf6bb55f36afb5def59d9efcb64e56e3c; Thu Oct 15 21:06:39 EDT 2026
+== round-4 regression tests: python3 -m pytest test_cm.py -v -p no:cacheprovider -k model_of_part or collide or failing_finder or finder_error or timeout_is or accounted_for or rejected_not_skipped or annotations or fidelity_check or clause_search or every_small_structure or benchmark_records
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pytest_asyncio/plugin.py:247: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+============================= test session starts ==============================
+platform darwin -- Python 3.12.4, pytest-8.3.4, pluggy-1.6.0 -- /Library/Frameworks/Python.framework/Versions/3.12/bin/python3
+rootdir: /Users/michaeljagdeo/Downloads/talentOS-2026/repos/lean-countermodel
+plugins: anyio-4.12.1, time-machine-2.16.0, asyncio-1.3.0, langsmith-0.4.2, cov-7.0.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 149 items / 105 deselected / 44 selected
+
+test_cm.py::test_benchmark_records_unsupported_input PASSED              [  2%]
+test_cm.py::test_every_record_is_accounted_for[fof('critical-axiom', axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n-2] PASSED [  4%]
+test_cm.py::test_every_record_is_accounted_for[fof % legal comment between tokens\n(critical, axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n-2] PASSED [  6%]
+test_cm.py::test_every_record_is_accounted_for[fof ( a , axiom , p ) .\n-1] PASSED [  9%]
+test_cm.py::test_every_record_is_accounted_for[fof(a, axiom, p, file('x.p', a)).\n-1] PASSED [ 11%]
+test_cm.py::test_every_record_is_accounted_for[fof(1, axiom, p).\nfof('thm.bool.TRUTH', axiom, q).\nfof('it\\'s', axiom, r).\n-3] PASSED [ 13%]
+test_cm.py::test_every_record_is_accounted_for[fof('50%', axiom, p % ). fof(b, axiom, q).\n   ).\n-1] PASSED [ 15%]
+test_cm.py::test_every_record_is_accounted_for[cnf(c, negated_conjecture, ~ r(X) | s(X)).\n-1] PASSED [ 18%]
+test_cm.py::test_annotations_are_not_formulas PASSED                     [ 20%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[hello.\n] PASSED [ 22%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom).\n] PASSED [ 25%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, unknown, p).\n] PASSED [ 27%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[tff(a, axiom, p).\n] PASSED [ 29%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[include('Axioms/A.ax').\n] PASSED [ 31%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, p)\n] PASSED [ 34%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, (p).\n] PASSED [ 36%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, p).\n/* fof(b, axiom, q). */\n] PASSED [ 38%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a b, axiom, p).\n] PASSED [ 40%]
+test_cm.py::test_a_model_of_part_of_the_problem_is_rejected[fof('critical-axiom', axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n] PASSED [ 43%]
+test_cm.py::test_a_model_of_part_of_the_problem_is_rejected[fof % legal comment between tokens\n(critical, axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n] PASSED [ 45%]
+test_cm.py::test_source_symbols_cannot_collide_with_generated_names PASSED [ 47%]
+test_cm.py::test_a_failing_finder_is_not_a_search_outcome PASSED         [ 50%]
+test_cm.py::test_benchmark_reports_a_failing_finder_as_finder_error PASSED [ 52%]
+test_cm.py::test_a_timeout_is_a_search_outcome_not_a_failure PASSED      [ 54%]
+test_cm.py::test_fidelity_check_flags_a_model_of_part_of_the_problem PASSED [ 56%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: (p(X) | q(Y))] PASSED [ 59%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | ![X]: q(X))] PASSED [ 61%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: (p(X) | r(X,Y))] PASSED [ 63%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) => ![Y]: (q(Y) => r(X,Y)))] PASSED [ 65%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(a) | q(a))] PASSED [ 68%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | ?[Y]: r(X,Y))] PASSED [ 70%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: (r(X,Y) | r(Y,X) | X = Y)] PASSED [ 72%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: ~ (p(X) & ~ q(X))] PASSED [ 75%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) <=> q(X))] PASSED [ 77%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: ((p(X) & q(Y)) => r(X,Y))] PASSED [ 79%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (![Y]: r(X,Y) | p(X))] PASSED [ 81%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y,Z]: (~ r(X,Y) | ~ r(Y,Z) | r(X,Z))] PASSED [ 84%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | ![Y]: (q(Y) | r(Y,X)))] PASSED [ 86%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-?[X]: (p(X) | q(X))] PASSED [ 88%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | p(X))] PASSED [ 90%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[cnf-~ r(X,Y) | ~ r(Y,Z) | r(X,Z)] PASSED [ 93%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[cnf-p(X) | q(Y)] PASSED [ 95%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[cnf-X = a | r(X,X)] PASSED [ 97%]
+test_cm.py::test_clause_search_agrees_with_brute_force PASSED            [100%]
+
+====================== 44 passed, 105 deselected in 5.66s ======================
+== round-4 regression tests: exit 0 (expected 0) ok
+== recheck.sh without lake: env PATH=/usr/bin:/bin ./recheck.sh
+commit 5b56935 (+uncommitted changes)
+./recheck.sh: line 13: lake: command not found
+FAILED: lean --version
+== recheck.sh without lake: exit 1 (expected nonzero) ok
+== replay.py, certificate that does not compile: python3 bench/replay.py /var/folders/dt/1v9rmk195_q7lp5m_x15yj8h0000gn/T/tmp.qk73BXtp5C
+fail 1 strict certificates; aggregate compiled in 0.2 s; leanchecker --fresh ok in 33.8 s; outside standard axioms or not replayed: ['NEGFAIL+1.p']
+== replay.py, certificate that does not compile: exit 1 (expected nonzero) ok
+== replay.py, certificate using sorry: python3 bench/replay.py /var/folders/dt/1v9rmk195_q7lp5m_x15yj8h0000gn/T/tmp.qk73BXtp5C
+sorry 1 strict certificates; aggregate compiled in 0.2 s; leanchecker --fresh ok in 33.4 s; outside standard axioms or not replayed: ['NEGSORRY+1.p']
+== replay.py, certificate using sorry: exit 1 (expected nonzero) ok
+sorry NEGSORRY+1.p compiled 0.3
+== axioms sorry
+'NEGSORRY_1.countermodel' depends on axioms: [sorryAx]
+== leanchecker --fresh Replay_sorry: ok in 33.4 s
+
+== inputs.py verify, one altered byte: python3 bench/inputs.py verify /private/tmp/claude-501/-Users-michaeljagdeo-Downloads-talentOS-2026/7c399779-7cfb-4afa-a876-982babc97c43/scratchpad/tptp/TPTP-v9.3.1
+MISMATCH against bench/inputs.json:
+  problem SYN307-1.p
+== inputs.py verify, one altered byte: exit 1 (expected nonzero) ok
+== inputs.py verify, restored: python3 bench/inputs.py verify /private/tmp/claude-501/-Users-michaeljagdeo-Downloads-talentOS-2026/7c399779-7cfb-4afa-a876-982babc97c43/scratchpad/tptp/TPTP-v9.3.1
+verified: 300 problems and 65 axiom files match bench/inputs.json
+== inputs.py verify, restored: exit 0 (expected 0) ok
+== overall: every control behaved as expected
