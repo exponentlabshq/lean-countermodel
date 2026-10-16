@@ -1,0 +1,19 @@
+{
+ "wrong_model": "one element, a = 1, p(1) false: a model of ~p(a) only",
+ "cases": [
+  {
+   "case": "quoted_record",
+   "records_read": 2,
+   "oracle_accepts_wrong_model": false,
+   "shallow_lean_exit": 1,
+   "reflected_lean_exit": 1
+  },
+  {
+   "case": "comment_record",
+   "records_read": 2,
+   "oracle_accepts_wrong_model": false,
+   "shallow_lean_exit": 1,
+   "reflected_lean_exit": 1
+  }
+ ]
+}

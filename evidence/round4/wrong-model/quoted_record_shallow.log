@@ -1,0 +1,5 @@
+$ lake env lean evidence/round4/wrong-model/quoted_record_shallow.lean
+exit status: 1
+evidence/round4/wrong-model/quoted_record_shallow.lean:23:30: error: Tactic `decide` proved that the proposition
+  p a
+is false

@@ -1,0 +1,167 @@
+{
+ "round3": "bench/superseded-acb343b-{dev,second}.jsonl, bench/superseded-30ad4f3-third.jsonl",
+ "round4": "bench/results-final-*.jsonl at 66c8b32",
+ "rows_unchanged": 290,
+ "rows_listed": [
+  {
+   "sample": "dev",
+   "problem": "SWW883+1.p",
+   "round3": {
+    "commit": "acb343b",
+    "verdict": "certified",
+    "records_read": 5
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "certified",
+    "records_read": 10,
+    "model_size": 2
+   },
+   "note": "withdrawn: certified a weakened problem; now certified on the complete problem"
+  },
+  {
+   "sample": "second",
+   "problem": "COM150+1.p",
+   "round3": {
+    "commit": "acb343b",
+    "verdict": "no model",
+    "records_read": 28
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "no model",
+    "records_read": 60,
+    "model_size": null
+   },
+   "note": "records added; verdict unchanged"
+  },
+  {
+   "sample": "second",
+   "problem": "SWW938+1.p",
+   "round3": {
+    "commit": "acb343b",
+    "verdict": "certified",
+    "records_read": 5
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "certified",
+    "records_read": 34,
+    "model_size": 2
+   },
+   "note": "withdrawn: certified a weakened problem; now certified on the complete problem"
+  },
+  {
+   "sample": "second",
+   "problem": "SWW902+1.p",
+   "round3": {
+    "commit": "acb343b",
+    "verdict": "certified",
+    "records_read": 5
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "certified",
+    "records_read": 28,
+    "model_size": 2
+   },
+   "note": "withdrawn: certified a weakened problem; now certified on the complete problem"
+  },
+  {
+   "sample": "second",
+   "problem": "SWW882+1.p",
+   "round3": {
+    "commit": "acb343b",
+    "verdict": "certified",
+    "records_read": 5
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "certified",
+    "records_read": 11,
+    "model_size": 2
+   },
+   "note": "withdrawn: certified a weakened problem; now certified on the complete problem"
+  },
+  {
+   "sample": "second",
+   "problem": "SWW942+1.p",
+   "round3": {
+    "commit": "acb343b",
+    "verdict": "certified",
+    "records_read": 5
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "certified",
+    "records_read": 10,
+    "model_size": 2
+   },
+   "note": "withdrawn: certified a weakened problem; now certified on the complete problem"
+  },
+  {
+   "sample": "third",
+   "problem": "SWW865+1.p",
+   "round3": {
+    "commit": "30ad4f3",
+    "verdict": "certified",
+    "records_read": 5
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "certified",
+    "records_read": 18,
+    "model_size": 3
+   },
+   "note": "withdrawn: certified a weakened problem; now certified on the complete problem"
+  },
+  {
+   "sample": "third",
+   "problem": "ALG310-1.p",
+   "round3": {
+    "commit": "30ad4f3",
+    "verdict": "certified (native)",
+    "records_read": 58
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "lean rejected",
+    "records_read": 58,
+    "model_size": 6
+   },
+   "note": "verdict changed; input read identically"
+  },
+  {
+   "sample": "third",
+   "problem": "SWW889+1.p",
+   "round3": {
+    "commit": "30ad4f3",
+    "verdict": "certified",
+    "records_read": 5
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "certified",
+    "records_read": 44,
+    "model_size": 2
+   },
+   "note": "withdrawn: certified a weakened problem; now certified on the complete problem"
+  },
+  {
+   "sample": "third",
+   "problem": "SWW921+1.p",
+   "round3": {
+    "commit": "30ad4f3",
+    "verdict": "certified",
+    "records_read": 5
+   },
+   "round4": {
+    "commit": "66c8b32",
+    "verdict": "certified",
+    "records_read": 13,
+    "model_size": 2
+   },
+   "note": "withdrawn: certified a weakened problem; now certified on the complete problem"
+  }
+ ]
+}

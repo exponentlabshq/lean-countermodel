@@ -1,0 +1,5 @@
+$ lake env lean evidence/round4/wrong-model/quoted_record_reflected.lean
+exit status: 1
+evidence/round4/wrong-model/quoted_record_reflected.lean:24:85: error: Tactic `decide` proved that the proposition
+  ((List.range 2).all fun i => Fm.wf M fns 0 (fact F0 1 1 ar i) && Fm.check M [] (fact F0 1 1 ar i)) = true
+is false
