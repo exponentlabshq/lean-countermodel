@@ -47,7 +47,7 @@ Each gives *finder error* and caches nothing. The timeout control still gives *n
 - **Valid input is unaffected.** Against the evaluation commit `66c8b32`, all 316 inputs read identically or are rejected by both versions (306 and 10; `bench/parser-comparison-r4b.json`), and the 30 shipped certificates regenerate byte-identically. The benchmark results and replay therefore stand as delivered.
 - **Test counts.** The full suite is now 169 tests.
   - In the repository, with the corpus rebuilt: **169 passed**, pytest exit status 0 (`bench/test-log.txt`, which now records pytest's own status).
-  - In a tree restored from the packages: 168 passed and 1 skipped, the corpus check, as you observed.
+  - In a tree restored from the packages: **167 passed, 2 skipped**. We applied all three packages in a fresh directory to get this. The skips are the corpus check, as you observed, and the new cache-classification test, which needs the Vampire cache. Neither data set is in the packages.
   - `bench/negative-controls.log` runs a selection of 64 tests plus five failure controls, and the paper describes it that way. Appendix A now has the current counts and every round-4 command.
 - **The 156 figure** is now a test, `test_small_structure_check_detects_a_wrong_rewrite`, asserting exactly 156 disagreements out of 1,032.
 - **Rewrite coverage selector.** It is stated as the 206 certified, native-assisted and Lean-rejected outcomes. `SYO595-1` is outside it and is not a certified result.

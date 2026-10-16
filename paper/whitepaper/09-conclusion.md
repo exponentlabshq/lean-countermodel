@@ -14,7 +14,7 @@ The remaining gap is the user's side: a command inside Lean that takes a goal an
 
 | Result | Command | Data |
 |---|---|---|
-| Unit and integration tests | `pytest test_cm.py` (Vampire on `PATH` or in `$VAMPIRE`) | 169 tests, all passing (`bench/test-log.txt`); 81 run without Vampire; in a restored package without the TPTP corpus, 168 pass and 1 is skipped |
+| Unit and integration tests | `pytest test_cm.py` (Vampire on `PATH` or in `$VAMPIRE`) | 169 tests, all passing (`bench/test-log.txt`); 81 run without Vampire; in a restored package, without the TPTP corpus and the Vampire cache, 167 pass and 2 are skipped |
 | Axioms and fresh kernel replay of all shipped certificates | `./recheck.sh` | writes `bench/recheck.log` |
 | Examples (shallow) | `lake build`; `lake env lean Axioms.lean` | `examples/`, `Cm/` |
 | One reflected certificate | `python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean` | — |

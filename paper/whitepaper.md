@@ -389,7 +389,7 @@ The trusted Python stages are tested against an evaluator with its **own record 
 | `test_ablation_keeps_every_experiment_distinct`, `test_ablation_refuses_records_it_would_otherwise_drop` (3 cases) | Round-4 final review. Records `'a-b'`, `a_b`, `'g-h'` and `g_h` give six distinct experiments and six result rows (prover verdicts stubbed). A role outside the ablation language (`negated_conjecture`, `lemma`) or a duplicated record name is rejected before any experiment runs. |
 | `test_ablation_finds_what_a_conclusion_needs` | `ablate.py` labels a needed axiom with a certified counter-model, and never labels an underivable target as needing anything. |
 
-The suite has **169 test cases**: 5 tests parametrized over the 15 examples (75), 14 rejection and capture cases, 22 record-reading cases, 18 adversarial rewrite cases, 13 further parametrized cases (3 ablation-scope, 4 finder-error, 6 malformed-formula), and 27 single tests. In the repository, with the TPTP inputs rebuilt, all 169 pass (`bench/test-log.txt`, pytest exit status 0); in a tree restored from the review packages, the input-integrity test is skipped because the corpus is not included, giving 168 passed and 1 skipped. Separately, `recheck.sh` rebuilds all 30 shipped certificates, prints their axioms and replays `Checker`, `AllShallow` and `AllReflected` through the kernel from scratch with `leanchecker --fresh` (Lean 4.35); its output is `bench/recheck.log`. The benchmark certificates are replayed the same way by `bench/replay.py` (§6.2).
+The suite has **169 test cases**: 5 tests parametrized over the 15 examples (75), 14 rejection and capture cases, 22 record-reading cases, 18 adversarial rewrite cases, 13 further parametrized cases (3 ablation-scope, 4 finder-error, 6 malformed-formula), and 27 single tests. In the repository, with the TPTP inputs rebuilt, all 169 pass (`bench/test-log.txt`, pytest exit status 0); in a tree restored from the review packages, two tests are skipped because their data is not included: the input-integrity test needs the TPTP corpus and the cache-classification test needs the Vampire cache, giving 167 passed and 2 skipped. Separately, `recheck.sh` rebuilds all 30 shipped certificates, prints their axioms and replays `Checker`, `AllShallow` and `AllReflected` through the kernel from scratch with `leanchecker --fresh` (Lean 4.35); its output is `bench/recheck.log`. The benchmark certificates are replayed the same way by `bench/replay.py` (§6.2).
 
 ## 4. The Verified Checker: Data Structures and Trust
 
@@ -1220,7 +1220,7 @@ The remaining gap is the user's side: a command inside Lean that takes a goal an
 
 | Result | Command | Data |
 |---|---|---|
-| Unit and integration tests | `pytest test_cm.py` (Vampire on `PATH` or in `$VAMPIRE`) | 169 tests, all passing (`bench/test-log.txt`); 81 run without Vampire; in a restored package without the TPTP corpus, 168 pass and 1 is skipped |
+| Unit and integration tests | `pytest test_cm.py` (Vampire on `PATH` or in `$VAMPIRE`) | 169 tests, all passing (`bench/test-log.txt`); 81 run without Vampire; in a restored package, without the TPTP corpus and the Vampire cache, 167 pass and 2 are skipped |
 | Axioms and fresh kernel replay of all shipped certificates | `./recheck.sh` | writes `bench/recheck.log` |
 | Examples (shallow) | `lake build`; `lake env lean Axioms.lean` | `examples/`, `Cm/` |
 | One reflected certificate | `python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean` | — |
