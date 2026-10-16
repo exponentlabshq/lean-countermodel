@@ -1,4 +1,4 @@
-commit 0a0b469
+commit decfb93
 Lean (version 4.35.0, arm64-apple-darwin24.6.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)
 Build completed successfully (38 jobs).
 == axioms: Cm
@@ -35,4 +35,4 @@ Build completed successfully (38 jobs).
 'transitive_cnf.countermodel' depends on axioms: [propext, Quot.sound]
 == leanchecker --fresh Checker: ok in 35 s
 == leanchecker --fresh AllShallow: ok in 35 s
-== leanchecker --fresh AllReflected: ok in 34 s
+== leanchecker --fresh AllReflected: ok in 36 s
