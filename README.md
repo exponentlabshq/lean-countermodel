@@ -12,7 +12,51 @@ python3 cm.py examples/group_comm.p > G.lean && lake env lean G.lean            
 python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean   # through the verified checker
 ```
 
-**Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.md`](paper/whitepaper.md) covers the method, data structures, scaling recipe, evaluation and related work.
+**Authors:** Michael Jagdeo, Exponent Labs LLC · Jeff Dumps. **Whitepaper:** [`paper/whitepaper.pdf`](paper/whitepaper.pdf) ([Markdown](paper/whitepaper.md)) covers the method, data structures, scaling recipe, evaluation and related work. Working on the code with an AI agent? See [`AGENTS.md`](AGENTS.md).
+
+## 0. Quick start
+
+**You need:**
+- macOS or Linux (we test on macOS 14.4 on Apple Silicon; the peer reviewer ran everything on Ubuntu 24.04 x86-64);
+- [elan](https://github.com/leanprover/elan), the Lean version manager. `lean-toolchain` pins Lean 4.35.0, and elan fetches it on first use;
+- Python 3.12 or later, with pytest;
+- the [Vampire 5.1.0](https://github.com/vprover/vampire/releases/tag/v5.1.0) binary for your platform.
+
+```sh
+git clone https://github.com/exponentlabshq/lean-countermodel && cd lean-countermodel
+curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh   # only if you have no elan
+python3 -m pip install -r requirements.txt
+export VAMPIRE=/path/to/vampire          # or put the binary on your PATH as `vampire`
+
+lake build                               # the checker and the 30 shipped certificates; no network after the toolchain
+python3 cm.py examples/group_comm.p > G.lean && lake env lean G.lean   # no output and exit 0: Lean accepted it
+python3 -m pytest test_cm.py -q          # a fresh clone: 168 passed, 2 skipped
+./recheck.sh                             # every shipped certificate's axioms, and a fresh kernel replay; exit 0
+```
+
+**What to expect:**
+- **The two skipped tests** need data that isn't in the repository: the TPTP benchmark inputs (rebuilt by `bench/inputs.py`, §7) and a Vampire answer cache. With both present, all 170 pass.
+- **Without Vampire,** the 82 tests that need no Vampire model still run.
+- **To see what a certificate depends on,** append `#print axioms group_comm.countermodel` to `G.lean`. A shallow certificate depends on at most `propext`; a reflected one (`cm.py --reflect`) on `propext` and `Quot.sound`.
+
+**Using it on your own problem:** write it in TPTP `fof` or `cnf` (§6 and the whitepaper's §8.1 list what is supported), then:
+
+```sh
+python3 cm.py problem.p > P.lean && lake env lean P.lean             # one theorem per formula
+python3 cm.py --reflect problem.p > P.lean && lake env lean P.lean   # through the verified checker
+python3 cm.py --reflect problem.p OUTDIR                             # a large problem: Lean modules in OUTDIR/<name>/
+```
+
+**Environment variables:**
+
+| Variable | Meaning | Default |
+|---|---|---|
+| `VAMPIRE` | path to the Vampire binary | `vampire` on your PATH |
+| `CM_CACHE` | a directory where Vampire's answers are cached by content; only definite answers are stored | no cache |
+| `CM_CHUNK` | formulas per Lean module above which the shallow emitter writes modules | 2000 |
+| `TPTP` | an unpacked TPTP release that the benchmark harness reads problems from | the TPTP website |
+
+`cm.py` exits non-zero, with a message, when Vampire finds no finite model, when the input uses a TPTP feature it does not support, or when Vampire fails to run. It never writes a certificate for a problem it has not read completely.
 
 ---
 
@@ -45,11 +89,11 @@ This project is a general tool for that last row: any first-order theory in TPTP
 | **Compile** | Either **shallow** (an `inductive T`, bitmask tables, one theorem per formula) or **reflected** (the problem as packed data, plus the model as packed tables) | **Yes**, the translation; tested independently |
 | **Certify** | Shallow: `decide` per formula. Reflected: `valid` and `Good M fns problem` by `decide +kernel`, concluding ordinary first-order satisfaction through `Checker.lean`'s `sem_iff_sat`, proved once. `#eval problem` prints exactly what is certified. | The kernel |
 
-**Hybrid dispatch:** reflection wins on ground facts (7× less CPU on a 10,000-fact slice). One theorem per formula still wins on deeply nested quantifiers. The benchmark uses reflection when at least 90% of formulas are ground facts. Details, the measured design patterns and the negative results are in the whitepaper, §4–5.
+**Hybrid dispatch:** reflection wins on ground facts: 3.2× less CPU on a 10,000-fact slice and 2.6× on the million-fact problem, in the controlled comparison of §4.3. One theorem per formula still wins on deeply nested quantifiers. The benchmark uses reflection when at least 90% of formulas are ground facts. Details, the measured design patterns and the negative results are in the whitepaper, §4–5.
 
 ## 4. Case studies
 
-### 4.1 TPTP: 100 problems nobody chose for us
+### 4.1 TPTP: three samples of 100 problems
 
 From TPTP's ProblemAndSolutionStatistics we kept the **2,561** fof/cnf problems marked Satisfiable or CounterSatisfiable (`bench/eligible.tsv`); these statuses do not guarantee a *finite* model. Every input is rebuilt byte for byte from the official TPTP v9.3.1 release (`bench/inputs.py`, `bench/inputs.json`). Three samples:
 
@@ -152,28 +196,42 @@ This problem forced most of the scaling recipe. On the way it exposed four bugs:
 | An independent Python evaluator | The same verdicts by brute force, independently of any translation into Lean |
 | Mutants (one corrupted table entry at a time) | Lean accepts exactly what the evaluator accepts, on both certificate paths |
 | Rewrite equivalence | Each rewritten formula agrees with its original on every model and mutant |
+| Total record reading | The whole file is accounted for, or it is rejected with a line number: a record can't be dropped silently. The test oracle reads records with its own, separately written reader |
+| Source fidelity | For 189 of the 192 certified benchmark results, the oracle read the **original** file and confirmed every formula in the certified model (`bench/coverage.md`; 3 are unchecked and named, none failed) |
+| Fresh kernel replay | All 30 shipped certificates (`recheck.sh`) and all 185 strict benchmark certificates (`bench/replay.py`) replay from scratch with `leanchecker --fresh`, using only Lean's standard axioms |
+| Negative controls | `bench/negative-controls.sh` checks that each safeguard fails when it should: a wrong model, a crashing finder, a certificate using `sorry`, a missing build tool, an altered input byte |
 | Planted bugs | Each one fails tests: a translation error, a scoping error, a dropped negation, a lost parenthesis, a single-formula edge case |
 
-**A lesson from a real bug:** a flattening rule misread TPTP's `! [X] : A => B` as ∀X (A → B). On three problems, Lean certified a *different statement*. The bug was fixed, regression-tested, and every problem rerun. **What you rewrite is part of what you must trust.**
+**Lessons from real bugs:**
+- **A flattening rule** misread TPTP's `! [X] : A => B` as ∀X (A → B). On three problems, Lean certified a *different statement*.
+- **The record reader** once skipped records it couldn't match, so eight certificates checked weakened problems. They were withdrawn, and the repaired pipeline certified the complete problems.
+
+Each bug was fixed, regression-tested, and every problem rerun. **What you read and rewrite is part of what you must trust:** Lean proves exactly the statement it is given.
 
 ## 6. Limits
 
 - **No command inside Lean yet;** you write TPTP.
 - **Untyped first-order logic only;** unsupported TPTP features are rejected, never misread (whitepaper §8.1 lists them).
 - **Reflected checking of deeply nested quantifiers is slow,** so the benchmark dispatches by fact share.
-- **Vampire's limits are ours:** within 30 s, no model for 19, 34 and 29 of the three samples' 100 problems.
+- **Vampire's limits are ours:** within 30 s, no model for 19, 34 and 29 of the three samples' 100 problems. Some have no finite model at all.
+- **The TPTP-to-Lean translation is trusted, tested code, not a verified compiler.** Rewriting is checked by bounded validation, not proved equivalent.
+- **Source fidelity is checked for 189 of 192 certified results;** `NLP219-1`, `NLP179+1` and `NLP186+1` are unchecked. Native-assisted results (7) trust Lean's compiler and are not replayed.
+- **Known crash classes**, reported as failures: very deep formula nesting exceeds Python's recursion limit (`KRS290-1`), and the benchmark harness does not handle shallow certificates of more than 2,000 formulas (`SYO595-1`).
+- **`bench/perf.py` is macOS/BSD-specific.** It reads memory through `/usr/bin/time -l`.
 
 ## 7. Reproduce
 
 | | |
 |---|---|
-| Requirements | Lean 4.35 (elan), Vampire 5.1.0 (on `PATH`, or set `VAMPIRE`), Python 3.12 with pytest. `nakamura/` pins Lean 4.13. The Lean project has no package dependencies. |
-| Vampire | One binary from the v5.1.0 release, e.g. `gh release download v5.1.0 -R vprover/vampire -p vampire-macOS-ARM64.zip && unzip vampire-macOS-ARM64.zip` (other platforms have their own assets) |
-| Tests | `lake build && pytest test_cm.py` (170 tests; the 82 that need no Vampire model also run without Vampire), including `tests/Boundary.lean`; `./recheck.sh` for axioms and a fresh kernel replay |
+| Requirements | See §0. `nakamura/` pins Lean 4.13; the main project has no Lean package dependencies |
+| Vampire | One binary from the v5.1.0 release, for example `gh release download v5.1.0 -R vprover/vampire -p vampire-macOS-ARM64.zip && unzip vampire-macOS-ARM64.zip` (other platforms have their own assets) |
+| Tests | `lake build && python3 -m pytest test_cm.py` (170 tests: 168 pass and 2 skip in a fresh clone; the 82 that need no Vampire model also run without Vampire), including `tests/Boundary.lean`; `./recheck.sh` for axioms and a fresh kernel replay; `bench/negative-controls.sh [TPTP-v9.3.1]` for the failure controls |
 | Examples | `lake build`, then `lake env lean Axioms.lean` |
 | Nakamura | `cd nakamura && lake build && lake env lean Axioms.lean` (clones spinoza-ethica-lean @ 6d4c046, about 11 MB) |
-| Benchmark inputs | `python3 bench/inputs.py TPTP-v9.3.1 [TPTP-v9.3.1.tgz]` rebuilds every input from the official release (934 MB tarball) and checks it against `bench/inputs.json` |
-| Benchmark | Frozen runs: `bench/frozen.py`, then `bench/replay.py` (usage in each file); exploratory sampling: `python3 bench.py N [WORKERS]` |
+| Benchmark inputs | Download and unpack the official [TPTP v9.3.1 release](https://tptp.org/TPTP/Distribution/TPTP-v9.3.1.tgz) (934 MB; about 10 GB unpacked), then `python3 bench/inputs.py verify TPTP-v9.3.1 TPTP-v9.3.1.tgz`. It rebuilds every input and checks every file, and the tarball, against `bench/inputs.json` |
+| Benchmark | Frozen runs: `bench/frozen.py`, then `bench/replay.py` (usage in each file; about 40 and 45 minutes); exploratory sampling: `python3 bench.py N [WORKERS]` |
+| Source fidelity and coverage | `bench/fidelity.py`, `bench/rewrite_check.py`, then `bench/coverage.py` (each takes the `bench` directory); the report is `bench/coverage.md` |
+| Ablation | `python3 ablate.py ablation/nakamura_register.p OUTDIR`: the assumption-dependency map, with certified counter-models (about 2 minutes) |
 | Whitepaper | `python3 paper/assemble.py` builds `paper/whitepaper.md` from `paper/whitepaper/` |
 | Formal-philosophy agenda | `paper/philosophy-lean-vampire-research.md` (original) and `paper/formal-philosophy.md` (revised, with results) |
 
