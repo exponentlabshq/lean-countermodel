@@ -1,5 +1,5 @@
-commit 5b56935cf6bb55f36afb5def59d9efcb64e56e3c; Thu Oct 15 21:06:39 EDT 2026
-== round-4 regression tests: python3 -m pytest test_cm.py -v -p no:cacheprovider -k model_of_part or collide or failing_finder or finder_error or timeout_is or accounted_for or rejected_not_skipped or annotations or fidelity_check or clause_search or every_small_structure or benchmark_records
+commit 5f37dd562634ac692455881ca5bd52cf2b7e5aac; Fri Oct 16 02:33:44 EDT 2026
+== round-4 regression tests: python3 -m pytest test_cm.py -v -p no:cacheprovider -k model_of_part or collide or failing_finder or finder_error or explicit_finder or recorded_vampire or timeout_is or accounted_for or rejected_not_skipped or annotations or fidelity_check or clause_search or every_small_structure or wrong_rewrite or benchmark_records or ablation_keeps or ablation_refuses or malformed_structure
 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pytest_asyncio/plugin.py:247: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
 The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
 
@@ -9,70 +9,90 @@ platform darwin -- Python 3.12.4, pytest-8.3.4, pluggy-1.6.0 -- /Library/Framewo
 rootdir: /Users/michaeljagdeo/Downloads/talentOS-2026/repos/lean-countermodel
 plugins: anyio-4.12.1, time-machine-2.16.0, asyncio-1.3.0, langsmith-0.4.2, cov-7.0.0
 asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-collecting ... collected 149 items / 105 deselected / 44 selected
+collecting ... collected 169 items / 105 deselected / 64 selected
 
-test_cm.py::test_benchmark_records_unsupported_input PASSED              [  2%]
-test_cm.py::test_every_record_is_accounted_for[fof('critical-axiom', axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n-2] PASSED [  4%]
-test_cm.py::test_every_record_is_accounted_for[fof % legal comment between tokens\n(critical, axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n-2] PASSED [  6%]
-test_cm.py::test_every_record_is_accounted_for[fof ( a , axiom , p ) .\n-1] PASSED [  9%]
-test_cm.py::test_every_record_is_accounted_for[fof(a, axiom, p, file('x.p', a)).\n-1] PASSED [ 11%]
-test_cm.py::test_every_record_is_accounted_for[fof(1, axiom, p).\nfof('thm.bool.TRUTH', axiom, q).\nfof('it\\'s', axiom, r).\n-3] PASSED [ 13%]
-test_cm.py::test_every_record_is_accounted_for[fof('50%', axiom, p % ). fof(b, axiom, q).\n   ).\n-1] PASSED [ 15%]
-test_cm.py::test_every_record_is_accounted_for[cnf(c, negated_conjecture, ~ r(X) | s(X)).\n-1] PASSED [ 18%]
-test_cm.py::test_annotations_are_not_formulas PASSED                     [ 20%]
-test_cm.py::test_unreadable_records_are_rejected_not_skipped[hello.\n] PASSED [ 22%]
-test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom).\n] PASSED [ 25%]
-test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, unknown, p).\n] PASSED [ 27%]
-test_cm.py::test_unreadable_records_are_rejected_not_skipped[tff(a, axiom, p).\n] PASSED [ 29%]
-test_cm.py::test_unreadable_records_are_rejected_not_skipped[include('Axioms/A.ax').\n] PASSED [ 31%]
-test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, p)\n] PASSED [ 34%]
-test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, (p).\n] PASSED [ 36%]
-test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, p).\n/* fof(b, axiom, q). */\n] PASSED [ 38%]
-test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a b, axiom, p).\n] PASSED [ 40%]
-test_cm.py::test_a_model_of_part_of_the_problem_is_rejected[fof('critical-axiom', axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n] PASSED [ 43%]
-test_cm.py::test_a_model_of_part_of_the_problem_is_rejected[fof % legal comment between tokens\n(critical, axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n] PASSED [ 45%]
-test_cm.py::test_source_symbols_cannot_collide_with_generated_names PASSED [ 47%]
-test_cm.py::test_a_failing_finder_is_not_a_search_outcome PASSED         [ 50%]
-test_cm.py::test_benchmark_reports_a_failing_finder_as_finder_error PASSED [ 52%]
-test_cm.py::test_a_timeout_is_a_search_outcome_not_a_failure PASSED      [ 54%]
-test_cm.py::test_fidelity_check_flags_a_model_of_part_of_the_problem PASSED [ 56%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: (p(X) | q(Y))] PASSED [ 59%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | ![X]: q(X))] PASSED [ 61%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: (p(X) | r(X,Y))] PASSED [ 63%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) => ![Y]: (q(Y) => r(X,Y)))] PASSED [ 65%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(a) | q(a))] PASSED [ 68%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | ?[Y]: r(X,Y))] PASSED [ 70%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: (r(X,Y) | r(Y,X) | X = Y)] PASSED [ 72%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: ~ (p(X) & ~ q(X))] PASSED [ 75%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) <=> q(X))] PASSED [ 77%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: ((p(X) & q(Y)) => r(X,Y))] PASSED [ 79%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (![Y]: r(X,Y) | p(X))] PASSED [ 81%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y,Z]: (~ r(X,Y) | ~ r(Y,Z) | r(X,Z))] PASSED [ 84%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | ![Y]: (q(Y) | r(Y,X)))] PASSED [ 86%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-?[X]: (p(X) | q(X))] PASSED [ 88%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | p(X))] PASSED [ 90%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[cnf-~ r(X,Y) | ~ r(Y,Z) | r(X,Z)] PASSED [ 93%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[cnf-p(X) | q(Y)] PASSED [ 95%]
-test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[cnf-X = a | r(X,X)] PASSED [ 97%]
-test_cm.py::test_clause_search_agrees_with_brute_force PASSED            [100%]
+test_cm.py::test_benchmark_records_unsupported_input PASSED              [  1%]
+test_cm.py::test_every_record_is_accounted_for[fof('critical-axiom', axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n-2] PASSED [  3%]
+test_cm.py::test_every_record_is_accounted_for[fof % legal comment between tokens\n(critical, axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n-2] PASSED [  4%]
+test_cm.py::test_every_record_is_accounted_for[fof ( a , axiom , p ) .\n-1] PASSED [  6%]
+test_cm.py::test_every_record_is_accounted_for[fof(a, axiom, p, file('x.p', a)).\n-1] PASSED [  7%]
+test_cm.py::test_every_record_is_accounted_for[fof(1, axiom, p).\nfof('thm.bool.TRUTH', axiom, q).\nfof('it\\'s', axiom, r).\n-3] PASSED [  9%]
+test_cm.py::test_every_record_is_accounted_for[fof('50%', axiom, p % ). fof(b, axiom, q).\n   ).\n-1] PASSED [ 10%]
+test_cm.py::test_every_record_is_accounted_for[cnf(c, negated_conjecture, ~ r(X) | s(X)).\n-1] PASSED [ 12%]
+test_cm.py::test_annotations_are_not_formulas PASSED                     [ 14%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, (p]).\n] PASSED [ 15%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, p,).\n] PASSED [ 17%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, p(b]).\n] PASSED [ 18%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, ![X: p(X)).\n] PASSED [ 20%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[hello.\n] PASSED [ 21%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom).\n] PASSED [ 23%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, unknown, p).\n] PASSED [ 25%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[tff(a, axiom, p).\n] PASSED [ 26%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[include('Axioms/A.ax').\n] PASSED [ 28%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, p)\n] PASSED [ 29%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, (p).\n] PASSED [ 31%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a, axiom, p).\n/* fof(b, axiom, q). */\n] PASSED [ 32%]
+test_cm.py::test_unreadable_records_are_rejected_not_skipped[fof(a b, axiom, p).\n] PASSED [ 34%]
+test_cm.py::test_a_model_of_part_of_the_problem_is_rejected[fof('critical-axiom', axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n] PASSED [ 35%]
+test_cm.py::test_a_model_of_part_of_the_problem_is_rejected[fof % legal comment between tokens\n(critical, axiom, p(a)).\nfof(negative, axiom, ~p(a)).\n] PASSED [ 37%]
+test_cm.py::test_source_symbols_cannot_collide_with_generated_names PASSED [ 39%]
+test_cm.py::test_a_failing_finder_is_not_a_search_outcome PASSED         [ 40%]
+test_cm.py::test_benchmark_reports_a_failing_finder_as_finder_error PASSED [ 42%]
+test_cm.py::test_a_timeout_is_a_search_outcome_not_a_failure PASSED      [ 43%]
+test_cm.py::test_fidelity_check_flags_a_model_of_part_of_the_problem PASSED [ 45%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: (p(X) | q(Y))] PASSED [ 46%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | ![X]: q(X))] PASSED [ 48%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: (p(X) | r(X,Y))] PASSED [ 50%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) => ![Y]: (q(Y) => r(X,Y)))] PASSED [ 51%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(a) | q(a))] PASSED [ 53%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | ?[Y]: r(X,Y))] PASSED [ 54%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: (r(X,Y) | r(Y,X) | X = Y)] PASSED [ 56%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: ~ (p(X) & ~ q(X))] PASSED [ 57%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) <=> q(X))] PASSED [ 59%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y]: ((p(X) & q(Y)) => r(X,Y))] PASSED [ 60%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (![Y]: r(X,Y) | p(X))] PASSED [ 62%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X,Y,Z]: (~ r(X,Y) | ~ r(Y,Z) | r(X,Z))] PASSED [ 64%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | ![Y]: (q(Y) | r(Y,X)))] PASSED [ 65%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-?[X]: (p(X) | q(X))] PASSED [ 67%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[fof-![X]: (p(X) | p(X))] PASSED [ 68%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[cnf-~ r(X,Y) | ~ r(Y,Z) | r(X,Z)] PASSED [ 70%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[cnf-p(X) | q(Y)] PASSED [ 71%]
+test_cm.py::test_rewriting_is_equivalent_on_every_small_structure[cnf-X = a | r(X,X)] PASSED [ 73%]
+test_cm.py::test_clause_search_agrees_with_brute_force PASSED            [ 75%]
+test_cm.py::test_ablation_keeps_every_experiment_distinct PASSED         [ 76%]
+test_cm.py::test_ablation_refuses_records_it_would_otherwise_drop[fof(base, axiom, q).\nfof(hidden, negated_conjecture, p).\nfof(goal, conjecture, p).\n] PASSED [ 78%]
+test_cm.py::test_ablation_refuses_records_it_would_otherwise_drop[fof(base, axiom, q).\nfof(l, lemma, p).\nfof(goal, conjecture, p).\n] PASSED [ 79%]
+test_cm.py::test_ablation_refuses_records_it_would_otherwise_drop[fof(a, axiom, q).\nfof(a, axiom, p).\nfof(goal, conjecture, p).\n] PASSED [ 81%]
+test_cm.py::test_explicit_finder_errors_are_finder_errors[printf '%% SZS status Error for t\\n'-1] PASSED [ 82%]
+test_cm.py::test_explicit_finder_errors_are_finder_errors[printf '%% Termination reason: Internal error\\n'-3] PASSED [ 84%]
+test_cm.py::test_explicit_finder_errors_are_finder_errors[printf '%% SZS status InputError for t\\n%% Termination reason: Refutation\\n'-0] PASSED [ 85%]
+test_cm.py::test_explicit_finder_errors_are_finder_errors[None-None] PASSED [ 87%]
+test_cm.py::test_recorded_vampire_answers_classify_as_before PASSED      [ 89%]
+test_cm.py::test_formula_readers_reject_malformed_structure[(p]] PASSED  [ 90%]
+test_cm.py::test_formula_readers_reject_malformed_structure[p(a]] PASSED [ 92%]
+test_cm.py::test_formula_readers_reject_malformed_structure[![X] p(X)] PASSED [ 93%]
+test_cm.py::test_formula_readers_reject_malformed_structure[![X,]: p(X)] PASSED [ 95%]
+test_cm.py::test_formula_readers_reject_malformed_structure[(p] PASSED   [ 96%]
+test_cm.py::test_formula_readers_reject_malformed_structure[p(a,] PASSED [ 98%]
+test_cm.py::test_small_structure_check_detects_a_wrong_rewrite PASSED    [100%]
 
-====================== 44 passed, 105 deselected in 5.66s ======================
+====================== 64 passed, 105 deselected in 7.29s ======================
 == round-4 regression tests: exit 0 (expected 0) ok
 == recheck.sh without lake: env PATH=/usr/bin:/bin ./recheck.sh
-commit 5b56935 (+uncommitted changes)
+commit 5f37dd5 (+uncommitted changes)
 ./recheck.sh: line 13: lake: command not found
 FAILED: lean --version
 == recheck.sh without lake: exit 1 (expected nonzero) ok
-== replay.py, certificate that does not compile: python3 bench/replay.py /var/folders/dt/1v9rmk195_q7lp5m_x15yj8h0000gn/T/tmp.qk73BXtp5C
-fail 1 strict certificates; aggregate compiled in 0.2 s; leanchecker --fresh ok in 33.8 s; outside standard axioms or not replayed: ['NEGFAIL+1.p']
+== replay.py, certificate that does not compile: python3 bench/replay.py /var/folders/dt/1v9rmk195_q7lp5m_x15yj8h0000gn/T/tmp.qS9xR3CvhG
+fail 1 strict certificates; aggregate compiled in 0.2 s; leanchecker --fresh ok in 37.6 s; outside standard axioms or not replayed: ['NEGFAIL+1.p']
 == replay.py, certificate that does not compile: exit 1 (expected nonzero) ok
-== replay.py, certificate using sorry: python3 bench/replay.py /var/folders/dt/1v9rmk195_q7lp5m_x15yj8h0000gn/T/tmp.qk73BXtp5C
-sorry 1 strict certificates; aggregate compiled in 0.2 s; leanchecker --fresh ok in 33.4 s; outside standard axioms or not replayed: ['NEGSORRY+1.p']
+== replay.py, certificate using sorry: python3 bench/replay.py /var/folders/dt/1v9rmk195_q7lp5m_x15yj8h0000gn/T/tmp.qS9xR3CvhG
+sorry 1 strict certificates; aggregate compiled in 0.2 s; leanchecker --fresh ok in 38.5 s; outside standard axioms or not replayed: ['NEGSORRY+1.p']
 == replay.py, certificate using sorry: exit 1 (expected nonzero) ok
 sorry NEGSORRY+1.p compiled 0.3
 == axioms sorry
 'NEGSORRY_1.countermodel' depends on axioms: [sorryAx]
-== leanchecker --fresh Replay_sorry: ok in 33.4 s
+== leanchecker --fresh Replay_sorry: ok in 38.5 s
 
 == inputs.py verify, one altered byte: python3 bench/inputs.py verify /private/tmp/claude-501/-Users-michaeljagdeo-Downloads-talentOS-2026/7c399779-7cfb-4afa-a876-982babc97c43/scratchpad/tptp/TPTP-v9.3.1
 MISMATCH against bench/inputs.json:

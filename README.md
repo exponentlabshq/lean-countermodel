@@ -24,7 +24,7 @@ python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean  
 | **Scales to a million facts** | NLP263+1 (1,026,857 facts, 383,180 constants) is certified in a median **5.2 min** through the verified checker, against 14.1 min one-theorem-per-formula, in a controlled, repeated comparison on an 8 GB laptop |
 | **Beats hand construction on a published Lean project** | It reproduces both of Nakamura's hand-built Spinoza counter-models from their axioms alone, with **2-element** models against their 4 and 3, checked against their own library (§4.2) |
 | **Proved semantics** | `Checker.lean` proves, once, that for a valid model (non-empty domain, closed functions) and closed, well-formed formulas, its evaluator agrees with **ordinary first-order satisfaction** on `Fin n`. Reflected certificates conclude exactly that, using only Lean's standard axioms (`propext`, `Quot.sound`). |
-| **Tested like it matters** | 149 tests: an independent evaluator of the original formulas, corrupted models, rewrite equivalence, kernel-checked boundary cases (empty domain, out-of-range constants, malformed data), rejection of unsupported syntax, variable capture, include expansion, and benchmark inputs checked byte for byte against the official TPTP release; `recheck.sh` replays every shipped certificate with `leanchecker --fresh`, and `bench/replay.py` every strict benchmark certificate |
+| **Tested like it matters** | 169 tests: an independent evaluator of the original formulas, corrupted models, rewrite equivalence, kernel-checked boundary cases (empty domain, out-of-range constants, malformed data), rejection of unsupported syntax, variable capture, include expansion, and benchmark inputs checked byte for byte against the official TPTP release; `recheck.sh` replays every shipped certificate with `leanchecker --fresh`, and `bench/replay.py` every strict benchmark certificate |
 
 ## 2. The gap
 
@@ -169,7 +169,7 @@ This problem forced most of the scaling recipe. On the way it exposed four bugs:
 |---|---|
 | Requirements | Lean 4.35 (elan), Vampire 5.1.0 (on `PATH`, or set `VAMPIRE`), Python 3.12 with pytest. `nakamura/` pins Lean 4.13. The Lean project has no package dependencies. |
 | Vampire | One binary from the v5.1.0 release, e.g. `gh release download v5.1.0 -R vprover/vampire -p vampire-macOS-ARM64.zip && unzip vampire-macOS-ARM64.zip` (other platforms have their own assets) |
-| Tests | `lake build && pytest test_cm.py` (149 tests; the 61 that need no Vampire model also run without Vampire), including `tests/Boundary.lean`; `./recheck.sh` for axioms and a fresh kernel replay |
+| Tests | `lake build && pytest test_cm.py` (169 tests; the 81 that need no Vampire model also run without Vampire), including `tests/Boundary.lean`; `./recheck.sh` for axioms and a fresh kernel replay |
 | Examples | `lake build`, then `lake env lean Axioms.lean` |
 | Nakamura | `cd nakamura && lake build && lake env lean Axioms.lean` (clones spinoza-ethica-lean @ 6d4c046, about 11 MB) |
 | Benchmark inputs | `python3 bench/inputs.py TPTP-v9.3.1 [TPTP-v9.3.1.tgz]` rebuilds every input from the official release (934 MB tarball) and checks it against `bench/inputs.json` |

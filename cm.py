@@ -28,10 +28,36 @@ def sym(k):
     return f"«{k}»" if re.fullmatch(r"[a-z]\w*", k) and k not in RESERVED else f"«'{k}'»"
 
 
+def reader(s):
+    """(nxt, peek, expect, binder) over the tokens of s. Structure is checked as it is read: running out of tokens,
+    a closing token of the wrong kind, a malformed quantifier binder or a missing ':' raise ValueError."""
+    t = re.findall(TOKENS, s)[::-1]
+
+    def nxt():
+        if not t:
+            raise ValueError(f"unsupported TPTP: formula ends early: {s.strip()[:80]!r}")
+        return t.pop()
+
+    def expect(tok):
+        if (k := nxt()) != tok:
+            raise ValueError(f"unsupported TPTP: {tok!r} expected, found {k!r} in {s.strip()[:80]!r}")
+
+    def binder():  # [X, Y]: the variables of a quantifier, then ':'
+        expect("[")
+        vs = [nxt()]
+        while (k := nxt()) == ",":
+            vs.append(nxt())
+        if k != "]" or not all(re.fullmatch(r"[A-Z]\w*", v) for v in vs):
+            raise ValueError(f"unsupported TPTP: malformed quantifier binder in {s.strip()[:80]!r}")
+        expect(":")
+        return vs
+
+    return t, nxt, (lambda *k: t and t[-1] in k), expect, binder
+
+
 def lean(s):
     """A TPTP fof formula as a Lean proposition over T."""
-    t = re.findall(TOKENS, s)[::-1]
-    nxt, peek = t.pop, lambda *k: t and t[-1] in k
+    t, nxt, peek, expect, binder = reader(s)
 
     def form():
         a = unit()
@@ -45,14 +71,12 @@ def lean(s):
         k = nxt()
         if k == "~":
             return f"¬{unit()}"
-        if k in "!?":  # ![X,Y]: body
-            nxt()
-            vs = [v + "'" for v in iter(nxt, "]") if v != ","]  # X -> X': no TPTP variable can then capture T, True, …
-            nxt()
+        if k in ("!", "?"):  # ![X,Y]: body
+            vs = [v + "'" for v in binder()]  # X -> X': no TPTP variable can then capture T, True, …
             return f"({'∀' if k == '!' else '∃'} {' '.join(vs)} : T, {unit()})"
         if k == "(":
             a = form()
-            nxt()
+            expect(")")
             return a
         a = term(k)
         return f"({a} {'=' if nxt() == '=' else '≠'} {term(nxt())})" if peek("=", "!=") else a
@@ -66,8 +90,10 @@ def lean(s):
             return k
         nxt()
         args = [term(nxt())]
-        while nxt() == ",":
+        while (c := nxt()) == ",":
             args.append(term(nxt()))
+        if c != ")":
+            raise ValueError(f"unsupported TPTP: ')' expected after arguments, found {c!r} in {s.strip()[:80]!r}")
         return f"({k} {' '.join(args)})"
 
     out = form()
@@ -204,7 +230,7 @@ def statements(path):
             fail(start, f"{kind}(...); cm.py reads self-contained fof/cnf only")
         if src[i:i + 1] != "(":
             fail(i, f"'(' expected after {kind}")
-        parts, cur, depth, i = [], [], 0, i + 1
+        parts, cur, stack, i = [], [], [], i + 1
         while True:  # the record's top-level arguments, split at depth-0 commas; quoted text and comments respected
             if i >= len(src):
                 fail(start, f"unterminated {kind} record")
@@ -230,16 +256,17 @@ def statements(path):
             if src.startswith("/*", i):
                 fail(i, "/* block comment */ (cm.py reads % comments only)")
             if c in "([":
-                depth += 1
+                stack.append(c)
             elif c in ")]":
-                if depth == 0:
+                if not stack:
                     if c == "]":
                         fail(i, "unbalanced ']'")
                     parts.append("".join(cur))
                     i += 1
                     break
-                depth -= 1
-            elif c == "," and depth == 0:
+                if stack.pop() + c not in ("()", "[]"):
+                    fail(i, f"{c!r} closes the wrong kind of bracket")
+            elif c == "," and not stack:
                 parts.append("".join(cur))
                 cur, i = [], i + 1
                 continue
@@ -251,6 +278,8 @@ def statements(path):
         i += 1
         if len(parts) < 3:
             fail(start, f"{kind} record with {len(parts)} argument(s); name, role and formula are required")
+        if any(not x.strip() for x in parts):
+            fail(start, f"an empty field in a {kind} record")
         name, role, formula = parts[0].strip(), parts[1].strip(), parts[2]
         if not re.fullmatch(RECORD_NAME, name):
             fail(start, f"record name {name!r}")
@@ -276,7 +305,13 @@ def problem(path):
     return out
 
 
-UNCACHED = {"Timeout", "MemoryOut", "ResourceOut", "Error", "InputError", "OSError"}  # depend on the run, not the problem
+# How Vampire's answer is classified (statuses and termination reasons Vampire 5.1 documents and our runs recorded).
+# Anything outside this table is a finder error: never a search outcome, never cached.
+SEARCH = {("Satisfiable", "Satisfiable"), ("CounterSatisfiable", "Satisfiable"),  # a finite model
+          ("Theorem", "Refutation"), ("Unsatisfiable", "Refutation"), ("ContradictoryAxioms", "Refutation"),
+          ("GaveUp", "Refutation not found, incomplete strategy")}  # definite: cacheable
+LIMITS = {"Time limit", "Memory limit"}  # inconclusive resource limits (status None, Timeout or MemoryOut): not cached
+LIMIT_STATUSES = {None, "Timeout", "MemoryOut", "ResourceOut"}
 
 
 def szs(out):
@@ -285,31 +320,44 @@ def szs(out):
 
 
 def termination(out):
-    """Vampire's termination reason ("Time limit", "Memory limit", "Refutation not found", ...), or None. Vampire 5.1
-    reports a timeout this way, with exit status 1 and no SZS status line."""
+    """Vampire's termination reason ("Time limit", "Refutation not found, incomplete strategy", ...), or None.
+    Vampire 5.1 reports a timeout this way, with exit status 1 and no SZS status line."""
     return m[1].strip() if (m := re.search(r"Termination reason: ([^\n]+)", out)) else None
+
+
+def classify(out):
+    """'search' (a definite answer, cacheable), 'limit' (a resource limit: no model found, not cached) or None
+    (an error or an answer outside the table)."""
+    status, reason = szs(out), termination(out)
+    if (status, reason) in SEARCH:
+        return "search"
+    if reason in LIMITS and status in LIMIT_STATUSES:
+        return "limit"
+    return None
 
 
 def vampire(path):
     """Vampire's output, cached in $CM_CACHE (if set) under a hash of the problem, the flags and Vampire's version:
-    a Lean upgrade then reruns only Lean. An answer with neither an SZS status nor a termination reason is an
-    operational failure: it raises RuntimeError and is never cached. Timeouts, memory limits and other run-dependent
-    outcomes are documented search outcomes, but they are not cached either."""
+    a Lean upgrade then reruns only Lean. Classified by classify(): definite answers are cached, resource limits
+    are returned but not cached, and anything else (an SZS Error, an unrecognized status or termination reason, no
+    status at all, a missing executable) raises RuntimeError with the exit code and diagnostics, and is not cached."""
     # `-updr off`: otherwise Vampire may settle the problem by deleting unused predicates, without printing a model
     cmd = [os.getenv("VAMPIRE", "vampire"), "-sa", "fmb", "-updr", "off", "-t", "30"]
     hit = None
-    if cache := os.getenv("CM_CACHE"):
-        version = subprocess.run([cmd[0], "--version"], capture_output=True, text=True).stdout
-        key = hashlib.sha256(open(path, "rb").read() + " ".join(cmd[1:]).encode() + version.encode()).hexdigest()
-        if os.path.exists(hit := os.path.join(cache, key)):
-            return open(hit).read()
-    run = subprocess.run(cmd + [path], capture_output=True, text=True)
-    status, reason = szs(run.stdout), termination(run.stdout)
-    if status is None and reason is None:
-        raise RuntimeError(f"vampire failed on {path}: exit {run.returncode}, no SZS status or termination reason; "
-                           f"stderr: {run.stderr.strip()[-300:]}")
-    run_dependent = status in UNCACHED or (reason or "").split()[0:2] in (["Time", "limit"], ["Memory", "limit"]) or "Time limit" in run.stdout
-    if hit and not run_dependent:
+    try:
+        if cache := os.getenv("CM_CACHE"):
+            version = subprocess.run([cmd[0], "--version"], capture_output=True, text=True).stdout
+            key = hashlib.sha256(open(path, "rb").read() + " ".join(cmd[1:]).encode() + version.encode()).hexdigest()
+            if os.path.exists(hit := os.path.join(cache, key)):
+                return open(hit).read()
+        run = subprocess.run(cmd + [path], capture_output=True, text=True)
+    except OSError as e:
+        raise RuntimeError(f"vampire failed on {path}: cannot run {cmd[0]!r}: {e}")
+    kind = classify(run.stdout)
+    if kind is None:
+        raise RuntimeError(f"vampire failed on {path}: exit {run.returncode}, SZS status {szs(run.stdout)}, termination "
+                           f"reason {termination(run.stdout)}; stderr: {run.stderr.strip()[-300:]}")
+    if hit and kind == "search":
         os.makedirs(cache, exist_ok=True)
         open(hit, "w").write(run.stdout)
     return run.stdout
@@ -407,8 +455,7 @@ OPCODE = {"&": 5, "|": 6, "=>": 7, "<=>": 8}
 def tokens(s, ids):
     """A TPTP formula as the token stream that CM.decode reads (prefix order; see Checker.lean).
     Variables become de Bruijn indices; symbols become numbers from `ids` ({"pred"|"fn"|"const": {name: id}})."""
-    t = re.findall(TOKENS, s)[::-1]
-    nxt, peek = t.pop, lambda *k: t and t[-1] in k
+    t, nxt, peek, expect, binder = reader(s)
 
     def form(env):
         a = unit(env)
@@ -422,15 +469,13 @@ def tokens(s, ids):
         k = nxt()
         if k == "~":
             return [4, *unit(env)]
-        if k in "!?":
-            nxt()
-            vs = [v for v in iter(nxt, "]") if v != ","]
-            nxt()
+        if k in ("!", "?"):
+            vs = binder()
             body = unit(vs[::-1] + env)  # the last-bound variable is index 0
             return [9 if k == "!" else 10] * len(vs) + body
         if k == "(":
             a = form(env)
-            nxt()
+            expect(")")
             return a
         unsupported(k)
         if k in ("$true", "$false"):
@@ -447,8 +492,10 @@ def tokens(s, ids):
             return []
         nxt()
         args = [term(nxt(), env)]
-        while nxt() == ",":
+        while (c := nxt()) == ",":
             args.append(term(nxt(), env))
+        if c != ")":
+            raise ValueError(f"unsupported TPTP: ')' expected after arguments, found {c!r} in {s.strip()[:80]!r}")
         return args
 
     def head(k, args, env):

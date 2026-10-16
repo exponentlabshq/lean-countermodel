@@ -14,15 +14,29 @@ from cm import statements as cm_statements
 VAMPIRE = os.getenv("VAMPIRE", "vampire")
 
 
+ROLES = {"definition": "kept", "axiom": "ablated", "hypothesis": "ablated", "conjecture": "target"}  # the ablation language
+
+
 def statements(path):
-    """[(name, role, text)] for every record of the theory, read by cm.statements: total and fail-closed, so a record
-    cannot be dropped silently. Names are made filename-safe (quoted TPTP names may contain punctuation)."""
-    return [(re.sub(r"\W", "_", r["name"].strip("'")), r["role"], r["text"]) for r in cm_statements(path)]
+    """[(id, role, text, name)] for every record of the theory, read by cm.statements (total and fail-closed).
+    id is collision-free (the record's position plus a filename-safe form of its name) and is used for job keys and
+    file paths; name is the source name, used in the report. A role outside the ablation language, or two records
+    with the same source name, is rejected: no accepted record is ever dropped from an experiment."""
+    recs, seen = cm_statements(path), set()
+    for r in recs:
+        if r["role"] not in ROLES:
+            raise ValueError(f"ablate.py: record {r['name']} (line {r['line']}) has role {r['role']!r}; ablation reads only "
+                             f"{', '.join(sorted(ROLES))} and refuses the theory rather than drop a premise")
+        if r["name"] in seen:
+            raise ValueError(f"ablate.py: two records named {r['name']}; record names must identify experiments")
+        seen.add(r["name"])
+    return [(f"r{i:03d}_{re.sub(r'[^A-Za-z0-9_]', '_', r['name'].strip(chr(39)))}", r["role"], r["text"], r["name"])
+            for i, r in enumerate(recs)]
 
 
 def write(path, keep, target):
     """A problem with the kept statements and one conjecture."""
-    open(path, "w").write("\n".join(t for _, _, t in keep) + "\n" + target[2] + "\n")
+    open(path, "w").write("\n".join(k[2] for k in keep) + "\n" + target[2] + "\n")
     return path
 
 
@@ -58,13 +72,13 @@ def verdict(path):
 
 def ablate(path, outdir):
     st = statements(path)
-    defs = [s for s in st if s[1] == "definition"]
-    axioms = [s for s in st if s[1] in ("axiom", "hypothesis")]
-    targets = [s for s in st if s[1] == "conjecture"]
+    defs = [s for s in st if ROLES[s[1]] == "kept"]
+    axioms = [s for s in st if ROLES[s[1]] == "ablated"]
+    targets = [s for s in st if ROLES[s[1]] == "target"]
     os.makedirs(outdir, exist_ok=True)
     jobs = [(t, None) for t in targets] + [(t, a) for t in targets for a in axioms]
 
-    def run(job):
+    def run(job):  # keyed and written by collision-free ids; reported by source names
         t, drop = job
         keep = defs + [a for a in axioms if a is not drop]
         p = write(os.path.join(outdir, f"{t[0]}__without_{drop[0] if drop else 'nothing'}.p"), keep, t)
@@ -72,6 +86,8 @@ def ablate(path, outdir):
 
     with ThreadPoolExecutor(4) as pool:
         results = dict(pool.map(run, jobs))
+    assert len(results) == len(jobs), "every experiment must have its own result"
+    name = {s[0]: s[3] for s in st}
     minimal = {}
     for t in targets:  # greedy deletion: drop every axiom whose removal still lets Vampire prove the target
         if results[(t[0], None)]["verdict"] != "follows":
@@ -81,10 +97,10 @@ def ablate(path, outdir):
             trial = [x for x in need if x is not a]
             if proves(write(os.path.join(outdir, f"{t[0]}__minimal.p"), defs + trial, t)):
                 need = trial
-        minimal[t[0]] = [a[0] for a in need]
-    return {"theory": path, "definitions": [d[0] for d in defs], "axioms": [a[0] for a in axioms],
-            "targets": [t[0] for t in targets], "minimal": minimal,
-            "results": [{"target": t, "without": d, **v} for (t, d), v in results.items()]}
+        minimal[t[3]] = [a[3] for a in need]
+    return {"theory": path, "definitions": [d[3] for d in defs], "axioms": [a[3] for a in axioms],
+            "targets": [t[3] for t in targets], "minimal": minimal,
+            "results": [{"target": name[t], "without": name[d] if d else None, **v} for (t, d), v in results.items()]}
 
 
 def table(report):

@@ -19,9 +19,10 @@ expect() {  # expect NAME WANT(0|nonzero) command...
 }
 echo "commit $(git rev-parse HEAD 2>/dev/null || echo 'not a git checkout'); $(date)" > "$log"
 
-# 1. The regression tests that encode the reviewer's protocol and the other controls (they must pass).
+# 1. The regression tests that encode the reviewers' protocols and the other controls (a selection of test_cm.py;
+#    the full suite's own run is bench/test-log.txt). They must pass.
 expect "round-4 regression tests" 0 python3 -m pytest test_cm.py -v -p no:cacheprovider -k \
-  "model_of_part or collide or failing_finder or finder_error or timeout_is or accounted_for or rejected_not_skipped or annotations or fidelity_check or clause_search or every_small_structure or benchmark_records"
+  "model_of_part or collide or failing_finder or finder_error or explicit_finder or recorded_vampire or timeout_is or accounted_for or rejected_not_skipped or annotations or fidelity_check or clause_search or every_small_structure or wrong_rewrite or benchmark_records or ablation_keeps or ablation_refuses or malformed_structure"
 
 # 2. recheck.sh must fail when the build cannot run (lake absent).
 expect "recheck.sh without lake" nonzero env PATH=/usr/bin:/bin ./recheck.sh

@@ -14,7 +14,16 @@ run = lambda *a: subprocess.run(a, capture_output=True, text=True)
 def holds(s, n, consts, tables, env={}):
     """Evaluate a TPTP formula in a finite model by brute force. Written separately from cm.lean."""
     t = re.findall(TOKENS, s)[::-1]
-    nxt, peek = t.pop, lambda *k: t and t[-1] in k
+    peek = lambda *k: t and t[-1] in k
+
+    def nxt(want=None):  # the next token; with want, it must be that token
+        if not t:
+            raise ValueError(f"formula ends early: {s[:60]!r}")
+        k = t.pop()
+        if want is not None and k != want:
+            raise ValueError(f"{want!r} expected, found {k!r} in {s[:60]!r}")
+        return k
+
     op = {"&": bool.__and__, "|": bool.__or__, "=>": lambda a, b: not a or b, "<=>": bool.__eq__}
 
     def form():  # each parser returns a function of the variable assignment
@@ -27,14 +36,18 @@ def holds(s, n, consts, tables, env={}):
         k = nxt()
         if k == "~":
             return (lambda a: lambda v: not a(v))(unit())
-        if k in "!?":
-            nxt()
-            xs = [x for x in iter(nxt, "]") if x != ","]
-            nxt()
+        if k in ("!", "?"):
+            nxt("[")
+            xs = [nxt()]
+            while (c := nxt()) == ",":
+                xs.append(nxt())
+            if c != "]" or not all(x[0].isupper() for x in xs):
+                raise ValueError(f"malformed quantifier binder in {s[:60]!r}")
+            nxt(":")
             body, q = unit(), all if k == "!" else any
             return lambda v: q(body({**v, **dict(zip(xs, es))}) for es in itertools.product(range(1, n + 1), repeat=len(xs)))
         if k == "(":
-            return (form(), nxt())[0]
+            return (form(), nxt(")"))[0]
         a = term(k)
         if peek("=", "!="):
             eq, b = nxt() == "=", term(nxt())
@@ -48,8 +61,10 @@ def holds(s, n, consts, tables, env={}):
         if peek("("):
             nxt()
             args.append(term(nxt()))
-            while nxt() == ",":
+            while (c := nxt()) == ",":
                 args.append(term(nxt()))
+            if c != ")":
+                raise ValueError(f"')' expected after arguments, found {c!r} in {s[:60]!r}")
         if k[0].isupper() and not quoted:
             return lambda v: v[k]
         return lambda v: tables[k][tuple(a(v) for a in args)] if args else consts[k]
@@ -78,20 +93,23 @@ def records(text):
     while i < len(toks):
         if toks[i] not in (("word", "fof"), ("word", "cnf")) or toks[i + 1:i + 2] != [("op", "(")]:
             raise ValueError(f"not a fof/cnf record: {toks[i:i + 3]}")
-        kind, args, cur, depth, i = toks[i][1], [], [], 0, i + 2
+        kind, args, cur, opened, i = toks[i][1], [], [], [], i + 2
         while True:
             if i >= len(toks):
                 raise ValueError("unterminated record")
             t = toks[i][1]
             i += 1
-            if t in "([" and toks[i - 1][0] == "op":
-                depth += 1
-            elif t in ")]" and toks[i - 1][0] == "op":
-                if depth == 0:
+            if t in ("(", "[") and toks[i - 1][0] == "op":
+                opened.append(t)
+            elif t in (")", "]") and toks[i - 1][0] == "op":
+                if not opened:
+                    if t == "]":
+                        raise ValueError("unbalanced ']'")
                     args.append(cur)
                     break
-                depth -= 1
-            elif t == "," and depth == 0:
+                if {"(": ")", "[": "]"}[opened.pop()] != t:
+                    raise ValueError(f"{t!r} closes the wrong kind of bracket")
+            elif t == "," and not opened:
                 args.append(cur)
                 cur = []
                 continue
@@ -99,7 +117,7 @@ def records(text):
         if toks[i:i + 1] != [("op", ".")]:
             raise ValueError("record not closed by '.'")
         i += 1
-        if len(args) < 3 or len(args[0]) != 1 or len(args[1]) != 1 or args[1][0] not in ORACLE_ROLES or not args[2]:
+        if len(args) < 3 or len(args[0]) != 1 or len(args[1]) != 1 or args[1][0] not in ORACLE_ROLES or not all(args):
             raise ValueError(f"malformed record: {args[:2]}")
         out.append((kind, args[0][0], args[1][0], " ".join(args[2])))
     return out
@@ -421,7 +439,8 @@ RECORD_COUNTS = [  # (source, records): hand-checked
     ("fof('50%', axiom, p % ). fof(b, axiom, q).\n   ).\n", 1),  # '%' in a name, and a comment hiding a fake record
     ("cnf(c, negated_conjecture, ~ r(X) | s(X)).\n", 1),
 ]
-REJECTED = ["hello.\n", "fof(a, axiom).\n", "fof(a, unknown, p).\n", "tff(a, axiom, p).\n", "include('Axioms/A.ax').\n",
+REJECTED = ["fof(a, axiom, (p]).\n", "fof(a, axiom, p,).\n", "fof(a, axiom, p(b]).\n", "fof(a, axiom, ![X: p(X)).\n",
+            "hello.\n", "fof(a, axiom).\n", "fof(a, unknown, p).\n", "tff(a, axiom, p).\n", "include('Axioms/A.ax').\n",
             "fof(a, axiom, p)\n", "fof(a, axiom, (p).\n", "fof(a, axiom, p).\n/* fof(b, axiom, q). */\n", "fof(a b, axiom, p).\n"]
 
 
@@ -609,3 +628,86 @@ def test_clause_search_agrees_with_brute_force():
         closed = f"![{','.join(sorted(VARS(c)))}]: ({c})" if VARS(c) else c
         for n, consts, tables in small_structures():
             assert clause_holds(c, n, consts, tables) == holds(closed, n, consts, tables), (c, n, consts, tables)
+
+
+def test_ablation_keeps_every_experiment_distinct(tmp_path, monkeypatch):
+    """Round-4 final review: 'a-b' and a_b (and 'g-h' and g_h) are distinct records. Two targets and two removable
+    axioms are six experiments: six result rows, six distinct problem files, reported under the source names.
+    Only the prover verdicts are stubbed; reading, ids, job creation, file writing and aggregation are real."""
+    import ablate
+    monkeypatch.setattr(ablate, "verdict", lambda p: {"verdict": "unknown", "evidence": os.path.basename(p)})
+    monkeypatch.setattr(ablate, "proves", lambda p, seconds=30: None)
+    (p := tmp_path / "t.p").write_text("fof('a-b', axiom, p).\nfof(a_b, axiom, q).\nfof('g-h', conjecture, p).\nfof(g_h, conjecture, q).\n")
+    report = ablate.ablate(str(p), str(tmp_path / "out"))
+    rows = {(r["target"], r["without"]) for r in report["results"]}
+    assert len(report["results"]) == 6 == len(rows) == len({r["evidence"] for r in report["results"]})
+    assert rows == {(t, d) for t in ("'g-h'", "g_h") for d in (None, "'a-b'", "a_b")}
+    assert len(os.listdir(tmp_path / "out")) == 6
+
+
+@pytest.mark.parametrize("src", [
+    "fof(base, axiom, q).\nfof(hidden, negated_conjecture, p).\nfof(goal, conjecture, p).\n",  # the reviewer's case
+    "fof(base, axiom, q).\nfof(l, lemma, p).\nfof(goal, conjecture, p).\n",
+    "fof(a, axiom, q).\nfof(a, axiom, p).\nfof(goal, conjecture, p).\n",  # one name, two records
+])
+def test_ablation_refuses_records_it_would_otherwise_drop(src, tmp_path):
+    """A role outside the ablation language (definition, axiom, hypothesis, conjecture), or a duplicated record name,
+    is rejected before any experiment runs: ablation never reports on a theory with a premise silently removed."""
+    import ablate
+    (p := tmp_path / "t.p").write_text(src)
+    with pytest.raises(ValueError):
+        ablate.ablate(str(p), str(tmp_path / "out"))
+
+
+@pytest.mark.parametrize("script,code", [
+    ("printf '%% SZS status Error for t\\n'", 1),                                  # an explicit SZS error
+    ("printf '%% Termination reason: Internal error\\n'", 3),                     # an unrecognized termination reason
+    ("printf '%% SZS status InputError for t\\n%% Termination reason: Refutation\\n'", 0),  # error status, ordinary reason
+    (None, None),                                                                  # no such executable
+])
+def test_explicit_finder_errors_are_finder_errors(script, code, tmp_path, monkeypatch):
+    """Round-4 final review: answers outside the decision table (cm.classify) are finder errors in the benchmark,
+    with the diagnostics kept, and are never cached; a missing executable is a finder error too."""
+    import bench
+    monkeypatch.setattr(bench, "DIR", str(tmp_path))
+    (tmp_path / "problems").mkdir()
+    fake = tmp_path / "vampire"
+    if script is not None:
+        fake.write_text(f"#!/bin/sh\n{script}\nexit {code}\n")
+        fake.chmod(0o755)
+    monkeypatch.setenv("VAMPIRE", str(fake))
+    monkeypatch.setenv("CM_CACHE", str(tmp_path / "cache"))
+    (tmp_path / "problems" / "X.p").write_text("fof(a, axiom, p(a)).\nfof(b, axiom, ~q(a)).\n")
+    r = bench.run_hybrid("X.p")
+    assert r["verdict"] == "finder error" and "vampire failed" in r["why"], r
+    assert not (tmp_path / "cache").exists() or not os.listdir(tmp_path / "cache")
+
+
+def test_recorded_vampire_answers_classify_as_before():
+    """Every cached answer is a definite search outcome under the decision table, so the fix changes no recorded row."""
+    import cm
+    cached = glob.glob("bench/vampire-cache/*")
+    if not cached:
+        pytest.skip("needs bench/vampire-cache")
+    assert all(cm.classify(open(f).read()) == "search" for f in cached)
+
+
+@pytest.mark.parametrize("formula", ["(p]", "p(a]", "![X] p(X)", "![X,]: p(X)", "(p", "p(a,"])
+def test_formula_readers_reject_malformed_structure(formula):
+    """lean(), tokens() and the oracle's holds() each refuse a closing token of the wrong kind, a malformed binder or a
+    formula that ends early, instead of reading past them."""
+    from cm import lean, tokens
+    ids = {"pred": {"p": 0}, "fn": {}, "const": {"a": 0}}
+    for read in (lean, lambda f: tokens(f, ids), lambda f: holds(f, 1, {"a": 1}, {"p": {(1,): True}})):
+        with pytest.raises(ValueError):
+            read(formula)
+
+
+def test_small_structure_check_detects_a_wrong_rewrite():
+    """The negative control behind the paper's figure: a deliberately wrong rewrite of the implication-flattening case
+    (the variable X replaced by the constant a) disagrees with the original on exactly 156 of the 1,032 structures."""
+    original = "![X]: (p(X) => ![Y]: (q(Y) => r(X,Y)))"
+    wrong = "![Y]: ((~ ( p ( a ) )) | ((~ ( q ( Y ) )) | (r ( a , Y ))))"
+    structures = list(small_structures())
+    assert len(structures) == 1032
+    assert sum(holds(original, n, c, t) != holds(wrong, n, c, t) for n, c, t in structures) == 156

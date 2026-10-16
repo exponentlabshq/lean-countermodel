@@ -14,14 +14,19 @@ The remaining gap is the user's side: a command inside Lean that takes a goal an
 
 | Result | Command | Data |
 |---|---|---|
-| Unit and integration tests | `pytest test_cm.py` (Vampire on `PATH` or in `$VAMPIRE`) | 106 tests; 18 run without Vampire |
+| Unit and integration tests | `pytest test_cm.py` (Vampire on `PATH` or in `$VAMPIRE`) | 169 tests, all passing (`bench/test-log.txt`); 81 run without Vampire; in a restored package without the TPTP corpus, 168 pass and 1 is skipped |
 | Axioms and fresh kernel replay of all shipped certificates | `./recheck.sh` | writes `bench/recheck.log` |
 | Examples (shallow) | `lake build`; `lake env lean Axioms.lean` | `examples/`, `Cm/` |
 | One reflected certificate | `python3 cm.py --reflect examples/group_comm.p > G.lean && lake env lean G.lean` | — |
 | Nakamura, against their library | `cd nakamura && lake build && lake env lean Axioms.lean` | spinoza-ethica-lean @ 6d4c046 |
-| Benchmark inputs, from the official TPTP v9.3.1 release (§6.2) | `python3 bench/inputs.py TPTP-v9.3.1 [TPTP-v9.3.1.tgz]` | `bench/inputs.json` (SHA-256 of the tarball, every original, expansion and axiom file) |
+| Benchmark inputs, from the official TPTP v9.3.1 release (§6.2) | `python3 bench/inputs.py verify TPTP-v9.3.1 [TPTP-v9.3.1.tgz]` (checks against the committed manifest; `record` writes a candidate manifest instead) | `bench/inputs.json` (SHA-256 of the tarball, every original, expansion and axiom file) |
 | TPTP development sample (original sampling) | `python3 bench.py N [WORKERS]` | `bench/eligible.tsv`, `bench/results*.jsonl` |
-| Frozen runs (§6.2): development and second sample at `acb343b`, third sample at `30ad4f3` | `python3 bench/frozen.py <repo>/bench [dev second third]`, from a worktree of that commit (usage in the file) | `bench/heldout-sample.json`, `bench/third-sample.json`, `bench/results-final-{dev,second,third}.jsonl`, `bench/superseded-*.jsonl` |
+| Frozen runs (§6.2): all three samples at `66c8b32` (round-4 rerun); earlier runs kept as `bench/superseded-*` | `python3 bench/frozen.py <repo>/bench [dev second third]`, from a worktree of that commit (usage in the file) | `bench/heldout-sample.json`, `bench/third-sample.json`, `bench/results-final-{dev,second,third}.jsonl`, `bench/superseded-*.jsonl` |
+| Record-reading comparison with an earlier `cm.py` (§6.2.2) | `python3 bench/compare_parsers.py <commit> OUT.json` | `bench/parser-comparison.json` (against `30ad4f3`), `bench/parser-comparison-r4b.json` (against `66c8b32`) |
+| Source fidelity of every certified result (§6.2.2) | `python3 bench/fidelity.py <repo>/bench 300` | `bench/fidelity.jsonl`, `bench/fidelity.log` |
+| Bounded rewrite validation on the benchmark (§6.2.2) | `python3 bench/rewrite_check.py <repo>/bench 60` | `bench/rewrite-check.jsonl`, `bench/rewrite-check.log` |
+| Coverage report, each check separate (§6.2.2) | `python3 bench/coverage.py <repo>/bench 300` | `bench/coverage.md`, `bench/coverage.json` |
+| Negative controls (§6.2.2) | `bench/negative-controls.sh [TPTP-v9.3.1]`: runs a selection of the regression tests and five failure controls | `bench/negative-controls.log` |
 | Fresh kernel replay of every strict benchmark certificate (§6.2) | `python3 bench/replay.py <repo>/bench`, in the same worktree, after `frozen.py` | `bench/replay-{dev,second,third}.jsonl`, `bench/replay.log` |
 | Input audit on the earlier scraped inputs (§8), superseded by the final runs' classifications | see `method` in the file | `bench/input-audit.json` |
 | Controlled timings (§6.3.1) | `python3 bench/perf.py bench/problems/NLP263+1.p 3 4`; `python3 bench/perf.py bench/slice10000.p 3 4` (the first 10,000 statements of NLP263+1) | `bench/perf.jsonl` |
